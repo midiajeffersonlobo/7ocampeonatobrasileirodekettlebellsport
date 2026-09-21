@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#043b9c">
+  <meta name="description" content="Site oficial do 7º Campeonato Brasileiro de Kettlebell Sport — Recife, 19 a 22 de novembro de 2026.">
+  <title>7º Campeonato Brasileiro de Kettlebell Sport | Recife 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/opening/background.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/opening/background-foreground-transparent.webp">
+  <link rel="preload" as="image" href="assets/opening/otimizados/01-titulo.png">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2307141f'/%3E%3Cpath d='M15 14h36L31 52H18l17-27H15z' fill='%23ffd20a'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css?v=20260921i">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body class="intro-active">
+  <section class="video-intro" id="videoIntro" aria-label="Vídeo de introdução do evento">
+    <video class="video-intro__media" id="videoIntroMedia" autoplay muted loop playsinline preload="auto">
+      <source src="assets/videos/intro-hero.webm" type="video/webm">
+      <source src="assets/videos/intro-hero.mp4" type="video/mp4">
+    </video>
+    <div class="video-intro__shade" aria-hidden="true"></div>
+    <button class="video-intro__skip" id="videoIntroSkip" type="button" aria-label="Pular vídeo de introdução">
+      <span>Pular vídeo</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5v14l10-7zM18 5h2v14h-2z"/></svg>
+    </button>
+    <p class="video-intro__hint">Clique em qualquer ponto ou pressione espaço para continuar</p>
+  </section>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+  <header class="site-header" id="siteHeader" data-tone="white">
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="siteNav"><span></span><span></span><span></span><span class="sr-only">Abrir menu</span></button>
+    <nav class="site-nav" id="siteNav" aria-label="Navegação principal">
+      <a href="#evento">O evento</a>
+      <a href="#programacao">Programação</a>
+      <a href="#experiencias">Experiências</a>
+      <a href="#local">Local</a>
+      <a href="#duvidas">Dúvidas</a>
+    </nav>
+    <div class="header-participation">
+      <span class="participation-label">Participe do evento</span>
+      <div class="header-actions">
+        <button class="button button--yellow" type="button" data-open-registration>Quero assistir</button>
+        <a class="button button--ghost" href="https://www.conbraks.com.br/campeonato-brasileiro-2026" target="_blank" rel="noopener">Sou atleta ↗</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="opening" id="inicio" aria-labelledby="event-title" data-header-tone="blue">
+    <h1 id="event-title" class="sr-only">7º Campeonato Brasileiro de Kettlebell Sport</h1>
+    <p class="sr-only">Recife, a capital do Kettlebell Sport 2026. De 19 a 22 de novembro de 2026, em Recife, Pernambuco.</p>
+
+    <img class="opening__visual" src="assets/opening/background.webp" alt="Vista aérea do centro histórico do Recife e do Rio Capibaribe ao entardecer" width="3840" height="2160" fetchpriority="high" decoding="sync">
+    <video class="opening__video" id="openingVideo" muted loop playsinline preload="auto" aria-hidden="true">
+      <source src="assets/videos/intro-hero.webm" type="video/webm">
+      <source src="assets/videos/intro-hero.mp4" type="video/mp4">
+    </video>
+    <img class="opening__foreground" src="assets/opening/background-foreground-transparent.webp" alt="" width="3840" height="2160" aria-hidden="true" decoding="async">
+    <div class="opening__water" aria-hidden="true"><span></span><i></i></div>
+
+    <div class="opening__stage">
+      <div class="opening__layer opening__layer--title" aria-hidden="true"><img src="assets/opening/otimizados/01-titulo.png" alt="" width="1278" height="373"></div>
+      <div class="opening__shimmer" aria-hidden="true"><img src="assets/opening/otimizados/01-titulo.png" alt="" width="1278" height="373"></div>
+      <div class="opening__layer opening__layer--city" aria-hidden="true"><img src="assets/opening/otimizados/02-recife-capital.png" alt="" width="596" height="130"></div>
+      <div class="opening__layer opening__layer--date" aria-hidden="true"><img src="assets/opening/otimizados/03-data-evento.png" alt="" width="408" height="132"></div>
+      <div class="opening__layer opening__layer--place" aria-hidden="true"><img src="assets/opening/otimizados/04-local-recife-pe.png" alt="" width="444" height="95"></div>
+      <a class="opening__layer opening__layer--url opening__url-link" href="https://www.conbraks.com.br/" target="_blank" rel="noopener" aria-label="Acessar o site CONBRAKS"><img src="assets/opening/otimizados/05-url-conbraks.png" alt="CONBRAKS.com.br" width="481" height="65"></a>
+      <button class="opening__layer opening__layer--compass opening__info-trigger" type="button" tabindex="-1" aria-hidden="true" aria-label="Mostrar Recife, capital do Kettlebell Sport"><img src="assets/opening/otimizados/07-icone-rosa-dos-ventos.png" alt="" width="141" height="127"></button>
+      <button class="opening__layer opening__layer--calendar opening__info-trigger" type="button" tabindex="-1" aria-hidden="true" aria-label="Mostrar a data do evento"><img src="assets/opening/otimizados/08-icone-calendario.png" alt="" width="121" height="116"></button>
+      <button class="opening__layer opening__layer--pin opening__info-trigger" type="button" tabindex="-1" aria-hidden="true" aria-label="Mostrar o local do evento"><img src="assets/opening/otimizados/09-icone-localizacao.png" alt="" width="86" height="114"></button>
+      <button class="opening__layer opening__layer--globe opening__info-trigger" type="button" tabindex="-1" aria-hidden="true" aria-label="Mostrar o endereço do evento"><img src="assets/opening/otimizados/10-icone-globo.png" alt="" width="104" height="111"></button>
+      <a class="opening__enter" href="#conteudo"><span>Conheça o evento</span><b aria-hidden="true">↓</b></a>
+    </div>
+  </section>
+
+  <main id="conteudo">
+    <section class="event-strip" aria-label="Informações principais" data-header-tone="blue">
+      <div><small>Quando</small><strong>19–22 NOV 2026</strong></div>
+      <div><small>Onde</small><strong>RECIFE · PE</strong></div>
+      <div><small>Local exato</small><strong>EM DEFINIÇÃO</strong></div>
+      <div><small>Para o público</small><strong>INSCRIÇÃO PRÉVIA</strong></div>
+    </section>
+
+    <section class="section section--intro" id="evento" data-header-tone="white">
+      <div class="section-label"><span>O campeonato</span><b>RECIFE 2026</b></div>
+      <div class="intro-grid">
+        <div class="intro-copy reveal">
+          <p class="eyebrow">Pela primeira vez no Nordeste</p>
+          <h2>Força, técnica e resistência em uma competição nacional.</h2>
+          <p>De 19 a 22 de novembro, Recife recebe atletas, técnicos, árbitros e apaixonados pelo Kettlebell Sport. Uma edição para acompanhar de perto, conhecer a modalidade e viver a energia de uma arena nacional.</p>
+          <div class="button-row">
+            <button class="button button--yellow" type="button" data-open-registration>Inscrição do público</button>
+            <a class="text-link" href="#entenda">Como funciona o esporte →</a>
+          </div>
+        </div>
+        <figure class="photo-frame reveal">
+          <img src="assets/fotos/foto-05.avif" alt="Atletas de Kettlebell Sport competindo em plataformas com arbitragem" width="1600" height="900" loading="lazy">
+          <figcaption><span>Competição oficial</span><b>Técnica. Ritmo. Controle.</b></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section section--routes" aria-labelledby="participar-title" data-header-tone="blue">
+      <div class="routes-heading reveal">
+        <p class="eyebrow">Escolha seu caminho</p>
+        <h2 id="participar-title">Como você quer fazer parte?</h2>
+      </div>
+      <div class="route-grid">
+        <article class="route-card route-card--audience reveal">
+          <span class="route-number">01</span>
+          <p class="route-kicker">Público</p>
+          <h3>Quero assistir</h3>
+          <p>Cadastre seu interesse para receber as orientações de acesso, horários e confirmação da organização.</p>
+          <button class="button button--dark" type="button" data-open-registration>Fazer inscrição</button>
+        </article>
+        <article class="route-card route-card--athlete reveal">
+          <span class="route-number">02</span>
+          <p class="route-kicker">Competidores</p>
+          <h3>Sou atleta</h3>
+          <p>Inscrições, regulamento e categorias são administrados pela CONBRAKS e pela federação responsável.</p>
+          <a class="button button--outline-light" href="https://www.conbraks.com.br/campeonato-brasileiro-2026" target="_blank" rel="noopener">Ir para inscrição ↗</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section section--sport" id="entenda" data-header-tone="yellow">
+      <div class="sport-copy reveal">
+        <p class="eyebrow">Entenda a modalidade</p>
+        <h2>Dez minutos que exigem o corpo inteiro.</h2>
+        <p>No Kettlebell Sport, atletas executam movimentos contínuos com pesos dentro de um tempo definido. Vence quem combina mais repetições válidas, técnica consistente e controle do ritmo.</p>
+      </div>
+      <div class="sport-facts reveal">
+        <article><strong>10'</strong><span>Duração tradicional de uma série</span></article>
+        <article><strong>3</strong><span>Movimentos centrais: jerk, snatch e long cycle</span></article>
+        <article><strong>1</strong><span>Objetivo: o maior número de repetições válidas</span></article>
+      </div>
+    </section>
+
+    <section class="section section--schedule" id="programacao" data-header-tone="white">
+      <div class="section-heading reveal">
+        <div><p class="eyebrow">Programação-base</p><h2>Quatro dias de preparação e competição.</h2></div>
+        <p>Os horários detalhados por categoria e bateria serão divulgados pela organização. A programação abaixo apresenta a estrutura inicial do evento.</p>
+      </div>
+      <div class="schedule-list">
+        <article class="schedule-day reveal"><time datetime="2026-11-19"><b>19</b><span>QUI<br>NOV</span></time><div><small>Bastidores</small><h3>Montagem e preparação da arena</h3><p>Organização técnica, equipamentos e credenciamento das equipes.</p></div></article>
+        <article class="schedule-day reveal"><time datetime="2026-11-20"><b>20</b><span>SEX<br>NOV</span></time><div><small>Dia 1</small><h3>Abertura das competições</h3><p>Primeiras baterias e recepção do público.</p></div></article>
+        <article class="schedule-day reveal"><time datetime="2026-11-21"><b>21</b><span>SÁB<br>NOV</span></time><div><small>Dia 2</small><h3>Competições e experiências</h3><p>Programação esportiva ao longo do dia.</p></div></article>
+        <article class="schedule-day reveal"><time datetime="2026-11-22"><b>22</b><span>DOM<br>NOV</span></time><div><small>Dia 3</small><h3>Finais e premiação</h3><p>Últimas baterias, resultados e encerramento.</p></div></article>
+      </div>
+    </section>
+
+    <section class="section section--experiences" id="experiencias" data-header-tone="yellow">
+      <div class="section-heading reveal">
+        <div><p class="eyebrow">Muito além da competição</p><h2>Ideias para ampliar a experiência do evento.</h2></div>
+        <p>As propostas abaixo ainda estão em avaliação e aparecem nesta versão para visualização e decisão da organização.</p>
+      </div>
+      <div class="experience-grid">
+        <article class="experience-card experience-card--bike reveal">
+          <span class="status-chip">Proposta em avaliação</span>
+          <div class="experience-icon" aria-hidden="true">◉</div>
+          <p class="eyebrow">Ponto do ciclista</p>
+          <h3>Uma parada para recuperar o fôlego e entrar na torcida.</h3>
+          <p>Área de apoio para ciclistas de rua com água, frutas, descanso e a possibilidade de acompanhar as provas durante a parada.</p>
+          <ul><li>Hidratação e frutas</li><li>Área para bicicletas</li><li>Acesso ao campeonato</li></ul>
+        </article>
+        <article class="experience-card experience-card--music reveal">
+          <span class="status-chip">Proposta em avaliação</span>
+          <div class="experience-icon" aria-hidden="true">ϟ</div>
+          <p class="eyebrow">Programação musical</p>
+          <h3>Rock para manter a energia entre as provas.</h3>
+          <p>Apresentações de bandas em horários compatíveis com a competição, criando momentos de convivência para atletas e público.</p>
+          <ul><li>Bandas convidadas</li><li>Intervalos musicais</li><li>Área de convivência</li></ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section section--gallery" aria-labelledby="gallery-title" data-header-tone="blue">
+      <div class="section-heading reveal"><div><p class="eyebrow">Edições anteriores</p><h2 id="gallery-title">O esporte visto de perto.</h2></div><p>Registros reais da estrutura, dos atletas e dos bastidores de competições anteriores.</p></div>
+      <div class="gallery-grid">
+        <button class="gallery-item gallery-item--wide reveal" type="button" data-gallery-src="assets/fotos/foto-02.avif" aria-label="Ampliar foto da arena"><img src="assets/fotos/foto-02.avif" alt="Arena de competição montada" width="1600" height="900" loading="lazy"><span>Arena</span></button>
+        <button class="gallery-item reveal" type="button" data-gallery-src="assets/fotos/foto-01.avif" aria-label="Ampliar foto da recepção"><img src="assets/fotos/foto-01.avif" alt="Recepção e organização do evento" width="1440" height="1920" loading="lazy"><span>Organização</span></button>
+        <button class="gallery-item reveal" type="button" data-gallery-src="assets/fotos/foto-03.avif" aria-label="Ampliar foto dos bastidores"><img src="assets/fotos/foto-03.avif" alt="Bastidores da montagem" width="1600" height="900" loading="lazy"><span>Bastidores</span></button>
+        <button class="gallery-item gallery-item--wide reveal" type="button" data-gallery-src="assets/fotos/foto-05.avif" aria-label="Ampliar foto dos atletas"><img src="assets/fotos/foto-05.avif" alt="Atletas em competição" width="1600" height="900" loading="lazy"><span>Competição</span></button>
+      </div>
+    </section>
+
+    <section class="section section--location" id="local" data-header-tone="white">
+      <div class="location-map" aria-hidden="true"><span>08°03′S</span><b>RECIFE</b><span>34°52′W</span></div>
+      <div class="location-copy reveal">
+        <p class="eyebrow">Localização</p>
+        <h2>Recife será a capital do Kettlebell Sport.</h2>
+        <p>O endereço definitivo, as orientações de chegada, estacionamento e acessibilidade serão publicados assim que o espaço do evento estiver confirmado.</p>
+        <div class="notice"><b>Local em definição</b><span>Não programe seu deslocamento antes da confirmação oficial.</span></div>
+      </div>
+    </section>
+
+    <section class="section section--organizers" data-header-tone="yellow">
+      <p class="eyebrow reveal">Realização e organização esportiva</p>
+      <div class="logo-row reveal" data-header-tone="blue">
+        <a href="https://www.conbraks.com.br/" target="_blank" rel="noopener"><img src="assets/logos/logo-conbraks.svg" alt="CONBRAKS"></a>
+        <a href="https://fedpernambucanakettlebellsport.com/" target="_blank" rel="noopener"><img src="assets/logos/logo-fpeks.svg?v=20260921a" alt="FPEKSPORT"></a>
+        <a href="https://www.instagram.com/wksf_brasil" target="_blank" rel="noopener"><img src="assets/logos/logo-wksf.svg" alt="WKSF"></a>
+      </div>
+      <div class="sponsor-call reveal">
+        <div><small>Empresas e instituições</small><h2>Sua marca pode fazer parte desta edição.</h2></div>
+        <a class="button button--yellow" href="https://wa.me/5581996484250?text=Ol%C3%A1%2C%20quero%20conhecer%20as%20oportunidades%20de%20patroc%C3%ADnio%20do%207%C2%BA%20Campeonato%20Brasileiro%20de%20Kettlebell%20Sport." target="_blank" rel="noopener">Quero patrocinar ↗</a>
+      </div>
+    </section>
+
+    <section class="section section--faq" id="duvidas" data-header-tone="white">
+      <div class="section-heading reveal"><div><p class="eyebrow">Perguntas frequentes</p><h2>Antes de ir para a arena.</h2></div></div>
+      <div class="faq-list reveal">
+        <details><summary>Preciso me inscrever para assistir?<span>+</span></summary><p>Sim. Use o cadastro de interesse do site. A organização enviará a confirmação e as orientações de entrada pelo canal informado.</p></details>
+        <details><summary>Onde os atletas fazem a inscrição?<span>+</span></summary><p>A inscrição esportiva é feita nos canais oficiais da CONBRAKS e da federação responsável. O botão “Sou atleta” leva ao site externo.</p></details>
+        <details><summary>O local do evento já está confirmado?<span>+</span></summary><p>A cidade está definida como Recife. O endereço exato ainda será anunciado oficialmente.</p></details>
+        <details><summary>O ponto para ciclistas e os shows estão confirmados?<span>+</span></summary><p>Não. Nesta versão, as duas experiências são propostas em avaliação para a organização do evento.</p></details>
+        <details><summary>Como acompanho as atualizações?<span>+</span></summary><p>Siga @conbraks e @fpeksport no Instagram. As informações confirmadas também serão atualizadas neste site.</p></details>
+      </div>
+    </section>
+
+    <section class="final-cta" data-header-tone="white">
+      <div class="reveal"><p class="eyebrow">19–22 novembro · Recife</p><h2>Venha sentir a força do Kettlebell Sport.</h2></div>
+      <div class="participation-block reveal"><span class="participation-label">Participe do evento</span><div class="button-row"><button class="button button--yellow" type="button" data-open-registration>Quero assistir</button><a class="button button--outline-light" href="https://www.conbraks.com.br/campeonato-brasileiro-2026" target="_blank" rel="noopener">Sou atleta ↗</a></div></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-logos" aria-label="Realização e organização esportiva">
+      <span><img src="assets/logos/logo-conbraks.svg" alt="CONBRAKS"></span>
+      <span><img src="assets/logos/logo-fpeks.svg?v=20260921b" alt="Federação Pernambucana de Kettlebell Sport"></span>
+      <span><img src="assets/logos/logo-wksf.svg" alt="WKSF Brasil"></span>
+    </div>
+    <div class="footer-copy"><p>7º Campeonato Brasileiro de Kettlebell Sport<br>Recife · Pernambuco · 2026</p></div>
+    <nav aria-label="Redes e contatos"><a href="https://instagram.com/conbraks" target="_blank" rel="noopener">@conbraks</a><a href="https://instagram.com/fpeksport" target="_blank" rel="noopener">@fpeksport</a><a href="mailto:ctjeffersonlobo@gmail.com?subject=Contato%20CONBRAKS%202026">E-mail</a><a href="https://wa.me/5581996484250" target="_blank" rel="noopener">WhatsApp</a></nav>
+    <div id="kupim-badge-wrap">
+      <a id="kupim-badge" href="https://kupimdigital.com.br/" target="_blank" rel="noopener" aria-label="Uma criação de Kupim Digital. Acessar o site.">
+        <span class="k-logo-spacer" aria-hidden="true"></span>
+        <span class="badge-text">© 2026 <b>Jefferson Lôbo</b>. Todos os direitos reservados.<br>Uma criação de <b>Kupim Digital</b>.</span>
+      </a>
+      <span class="k-logo-wrap" aria-hidden="true">
+        <svg viewBox="0 0 80.339996 68.730003" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="k-fill-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#eff3f8"/><stop offset="100%" stop-color="#eff3f8"/></linearGradient></defs>
+          <path d="m 13.66,16.47 c 7.19,-0.43 14.44,-0.34 21.63,-0.04 -0.24,8.15 0,16.3 -0.14,24.45 C 44.4,32.62 53.53,24.22 62.99,16.19 71.94,16.35 80.9,16.03 89.85,16.38 83.67,21.31 78.35,27.2 72.22,32.19 68.1,35.71 64.48,39.82 60.09,43 71.83,56.41 82.59,70.68 93.98,84.4 91.4,85.16 88.68,84.79 86.03,84.85 79.75,84.76 73.47,85.02 67.2,84.71 59.87,75.36 52.54,66.01 44.97,56.86 c -3.63,2.59 -6.28,6.29 -9.84,9 0.14,6.27 -0.03,12.54 0.12,18.81 -7.19,0.24 -14.43,0.42 -21.61,-0.1 0.34,-22.69 0.3,-45.41 0.02,-68.1 z" transform="translate(-13.640002,-16.175853)" fill="url(#k-fill-gradient)"/>
+        </svg>
+      </span>
+    </div>
+  </footer>
+
+  <dialog class="dialog" id="registrationDialog" aria-labelledby="registrationTitle">
+    <form class="dialog-card" id="registrationForm">
+      <button class="dialog-close" type="button" data-close-dialog aria-label="Fechar">×</button>
+      <p class="eyebrow">Inscrição do público</p>
+      <h2 id="registrationTitle">Quero assistir ao campeonato</h2>
+      <p>Preencha os dados para enviar sua solicitação à organização pelo WhatsApp. Sua presença estará confirmada somente após a resposta da equipe.</p>
+      <label>Nome completo<input type="text" name="name" autocomplete="name" required></label>
+      <div class="form-row"><label>Quantidade de pessoas<input type="number" name="people" min="1" max="10" value="1" required></label><label>Cidade<input type="text" name="city" autocomplete="address-level2" required></label></div>
+      <label class="checkbox"><input type="checkbox" name="updates" value="sim"><span>Quero receber também informações sobre a programação.</span></label>
+      <button class="button button--yellow button--full" type="submit">Enviar pelo WhatsApp ↗</button>
+      <small>Este site não armazena seus dados. A mensagem será aberta no WhatsApp para você revisar antes do envio.</small>
+    </form>
+  </dialog>
+
+  <dialog class="lightbox" id="galleryDialog" aria-label="Foto ampliada"><button type="button" data-close-gallery aria-label="Fechar">×</button><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt=""></dialog>
+  <script src="script.js?v=20260921i"></script>
+</body>
+</html>
