@@ -1,7 +1,0 @@
-# Configuração das Edge Functions do projeto.
-# Necessário pra integração GitHub -> Supabase saber que a function
-# "gerar-pdf" existe e deve ser publicada sem exigir login de usuário
-# (o site chama essa function anonimamente, sem token de autenticação).
-
-[functions.gerar-pdf]
-verify_jwt = false
