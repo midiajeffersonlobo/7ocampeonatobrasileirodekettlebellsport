@@ -13,7 +13,7 @@
   <link rel="preload" as="image" href="assets/opening/background-foreground-transparent.webp">
   <link rel="preload" as="image" href="assets/opening/otimizados/01-titulo.png">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2307141f'/%3E%3Cpath d='M15 14h36L31 52H18l17-27H15z' fill='%23ffd20a'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20260921r">
+  <link rel="stylesheet" href="styles.css?v=20261002d">
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body class="intro-active">
@@ -44,7 +44,7 @@
       <span class="participation-label">Participe do evento</span>
       <div class="header-actions">
         <button class="button button--yellow" type="button" data-open-registration>Quero assistir</button>
-        <a class="button button--ghost" href="https://www.conbraks.com.br/campeonato-brasileiro-2026" target="_blank" rel="noopener">Sou atleta ↗</a>
+        <a class="button button--ghost" href="#atletas">Sou atleta ↓</a>
       </div>
     </div>
   </header>
@@ -72,6 +72,10 @@
       <button class="opening__layer opening__layer--calendar opening__info-trigger" type="button" tabindex="-1" aria-hidden="true" aria-label="Mostrar a data do evento"><img src="assets/opening/otimizados/08-icone-calendario.png" alt="" width="121" height="116"></button>
       <button class="opening__layer opening__layer--pin opening__info-trigger" type="button" tabindex="-1" aria-hidden="true" aria-label="Mostrar o local do evento"><img src="assets/opening/otimizados/09-icone-localizacao.png" alt="" width="86" height="114"></button>
       <button class="opening__layer opening__layer--globe opening__info-trigger" type="button" tabindex="-1" aria-hidden="true" aria-label="Mostrar o endereço do evento"><img src="assets/opening/otimizados/10-icone-globo.png" alt="" width="104" height="111"></button>
+      <div class="opening__cta" aria-label="Participe do evento">
+        <button class="button button--yellow" type="button" data-open-registration>Quero assistir</button>
+        <a class="button button--ghost" href="#atletas">Sou atleta ↓</a>
+      </div>
       <a class="opening__enter" href="#conteudo"><span>Conheça o evento</span><b aria-hidden="true">↓</b></a>
     </div>
   </section>
@@ -121,8 +125,75 @@
           <p class="route-kicker">Competidores</p>
           <h3>Sou atleta</h3>
           <p>Inscrições, regulamento e categorias são administrados pela CONBRAKS e pela federação responsável.</p>
-          <a class="button button--outline-light" href="https://www.conbraks.com.br/campeonato-brasileiro-2026" target="_blank" rel="noopener">Ir para inscrição ↗</a>
+          <a class="button button--outline-light" href="#atletas">Ver como se inscrever ↓</a>
         </article>
+      </div>
+    </section>
+
+    <section class="section section--athletes" id="atletas" aria-labelledby="atletas-title" data-header-tone="white">
+      <div class="athletes-head reveal">
+        <p class="eyebrow">Inscrição de atletas</p>
+        <h2 id="atletas-title">Antes de preencher a ficha.</h2>
+        <p>Campeonato Brasileiro 2026 e Seletiva para o Mundial WKSF 2027. A ficha é preenchida no site oficial da CONBRAKS; aqui está o que você precisa saber antes de ir.</p>
+        <button class="button button--yellow" type="button" data-athlete-cta aria-haspopup="dialog">Quero me inscrever como atleta</button>
+        <div class="athletes-closed" data-athlete-closed hidden><b>Inscrições encerradas</b><span>O período de inscrições terminou em 10/10/2026. Em caso de dúvida, fale com a organização.</span></div>
+      </div>
+      <div class="athletes-grid">
+        <div class="reveal">
+          <h3>Valores por prova</h3>
+          <ol class="lot-list">
+            <li data-lot-until="2026-08-31"><b>1º lote</b><span>até 31/08</span><strong>R$ 230</strong></li>
+            <li data-lot-until="2026-09-20"><b>2º lote</b><span>até 20/09</span><strong>R$ 250</strong></li>
+            <li data-lot-until="2026-10-10"><b>3º lote</b><span>até 10/10</span><strong>R$ 270</strong></li>
+          </ol>
+          <p class="athletes-note">Valor por prova e modalidade. Para o Brasileiro + Seletiva Mundial 2027, some a taxa única de R$ 150 por atleta, independente do número de provas. Parcelamento em até 10x no cartão (com juros) pelo WhatsApp da organização.</p>
+          <p class="athletes-note" data-lots-closed hidden><b>Inscrições encerradas em 10/10/2026.</b> Em caso de dúvida, fale com a organização.</p>
+        </div>
+        <ol class="steps reveal">
+          <li><span><b>Preencha a ficha</b>Preencha todos os dados com atenção, confira o resumo e envie.</span></li>
+          <li><span><b>Salve o resumo</b>Guarde o resumo com seus dados exibido ao final do preenchimento.</span></li>
+          <li><span><b>Pague via Pix</b>Chave CNPJ 53.107.237/0001-32, em nome da Confederação Brasileira de Kettlebell Sport – CONBRAKS.</span></li>
+          <li><span><b>Envie o comprovante</b>Pelo WhatsApp <a class="text-link" href="https://wa.me/5555999765702" target="_blank" rel="noopener">(55) 99976-5702</a> (Christian Thier). Inscrição não paga até o prazo é excluída.</span></li>
+        </ol>
+      </div>
+      <div class="faq-list athlete-detail reveal">
+        <details><summary>Datas e provas<span>+</span></summary>
+          <ul>
+            <li><b>19/11 (qui)</b> · Pesagem e credenciamento, 15h–20h</li>
+            <li><b>20/11 (sex)</b> · Pesagem 8h–9h30 · Abertura 10h · TALC e Biathlon (masc. e fem.) 13h</li>
+            <li><b>21/11 (sáb)</b> · Pesagem 8h–9h · OALC, Snatch Only e Snatch 12min (masc. e fem.) 9h</li>
+            <li><b>22/11 (dom)</b> · Pesagem 8h–9h · Maratona (1h) · masc. e fem. · 9h</li>
+          </ul>
+        </details>
+        <details><summary>Categorias<span>+</span></summary>
+          <ul>
+            <li><b>Brasileiro + Seletiva Mundial 2027:</b> Disable, Under 15, Under 18, Amador, Master e Elite.</li>
+            <li><b>Só Brasileiro 2026:</b> Under 6, 9, 12 e 15, Iniciante, Pré-Amador, Amador, Master e Elite.</li>
+            <li>Quem se inscreve só no Brasileiro não concorre à classificação para a Seletiva do Mundial 2027.</li>
+            <li>Classificação por coeficientes (regulamento WKSF). Categorias com menos de 3 atletas são unidas à de peso acima ou abaixo.</li>
+          </ul>
+        </details>
+        <details><summary>Categorias de peso<span>+</span></summary>
+          <ul>
+            <li><b>TALC e Biathlon 10min · masc.:</b> até 63, 68, 74, 80, 87, 95 kg e acima de 95 kg.</li>
+            <li><b>TALC e Biathlon 10min · fem.:</b> até 52, 58, 65, 75 kg e acima de 75 kg.</li>
+            <li><b>TALC e Biathlon U15/U18 · masc.:</b> até 52, 62, 72 kg e acima de 72 kg. <b>Fem.:</b> até 48, 58 kg e acima de 58 kg.</li>
+            <li><b>OALC, Snatch Only 10min, Snatch 12min e Meia Maratona (30min) · masc.:</b> até 74, 87 kg e acima de 87 kg. <b>Fem.:</b> até 58, 65 kg e acima de 65 kg.</li>
+            <li><b>Mesmas provas, U18:</b> masc. até 62 kg e acima; fem. até 58 kg e acima. <b>U15:</b> masc. até 52 kg e acima; fem. até 48 kg e acima.</li>
+            <li>Se não bater o peso da ficha na pesagem, é possível migrar para a categoria acima ou abaixo mediante nova taxa de inscrição.</li>
+          </ul>
+        </details>
+        <details><summary>Cargas dos kettlebells<span>+</span></summary>
+          <ul>
+            <li><b>Masculino:</b> Iniciante 16 kg*, Pré-Amador 20 kg*, Disable 16 kg, Under 15 16 kg (TALC/Biathlon/OALC/Military Snatch), Under 18 24 kg (TALC/Biathlon/OALC/Military Snatch), Amador 24 kg, Master 24 kg (16 kg para +60 anos), Elite 32 kg.</li>
+            <li><b>Feminino:</b> Iniciante 8 kg*, Pré-Amador 12 kg*, Disable 8 kg, Under 15 12 kg (TALC/Biathlon/OALC/Military Snatch), Under 18 16 kg (TALC/Biathlon/OALC/Military Snatch), Amadora 16 kg, Master 16 kg (12 kg para +55 anos), Elite 20 e 24 kg.</li>
+            <li><b>Crianças (só Brasileiro):</b> Under 6 2/4/6 kg, Under 9 4/6/8 kg, Under 12 6/8/12 kg, Under 15 8/12/16 kg.</li>
+            <li>* Apenas Campeonato Brasileiro.</li>
+          </ul>
+        </details>
+        <details><summary>Premiação<span>+</span></summary>
+          <p>1º, 2º e 3º colocados de cada categoria e modalidade recebem medalha e certificado. Todos os atletas recebem certificado de participação e colocação. Quem obtiver o índice para o Mundial WKSF 2027 recebe certificado de classificação.</p>
+        </details>
       </div>
     </section>
 
@@ -224,8 +295,8 @@
     <section class="section section--faq" id="duvidas" data-header-tone="white">
       <div class="section-heading reveal"><div><p class="eyebrow">Perguntas frequentes</p><h2>Antes de ir para a arena.</h2></div></div>
       <div class="faq-list reveal">
-        <details><summary>Preciso me inscrever para assistir?<span>+</span></summary><p>Sim. Use o cadastro de interesse do site. A organização enviará a confirmação e as orientações de entrada pelo canal informado.</p></details>
-        <details><summary>Onde os atletas fazem a inscrição?<span>+</span></summary><p>A inscrição esportiva é feita nos canais oficiais da CONBRAKS e da federação responsável. O botão “Sou atleta” leva ao site externo.</p></details>
+        <details><summary>Preciso me inscrever para assistir?<span>+</span></summary><p>Sim. Use o cadastro de interesse do site. A organização enviará a confirmação e as orientações de entrada pelo canal informado. E traga 1 kg de alimento não perecível para doação.</p></details>
+        <details><summary>Onde os atletas fazem a inscrição?<span>+</span></summary><p>A inscrição esportiva é feita nos canais oficiais da CONBRAKS e da federação responsável. O botão “Sou atleta” leva à seção de inscrição de atletas. Lá você lê as orientações da federação e é direcionado à ficha no site da CONBRAKS.</p></details>
         <details><summary>O local do evento já está confirmado?<span>+</span></summary><p>Sim. O evento será realizado no Círculo Militar do Recife, na Av. Gov. Agamenon Magalhães, 2807, Boa Vista, Recife/PE.</p></details>
         <details><summary>O ponto para ciclistas e os shows estão confirmados?<span>+</span></summary><p>Não. Nesta versão, as duas experiências são propostas em avaliação para a organização do evento.</p></details>
         <details><summary>Como acompanho as atualizações?<span>+</span></summary><p>Siga @conbraks e @fpeksport no Instagram. As informações confirmadas também serão atualizadas neste site.</p></details>
@@ -234,7 +305,7 @@
 
     <section class="final-cta" data-header-tone="white">
       <div class="reveal"><p class="eyebrow">19–22 novembro · Recife</p><h2>Venha sentir a força do Kettlebell Sport.</h2></div>
-      <div class="participation-block reveal"><span class="participation-label">Participe do evento</span><div class="button-row"><button class="button button--yellow" type="button" data-open-registration>Quero assistir</button><a class="button button--outline-light" href="https://www.conbraks.com.br/campeonato-brasileiro-2026" target="_blank" rel="noopener">Sou atleta ↗</a></div></div>
+      <div class="participation-block reveal"><span class="participation-label">Participe do evento</span><div class="button-row"><button class="button button--yellow" type="button" data-open-registration>Quero assistir</button><a class="button button--outline-light" href="#atletas">Sou atleta ↓</a></div></div>
     </section>
   </main>
 
@@ -260,21 +331,361 @@
     </div>
   </footer>
 
-  <dialog class="dialog" id="registrationDialog" aria-labelledby="registrationTitle">
-    <form class="dialog-card" id="registrationForm">
+  <!-- Inscrição do público: formulário com o visual do site, respostas enviadas ao Google Forms -->
+  <dialog class="athlete-modal public-modal" id="registrationDialog" aria-labelledby="registrationTitle">
+    <form class="athlete-modal__card public-card" id="registrationForm" novalidate data-step="1">
       <button class="dialog-close" type="button" data-close-dialog aria-label="Fechar">×</button>
-      <p class="eyebrow">Inscrição do público</p>
-      <h2 id="registrationTitle">Quero assistir ao campeonato</h2>
-      <p>Preencha os dados para enviar sua solicitação à organização pelo WhatsApp. Sua presença estará confirmada somente após a resposta da equipe.</p>
-      <label>Nome completo<input type="text" name="name" autocomplete="name" required></label>
-      <div class="form-row"><label>Quantidade de pessoas<input type="number" name="people" min="1" max="10" value="1" required></label><label>Cidade<input type="text" name="city" autocomplete="address-level2" required></label></div>
-      <label class="checkbox"><input type="checkbox" name="updates" value="sim"><span>Quero receber também informações sobre a programação.</span></label>
-      <button class="button button--yellow button--full" type="submit">Enviar pelo WhatsApp ↗</button>
-      <small>Este site não armazena seus dados. A mensagem será aberta no WhatsApp para você revisar antes do envio.</small>
+      <header class="athlete-modal__head">
+        <p class="eyebrow">Inscrição do público<span class="public-steplabel" data-pub-steplabel></span></p>
+        <h2 id="registrationTitle">Quero assistir ao campeonato</h2>
+        <p>Preencha seus dados para se inscrever. A organização entrará em contato com as orientações de acesso.</p>
+      </header>
+
+      <div class="public-body" data-pub-body>
+        <fieldset class="public-step public-step--1">
+          <legend>Seus dados <span>Obrigatório</span></legend>
+          <label class="public-field">Nome completo<input type="text" name="nome" autocomplete="name" required maxlength="120"><small class="public-error" hidden></small></label>
+          <div class="public-row public-row--age">
+            <label class="public-field">Idade<input type="number" name="idade" inputmode="numeric" min="1" max="120" required><small class="public-error" hidden></small></label>
+            <label class="public-field">Telefone (WhatsApp)<input type="tel" name="telefone" autocomplete="tel-national" inputmode="tel" placeholder="(81) 9.9999-9999" required maxlength="16"><small class="public-error" hidden></small></label>
+          </div>
+          <div class="public-donation">
+            <svg class="donation-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 21.5s-8.5-5.2-8.5-10.8c0-3 2.3-5.2 5-5.2 1.5 0 2.8.7 3.5 1.9.7-1.2 2-1.9 3.5-1.9 2.7 0 5 2.2 5 5.2 0 5.6-8.5 10.8-8.5 10.8z" fill="currentColor"/><path d="M5 29.5h6.5l7-2.5h8.2a3 3 0 0 1 0 6H19" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.5 41.5H24l15.6-9.4a3 3 0 0 0-3.2-5.1L27 32.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 27v16" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg>
+            <p><b>Traga 1 kg de alimento não perecível.</b><span>Sua doação será destinada a uma instituição de caridade.</span></p>
+          </div>
+        </fieldset>
+
+        <fieldset class="public-step public-step--2">
+          <legend>Conte um pouco sobre você <span>Opcional</span></legend>
+          <div class="public-group public-group--a">
+            <div class="public-row public-row--choices">
+              <div class="public-choice" role="radiogroup" aria-label="Sexo biológico">
+                <span class="public-choice__label">Sexo biológico</span>
+                <div class="public-pills"><label><input type="radio" name="sexo" value="Feminino"><span>Feminino</span></label><label><input type="radio" name="sexo" value="Masculino"><span>Masculino</span></label></div>
+              </div>
+              <div class="public-choice" role="radiogroup" aria-label="Já conhecia o Kettlebell Sport?">
+                <span class="public-choice__label">Já conhecia o Kettlebell Sport?</span>
+                <div class="public-pills"><label><input type="radio" name="conhecia" value="Sim"><span>Sim</span></label><label><input type="radio" name="conhecia" value="Não"><span>Não</span></label></div>
+              </div>
+            </div>
+            <div class="public-row public-row--plain">
+              <label class="public-field">Cidade onde mora<input type="text" name="cidade" autocomplete="address-level2" maxlength="80"></label>
+              <label class="public-field">Bairro onde mora<input type="text" name="bairro" maxlength="80"></label>
+            </div>
+          </div>
+          <div class="public-group public-group--b">
+            <div class="public-row public-row--activity">
+              <div class="public-choice" role="radiogroup" aria-label="Pratica atividade física?">
+                <span class="public-choice__label">Pratica atividade física?</span>
+                <div class="public-pills"><label><input type="radio" name="atividade" value="Sim"><span>Sim</span></label><label><input type="radio" name="atividade" value="Não"><span>Não</span></label></div>
+              </div>
+              <label class="public-field public-field--qual" data-pub-qual hidden>Qual atividade física?<input type="text" name="qual" maxlength="80" placeholder="Ex.: musculação, corrida"></label>
+            </div>
+            <div class="public-choice" role="radiogroup" aria-label="Autoriza que a equipe entre em contato para apresentar o Kettlebell Sport?">
+                <span class="public-choice__label">Autoriza que a equipe entre em contato para apresentar o Kettlebell Sport?</span>
+                <div class="public-pills"><label><input type="radio" name="contato" value="Sim"><span>Sim</span></label><label><input type="radio" name="contato" value="Não"><span>Não</span></label></div>
+              </div>
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="public-success" data-pub-success hidden>
+        <div class="public-success__icon" aria-hidden="true">✓</div>
+        <h3>Inscrição recebida!</h3>
+        <p>Obrigado. A organização entrará em contato pelo telefone informado com as orientações de acesso.</p>
+        <div class="public-donation public-donation--success">
+          <svg class="donation-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 21.5s-8.5-5.2-8.5-10.8c0-3 2.3-5.2 5-5.2 1.5 0 2.8.7 3.5 1.9.7-1.2 2-1.9 3.5-1.9 2.7 0 5 2.2 5 5.2 0 5.6-8.5 10.8-8.5 10.8z" fill="currentColor"/><path d="M5 29.5h6.5l7-2.5h8.2a3 3 0 0 1 0 6H19" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.5 41.5H24l15.6-9.4a3 3 0 0 0-3.2-5.1L27 32.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 27v16" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg>
+          <p><b>Não esqueça: traga 1 kg de alimento não perecível para doação.</b></p>
+        </div>
+        <button class="button button--yellow" type="button" data-close-dialog>Fechar</button>
+      </div>
+
+      <footer class="athlete-modal__foot public-foot" data-pub-foot>
+        <p class="athlete-warn" data-pub-warn role="alert" hidden></p>
+        <div class="public-actions">
+          <a class="button button--ghost public-info" href="https://wa.me/5581996484250?text=Ol%C3%A1!%20Quero%20mais%20informa%C3%A7%C3%B5es%20sobre%20o%207%C2%BA%20Campeonato%20Brasileiro%20de%20Kettlebell%20Sport." target="_blank" rel="noopener">Mais informações ↗</a>
+          <div class="public-actions__main">
+            <button class="button button--ghost" type="button" data-pub-back>← Voltar</button>
+            <button class="button button--ghost" type="button" data-pub-skip>Pular e enviar</button>
+            <button class="button button--yellow" type="button" data-pub-next>Continuar</button>
+            <button class="button button--yellow" type="submit" data-pub-submit>Enviar inscrição</button>
+          </div>
+        </div>
+        <small class="public-privacy">Seus dados serão usados apenas pela organização do evento.</small>
+      </footer>
     </form>
   </dialog>
 
+  <!-- Inscrição de atletas · Etapa 1: leitura obrigatória do texto da federação -->
+  <dialog class="athlete-modal" id="athleteReadDialog" aria-labelledby="athleteReadTitle">
+    <div class="athlete-modal__card">
+      <button class="dialog-close" type="button" data-athlete-close aria-label="Fechar">×</button>
+      <header class="athlete-modal__head">
+        <p class="eyebrow">Inscrição de atletas · Etapa 1 de 2</p>
+        <h2 id="athleteReadTitle">Leia tudo antes da ficha</h2>
+        <p>Role o texto até o fim. A confirmação de leitura só é liberada depois disso.</p>
+      </header>
+
+      <div class="read-box" data-read-scroll tabindex="0" role="region" aria-label="Informações oficiais da inscrição">
+        <article class="read-doc">
+          <section class="read-block read-block--intro">
+            <p class="read-kicker">7º Campeonato Brasileiro de Kettlebell Sport · Recife/PE</p>
+            <p class="read-lead">Leia atentamente todas as informações antes de preencher sua ficha de inscrição.</p>
+            <p>Campeonato Brasileiro de Kettlebell Sport 2026 e Seletiva para o Campeonato Mundial de Kettlebell Sport WKSF para o ano de 2027.</p>
+          </section>
+
+          <section class="read-block">
+            <h3><span>01</span>Datas e programação</h3>
+            <ol class="read-days">
+              <li><b>19/11 · 5ª feira</b><span><em>Pesagem e credenciamento dos atletas</em> · das 15h às 20h</span></li>
+              <li><b>20/11 · 6ª feira</b><span><em>Pesagem e credenciamento dos atletas</em> · das 8h às 9h30</span><span><em>Cerimônia de Abertura</em> · início às 10h</span><span><em>Provas TALC e Biathlon</em> · masculino e feminino · início às 13h</span></li>
+              <li><b>21/11 · sábado</b><span><em>Pesagem e credenciamento dos atletas</em> · das 8h às 9h</span><span><em>Provas OALC, Snatch Only e Snatch 12min</em> · masculino e feminino · início às 9h</span></li>
+              <li><b>22/11 · domingo</b><span><em>Pesagem e credenciamento dos atletas</em> · das 8h às 9h</span><span><em>Provas Maratona (1h)</em> · masculino e feminino · início às 9h</span></li>
+            </ol>
+          </section>
+
+          <section class="read-block">
+            <h3><span>02</span>Local</h3>
+            <p class="read-place"><b>Círculo Militar do Recife</b>Av. Gov. Agamenon Magalhães, 2807 – Boa Vista<br>Recife/Pernambuco/Brasil</p>
+            <a class="text-link" href="https://maps.app.goo.gl/sHgvE55kkb1d1bAP6?g_st=awb" target="_blank" rel="noopener">Veja o local do evento no Google Maps ↗</a>
+          </section>
+
+          <section class="read-block">
+            <h3><span>03</span>Duas formas de se inscrever</h3>
+            <div class="read-compare">
+              <div class="read-option read-option--featured">
+                <small>Opção 1</small>
+                <h4>Campeonato Brasileiro 2026 + Seletiva Mundial 2027</h4>
+                <p>Inscrição nas provas oficiais da WKSF Internacional.</p>
+                <dl>
+                  <dt>Categorias</dt><dd>Disable, Under 15, Under 18, Amador, Master e Elite</dd>
+                  <dt>Valor</dt><dd>Valor por prova + taxa única de R$ 150,00 por atleta</dd>
+                  <dt>Classificação para a Seletiva do Mundial 2027</dt><dd><b>Sim</b></dd>
+                </dl>
+              </div>
+              <div class="read-option">
+                <small>Opção 2</small>
+                <h4>Apenas Campeonato Brasileiro 2026</h4>
+                <p>Inscrição em todas as provas oferecidas no formulário de inscrição.</p>
+                <dl>
+                  <dt>Categorias</dt><dd>Under 6, Under 9, Under 12, Under 15, Iniciante, Pré-Amador, Amador, Master e Elite</dd>
+                  <dt>Valor</dt><dd>Valor por prova</dd>
+                  <dt>Classificação para a Seletiva do Mundial 2027</dt><dd><b>Não</b></dd>
+                </dl>
+              </div>
+            </div>
+            <div class="read-alert">
+              <b>Atenção!</b>
+              <ul>
+                <li>Para os atletas que irão competir no Campeonato Brasileiro e Seletiva, a classificação final das modalidades e categorias acontecerá no sistema de coeficientes, de acordo com o regulamento da WKSF.</li>
+                <li>As modalidades e categorias que não tiverem no mínimo 3 atletas inscritos serão unidas automaticamente com a categoria de peso corporal acima ou abaixo (conforme regulamento WKSF internacional).</li>
+              </ul>
+            </div>
+            <div class="read-alert">
+              <b>Observação importante</b>
+              <p>Os atletas inscritos <strong>apenas</strong> no Campeonato Brasileiro não terão direito à classificação para a Seletiva do Mundial 2027.</p>
+            </div>
+          </section>
+
+          <section class="read-block">
+            <h3><span>04</span>Categorias de peso corporal</h3>
+
+            <div class="read-sub">
+              <h4>4.1 · Provas TALC e Biathlon 10min</h4>
+              <p class="read-scope">Apenas Campeonato Brasileiro e/ou Campeonato Brasileiro + Seletiva Mundial 2027</p>
+              <div class="read-weights">
+                <div><b>Masculino</b><ul><li>até 63 kg</li><li>até 68 kg</li><li>até 74 kg</li><li>até 80 kg</li><li>até 87 kg</li><li>até 95 kg</li><li>acima de 95 kg</li></ul></div>
+                <div><b>Feminino</b><ul><li>até 52 kg</li><li>até 58 kg</li><li>até 65 kg</li><li>até 75 kg</li><li>acima de 75 kg</li></ul></div>
+              </div>
+            </div>
+
+            <div class="read-sub">
+              <h4>4.2 · U15 e U18 · Provas TALC e Biathlon 10min</h4>
+              <p class="read-scope">Apenas Campeonato Brasileiro + Seletiva Mundial 2027</p>
+              <div class="read-weights">
+                <div><b>Masculino U18 e U15</b><ul><li>até 52 kg</li><li>até 62 kg</li><li>até 72 kg</li><li>acima de 72 kg</li></ul></div>
+                <div><b>Feminino U18 e U15</b><ul><li>até 48 kg</li><li>até 58 kg</li><li>acima de 58 kg</li></ul></div>
+              </div>
+            </div>
+
+            <div class="read-sub">
+              <h4>4.3 · OALC, Snatch Only 10min, Snatch 12min e Meia Maratona (30min)</h4>
+              <p class="read-scope">Apenas Campeonato Brasileiro e/ou Campeonato Brasileiro + Seletiva Mundial 2027</p>
+              <div class="read-weights">
+                <div><b>Masculino</b><ul><li>até 74 kg</li><li>até 87 kg</li><li>acima de 87 kg</li></ul></div>
+                <div><b>Feminino</b><ul><li>até 58 kg</li><li>até 65 kg</li><li>acima de 65 kg</li></ul></div>
+              </div>
+            </div>
+
+            <div class="read-sub">
+              <h4>4.4 · U15 e U18 · OALC, Snatch Only 10min, Snatch 12min e Meia Maratona (30min)</h4>
+              <p class="read-scope">Apenas Campeonato Brasileiro + Seletiva Mundial 2027</p>
+              <div class="read-weights">
+                <div><b>Masculino U18</b><ul><li>até 62 kg</li><li>acima de 62 kg</li></ul></div>
+                <div><b>Feminino U18</b><ul><li>até 58 kg</li><li>acima de 58 kg</li></ul></div>
+                <div><b>Masculino U15</b><ul><li>até 52 kg</li><li>acima de 52 kg</li></ul></div>
+                <div><b>Feminino U15</b><ul><li>até 48 kg</li><li>acima de 48 kg</li></ul></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="read-block">
+            <h3><span>05</span>Cargas dos kettlebells</h3>
+            <p class="read-scope">Apenas Campeonato Brasileiro 2026 e/ou Campeonato Brasileiro 2026 + Seletiva Mundial 2027</p>
+            <div class="read-table-wrap">
+              <table class="read-table">
+                <thead><tr><th scope="col">Categoria</th><th scope="col">Masculino</th><th scope="col">Feminino</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row">Iniciante*</th><td>16 kg</td><td>8 kg</td></tr>
+                  <tr><th scope="row">Pré-Amador*</th><td>20 kg</td><td>12 kg</td></tr>
+                  <tr><th scope="row">Disable</th><td>16 kg</td><td>8 kg</td></tr>
+                  <tr><th scope="row">Under 15 <small>Brasileiro + Seletiva · TALC/Biathlon/OALC/Military Snatch</small></th><td>16 kg</td><td>12 kg</td></tr>
+                  <tr><th scope="row">Under 18 <small>TALC/Biathlon/OALC/Military Snatch</small></th><td>24 kg</td><td>16 kg</td></tr>
+                  <tr><th scope="row">Amador / Amadora</th><td>24 kg</td><td>16 kg</td></tr>
+                  <tr><th scope="row">Master</th><td>24 kg<small>16 kg para +60 anos</small></td><td>16 kg<small>12 kg para +55 anos</small></td></tr>
+                  <tr><th scope="row">Elite</th><td>32 kg</td><td>20 e 24 kg</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="read-footnote">* Apenas Campeonato Brasileiro.</p>
+
+            <div class="read-sub">
+              <h4>Crianças · Apenas Campeonato Brasileiro</h4>
+              <ul class="read-kids">
+                <li><b>Under 6</b><span>até 6 anos</span><strong>2/4/6 kg</strong></li>
+                <li><b>Under 9</b><span>até 9 anos</span><strong>4/6/8 kg</strong></li>
+                <li><b>Under 12</b><span>até 12 anos</span><strong>6/8/12 kg</strong></li>
+                <li><b>Under 15</b><span>até 15 anos · só Brasileiro, crianças</span><strong>8/12/16 kg</strong></li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="read-block">
+            <h3><span>06</span>Inscrições e valores</h3>
+            <p>O período de inscrições vai de <b>18/08 até 10/10/2026</b>. Os valores das inscrições são diferentes para o Campeonato Brasileiro 2026 e para o Campeonato Brasileiro 2026 + Seletiva Mundial 2027, conforme descrito abaixo.</p>
+            <ol class="read-lots">
+              <li><b>1º lote</b><span>até 31/08/2026</span><strong>R$ 230,00 <small>por prova</small></strong></li>
+              <li><b>2º lote</b><span>até 20/09/2026</span><strong>R$ 250,00 <small>por prova</small></strong></li>
+              <li><b>3º lote</b><span>até 10/10/2026</span><strong>R$ 270,00 <small>por prova</small></strong></li>
+            </ol>
+            <div class="read-compare read-compare--tight">
+              <div class="read-option">
+                <h4>Apenas Campeonato Brasileiro</h4>
+                <p>Valor do lote vigente por prova.</p>
+              </div>
+              <div class="read-option read-option--featured">
+                <h4>Campeonato Brasileiro 2026 + Seletiva Mundial 2027</h4>
+                <p>Valor normal praticado para o Campeonato Brasileiro + <b>taxa única de R$ 150,00 por atleta</b>, independente do número de provas inscritas na Seletiva Mundial 2027.</p>
+              </div>
+            </div>
+            <div class="read-alert">
+              <b>Observação importante</b>
+              <p>O valor da inscrição é por <strong>prova e modalidade inscrita</strong>, de acordo com as datas acima.</p>
+            </div>
+          </section>
+
+          <section class="read-block">
+            <h3><span>07</span>Pagamento das inscrições</h3>
+            <div class="read-pix">
+              <small>Pagamento via Pix · chave CNPJ</small>
+              <strong>53.107.237/0001-32</strong>
+              <span>em nome de Confederação Brasileira de Kettlebell Sport – CONBRAKS</span>
+            </div>
+            <div class="read-alert">
+              <b>Observação importante</b>
+              <ul>
+                <li>Para pagamento parcelado, entre em contato direto pelo telefone/WhatsApp <a class="text-link" href="https://wa.me/5555999765702" target="_blank" rel="noopener">(55) 99976-5702</a>.</li>
+                <li>Parcelamento em até 10x no cartão de crédito (com acréscimo de juros de acordo com o número de parcelas).</li>
+                <li>A inscrição <strong>somente</strong> será efetivada com o envio da ficha de inscrição devidamente preenchida e o pagamento da taxa de inscrição até a data limite (o comprovante de pagamento via Pix deverá ser enviado para o WhatsApp (55) 99976-5702).</li>
+                <li><strong>As inscrições que não forem pagas até a data limite serão automaticamente excluídas da competição.</strong></li>
+              </ul>
+            </div>
+            <div class="read-alert">
+              <b>Observação importante · pesagem</b>
+              <p>Caso algum atleta, no momento da pesagem, não atinja a categoria de peso corporal apontada na ficha de inscrição, poderá, mediante pagamento de nova taxa de inscrição, se inscrever na categoria abaixo ou acima de sua categoria de peso corporal original, de acordo com o Regulamento da WKSF e da CONBRAKS.</p>
+            </div>
+          </section>
+
+          <section class="read-block">
+            <h3><span>08</span>Premiação</h3>
+            <ul class="read-list">
+              <li>Os atletas classificados em 1º, 2º e 3º lugares em cada categoria e modalidade receberão medalhas e certificado como premiação.</li>
+              <li>Todos os atletas receberão certificado atestando sua participação e colocação no campeonato.</li>
+              <li>O atleta que obtiver o índice para o Mundial WKSF 2027 receberá certificado atestando sua classificação.</li>
+            </ul>
+          </section>
+
+          <section class="read-block">
+            <h3><span>09</span>Ficha de inscrição · passo a passo</h3>
+            <ol class="read-steps">
+              <li>Preencha todos os dados atentamente.</li>
+              <li>Verifique o resumo para conferência dos seus dados e inscrição ao final do preenchimento.</li>
+              <li>Edite o que for necessário ou envie sua inscrição.</li>
+              <li>Salve o resumo com seus dados exibido ao final do preenchimento.</li>
+              <li>Efetue o pagamento para o Pix da CONBRAKS (CNPJ 53.107.237/0001-32).</li>
+              <li>Envie o comprovante para o WhatsApp (55) 99976-5702 (Christian Thier).</li>
+              <li>Caso queira fazer o pagamento parcelado em até 10x, entre em contato com o WhatsApp (55) 99976-5702 (Christian Thier).</li>
+              <li>Término das inscrições em 10/10/2026.</li>
+            </ol>
+          </section>
+
+          <p class="read-end" aria-hidden="true">Fim do texto · agora confirme a leitura abaixo</p>
+        </article>
+      </div>
+
+      <footer class="athlete-modal__foot">
+        <div class="read-progress" aria-hidden="true"><i data-read-bar></i></div>
+        <p class="read-status" data-read-status aria-live="polite">Role o texto até o fim para liberar a confirmação.</p>
+        <div class="athlete-modal__actions">
+          <label class="athlete-check is-locked" data-read-check-wrap>
+            <input type="checkbox" data-read-check aria-disabled="true">
+            <span>Li e entendi todas as informações acima.</span>
+          </label>
+          <button class="button button--yellow" type="button" data-read-continue aria-disabled="true">Continuar</button>
+        </div>
+        <p class="athlete-warn" data-read-warn role="alert" hidden></p>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- Inscrição de atletas · Etapa 2: aviso do vídeo tutorial no site da CONBRAKS -->
+  <dialog class="athlete-modal athlete-modal--video" id="athleteVideoDialog" aria-labelledby="athleteVideoTitle">
+    <div class="athlete-modal__card">
+      <button class="dialog-close" type="button" data-athlete-close aria-label="Fechar">×</button>
+      <div class="video-step">
+        <div class="video-step__copy">
+          <p class="eyebrow">Inscrição de atletas · Etapa 2 de 2</p>
+          <h2 id="athleteVideoTitle">Assista ao tutorial antes de preencher</h2>
+          <p>O vídeo tutorial de inscrição fica <b>no site da CONBRAKS</b>. Ele explica passo a passo como preencher a ficha corretamente e evita os erros mais comuns.</p>
+          <ol class="video-step__list">
+            <li><span>Abra o site da CONBRAKS pelo botão abaixo.</span></li>
+            <li><span>Desça a página até a seção <b>“Antes de começar, assista ao tutorial”</b>.</span></li>
+            <li><span>Assista ao vídeo até o fim.</span></li>
+            <li><span>Só depois preencha a ficha de inscrição.</span></li>
+          </ol>
+        </div>
+        <figure class="video-step__figure">
+          <img src="assets/inscricao/tutorial-conbraks.webp" alt="Print do site da CONBRAKS com o título “Antes de começar, assista ao tutorial” e o vídeo “Passo a passo” logo abaixo" width="412" height="531" loading="lazy">
+          <figcaption>É assim que aparece no site da CONBRAKS</figcaption>
+        </figure>
+      </div>
+      <footer class="athlete-modal__foot">
+        <div class="athlete-modal__actions">
+          <label class="athlete-check">
+            <input type="checkbox" data-video-check>
+            <span>Entendi: vou assistir ao vídeo tutorial no site da CONBRAKS antes de preencher a ficha.</span>
+          </label>
+          <div class="athlete-modal__buttons">
+            <button class="button button--ghost" type="button" data-video-back>← Voltar ao texto</button>
+            <button class="button button--yellow" type="button" data-video-go aria-disabled="true">Ir para a inscrição na CONBRAKS ↗</button>
+          </div>
+        </div>
+        <p class="athlete-warn" data-video-warn role="alert" hidden></p>
+      </footer>
+    </div>
+  </dialog>
+
   <dialog class="lightbox" id="galleryDialog" aria-label="Foto ampliada"><button type="button" data-close-gallery aria-label="Fechar">×</button><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt=""></dialog>
-  <script src="script.js?v=20260921m"></script>
+  <script src="script.js?v=20261002c"></script>
 </body>
 </html>
