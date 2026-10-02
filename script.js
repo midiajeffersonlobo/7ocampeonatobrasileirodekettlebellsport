@@ -225,25 +225,205 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: .12, rootMargin: '0px 0px -40px' });
 document.querySelectorAll('.reveal').forEach((element) => observer.observe(element));
 
+/* Inscrição do público: formulário do site enviando as respostas ao Google Forms.
+   Em telas pequenas (ou baixas) o formulário vira duas etapas para caber sem rolagem. */
 const registrationDialog = document.querySelector('#registrationDialog');
-document.querySelectorAll('[data-open-registration]').forEach((button) => {
-  button.addEventListener('click', () => registrationDialog.showModal());
-});
-document.querySelector('[data-close-dialog]').addEventListener('click', () => registrationDialog.close());
-registrationDialog.addEventListener('click', (event) => {
-  if (event.target === registrationDialog) registrationDialog.close();
-});
+(() => {
+  const FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSd6-iEpmzYzax9vq_uNYFHXV3ZPPMA8jFhDw2IMvPw2T9z0vw/formResponse';
+  const ENTRY = {
+    nome: 'entry.1754534373',
+    idade: 'entry.986654450',
+    telefone: 'entry.373158959',
+    sexo: 'entry.791056516',
+    cidade: 'entry.1478208802',
+    bairro: 'entry.504945486',
+    atividade: 'entry.580061454',
+    qual: 'entry.2047383611',
+    conhecia: 'entry.1268736641',
+    contato: 'entry.518672639',
+  };
+  const OPTIONAL = ['sexo', 'cidade', 'bairro', 'atividade', 'qual', 'conhecia', 'contato'];
 
-document.querySelector('#registrationForm').addEventListener('submit', (event) => {
-  event.preventDefault();
-  const data = new FormData(event.currentTarget);
-  const name = String(data.get('name')).trim();
-  const people = String(data.get('people')).trim();
-  const city = String(data.get('city')).trim();
-  const updates = data.get('updates') === 'sim' ? 'Sim' : 'Não';
-  const message = `Olá! Quero solicitar inscrição para assistir ao 7º Campeonato Brasileiro de Kettlebell Sport.\n\nNome: ${name}\nQuantidade de pessoas: ${people}\nCidade: ${city}\nDeseja receber a programação: ${updates}`;
-  window.open(`https://wa.me/5581996484250?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
-});
+  const form = document.querySelector('#registrationForm');
+  const body = form.querySelector('[data-pub-body]');
+  const foot = form.querySelector('[data-pub-foot]');
+  const success = form.querySelector('[data-pub-success]');
+  const warn = form.querySelector('[data-pub-warn]');
+  const stepLabel = form.querySelector('[data-pub-steplabel]');
+  const qualField = form.querySelector('[data-pub-qual]');
+  const btnNext = form.querySelector('[data-pub-next]');
+  const btnBack = form.querySelector('[data-pub-back]');
+  const btnSkip = form.querySelector('[data-pub-skip]');
+  const btnSubmit = form.querySelector('[data-pub-submit]');
+  const stepQuery = matchMedia('(max-width: 767px), (max-height: 720px)');
+  let sending = false;
+
+  const field = (name) => form.elements[name];
+  const digits = (value) => value.replace(/\D/g, '');
+
+  function formatPhone(value) {
+    const d = digits(value).slice(0, 11);
+    if (d.length <= 2) return d.length ? `(${d}` : '';
+    if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+    if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+    return `(${d.slice(0, 2)}) ${d.slice(2, 3)}.${d.slice(3, 7)}-${d.slice(7)}`;
+  }
+
+  function showWarn(message) {
+    if (!message) { warn.hidden = true; warn.textContent = ''; return; }
+    warn.textContent = message;
+    warn.hidden = false;
+    warn.classList.remove('is-shaking'); void warn.offsetWidth; warn.classList.add('is-shaking');
+  }
+
+  function setError(input, message) {
+    const error = input.closest('label').querySelector('.public-error');
+    input.setAttribute('aria-invalid', message ? 'true' : 'false');
+    if (error) { error.textContent = message || ''; error.hidden = !message; }
+  }
+
+  function validateRequired() {
+    const nome = field('nome');
+    const idade = field('idade');
+    const telefone = field('telefone');
+    const checks = [
+      [nome, nome.value.trim().length >= 3 ? '' : 'Informe seu nome completo.'],
+      [idade, /^\d{1,3}$/.test(idade.value) && +idade.value >= 1 && +idade.value <= 120 ? '' : 'Informe uma idade entre 1 e 120.'],
+      [telefone, [10, 11].includes(digits(telefone.value).length) ? '' : 'Informe o telefone com DDD.'],
+    ];
+    let firstInvalid = null;
+    checks.forEach(([input, message]) => { setError(input, message); if (message && !firstInvalid) firstInvalid = input; });
+    if (firstInvalid) {
+      showWarn('Preencha corretamente os campos obrigatórios: nome, idade e telefone.');
+      firstInvalid.focus();
+      return false;
+    }
+    showWarn('');
+    return true;
+  }
+
+  const TOTAL_STEPS = 3;
+  function isStepped() { return form.classList.contains('is-stepped'); }
+  function currentStep() { return Number(form.dataset.step || 1); }
+
+  function setStep(step) {
+    form.dataset.step = String(step);
+    const stepped = isStepped();
+    stepLabel.textContent = stepped ? ` · Etapa ${step} de ${TOTAL_STEPS}` : '';
+    btnNext.hidden = !stepped || step >= TOTAL_STEPS;
+    btnBack.hidden = !stepped || step === 1;
+    btnSkip.hidden = !stepped || step !== 2;
+    btnSubmit.hidden = stepped && step !== TOTAL_STEPS;
+  }
+
+  function applyLayout() {
+    form.classList.toggle('is-stepped', stepQuery.matches);
+    setStep(stepQuery.matches ? Number(form.dataset.step || 1) : 1);
+  }
+
+  function syncQual() {
+    const yes = form.querySelector('input[name="atividade"]:checked')?.value === 'Sim';
+    qualField.hidden = !yes;
+    if (!yes) field('qual').value = '';
+  }
+
+  function resetForm() {
+    form.reset();
+    form.querySelectorAll('[aria-invalid]').forEach((input) => setError(input, ''));
+    showWarn('');
+    syncQual();
+    sending = false;
+    btnSubmit.disabled = false;
+    btnSubmit.textContent = 'Enviar inscrição';
+    success.hidden = true;
+    body.hidden = false;
+    foot.hidden = false;
+    form.dataset.step = '1';
+    applyLayout();
+  }
+
+  async function send() {
+    if (sending) return;
+    if (!validateRequired()) { if (isStepped()) setStep(1); return; }
+    const params = new URLSearchParams();
+    params.append(ENTRY.nome, field('nome').value.trim());
+    params.append(ENTRY.idade, String(+field('idade').value));
+    params.append(ENTRY.telefone, formatPhone(field('telefone').value));
+    OPTIONAL.forEach((name) => {
+      const input = form.querySelector(`[name="${name}"]:checked`) || form.querySelector(`input[type="text"][name="${name}"]`);
+      const value = input ? input.value.trim() : '';
+      if (value) params.append(ENTRY[name], value);
+    });
+    sending = true;
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = 'Enviando…';
+    showWarn('');
+    try {
+      await fetch(FORM_ACTION, { method: 'POST', mode: 'no-cors', body: params });
+      body.hidden = true;
+      foot.hidden = true;
+      success.hidden = false;
+      stepLabel.textContent = '';
+      success.querySelector('button').focus();
+    } catch (error) {
+      showWarn('Não foi possível enviar agora. Verifique sua conexão e tente de novo, ou fale com a organização em "Mais informações".');
+      sending = false;
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = 'Enviar inscrição';
+    }
+  }
+
+  field('telefone').addEventListener('input', (event) => { event.target.value = formatPhone(event.target.value); });
+  form.querySelectorAll('input[name="nome"], input[name="idade"], input[name="telefone"]').forEach((input) => {
+    input.addEventListener('input', () => {
+      if (input.getAttribute('aria-invalid') === 'true') setError(input, '');
+      if (!warn.hidden && !form.querySelector('[aria-invalid="true"]')) showWarn('');
+    });
+  });
+
+  // Opções opcionais: tocar de novo na opção marcada desmarca.
+  form.querySelectorAll('.public-pills label').forEach((label) => {
+    const radio = label.querySelector('input');
+    label.addEventListener('pointerdown', () => { label.dataset.wasChecked = String(radio.checked); });
+    label.addEventListener('click', (event) => {
+      if (event.target !== radio && label.dataset.wasChecked === 'true') {
+        event.preventDefault();
+        radio.checked = false;
+      }
+      label.dataset.wasChecked = 'false';
+      if (radio.name === 'atividade') requestAnimationFrame(syncQual);
+    });
+  });
+  form.querySelectorAll('input[name="atividade"]').forEach((radio) => radio.addEventListener('change', syncQual));
+
+  btnNext.addEventListener('click', () => {
+    if (currentStep() === 1 && !validateRequired()) return;
+    showWarn('');
+    setStep(Math.min(TOTAL_STEPS, currentStep() + 1));
+  });
+  btnBack.addEventListener('click', () => { showWarn(''); setStep(Math.max(1, currentStep() - 1)); });
+  btnSkip.addEventListener('click', () => send());
+  form.addEventListener('submit', (event) => { event.preventDefault(); send(); });
+  form.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && event.target.matches('input') && isStepped() && currentStep() < TOTAL_STEPS) {
+      event.preventDefault();
+      btnNext.click();
+    }
+  });
+
+  document.querySelectorAll('[data-open-registration]').forEach((button) => {
+    button.addEventListener('click', () => {
+      resetForm();
+      document.documentElement.classList.add('athlete-modal-open');
+      registrationDialog.showModal();
+      field('nome').focus();
+    });
+  });
+  form.querySelectorAll('[data-close-dialog]').forEach((button) => button.addEventListener('click', () => registrationDialog.close()));
+  registrationDialog.addEventListener('close', () => document.documentElement.classList.remove('athlete-modal-open'));
+  stepQuery.addEventListener?.('change', () => { if (registrationDialog.open && success.hidden) applyLayout(); });
+  applyLayout();
+})();
 
 const galleryDialog = document.querySelector('#galleryDialog');
 const galleryImage = galleryDialog.querySelector('img');
@@ -294,5 +474,129 @@ document.addEventListener('keydown', (event) => {
       document.removeEventListener('click', closeOnce);
     };
     document.addEventListener('click', closeOnce);
+  });
+})();
+
+/* Inscrição de atletas: lote vigente, encerramento e fluxo em duas etapas
+   (leitura obrigatória do texto da federação → aviso do vídeo tutorial → CONBRAKS).
+   O endereço da ficha só é usado no último botão, depois das duas confirmações. */
+(function(){
+  var REG_URL='https://www.conbraks.com.br/campeonato-brasileiro-2026';
+  var CLOSE_AT=new Date('2026-10-10T23:59:59-03:00').getTime(); /* encerra em 11/10 às 00h, horário de Brasília */
+  var now=Date.now(),found=false;
+
+  document.querySelectorAll('[data-lot-until]').forEach(function(li){
+    var end=new Date(li.dataset.lotUntil+'T23:59:59-03:00').getTime();
+    if(end<now){li.classList.add('is-past')}else if(!found){found=true;li.classList.add('is-current');li.setAttribute('aria-current','true')}
+  });
+
+  var cta=document.querySelector('[data-athlete-cta]');
+  var closedBox=document.querySelector('[data-athlete-closed]');
+  var lotsClosed=document.querySelector('[data-lots-closed]');
+  if(now>CLOSE_AT){
+    if(lotsClosed)lotsClosed.hidden=false;
+    if(cta)cta.remove();
+    if(closedBox)closedBox.hidden=false;
+    return;
+  }
+  if(!cta)return;
+
+  var root=document.documentElement;
+  var readDlg=document.querySelector('#athleteReadDialog');
+  var videoDlg=document.querySelector('#athleteVideoDialog');
+  var box=readDlg.querySelector('[data-read-scroll]');
+  var bar=readDlg.querySelector('[data-read-bar]');
+  var status=readDlg.querySelector('[data-read-status]');
+  var check=readDlg.querySelector('[data-read-check]');
+  var checkWrap=readDlg.querySelector('[data-read-check-wrap]');
+  var cont=readDlg.querySelector('[data-read-continue]');
+  var warn=readDlg.querySelector('[data-read-warn]');
+  var vCheck=videoDlg.querySelector('[data-video-check]');
+  var vGo=videoDlg.querySelector('[data-video-go]');
+  var vBack=videoDlg.querySelector('[data-video-back]');
+  var vWarn=videoDlg.querySelector('[data-video-warn]');
+  var reachedEnd=false;
+  var END_TOLERANCE=12; /* px: evita travar por arredondamento de pixels */
+
+  function showWarn(el,msg){
+    if(!msg){el.hidden=true;el.textContent='';return}
+    el.textContent=msg;el.hidden=false;
+    el.classList.remove('is-shaking');void el.offsetWidth;el.classList.add('is-shaking');
+  }
+  function setDisabled(btn,off){btn.setAttribute('aria-disabled',String(off));btn.classList.toggle('is-disabled',off)}
+
+  function updateRead(){
+    var max=box.scrollHeight-box.clientHeight;
+    var pct=max<=0?1:Math.min(1,box.scrollTop/max);
+    bar.style.transform='scaleX('+pct+')';
+    if(reachedEnd)return;
+    if(max<=END_TOLERANCE||box.scrollTop>=max-END_TOLERANCE){
+      reachedEnd=true;
+      checkWrap.classList.remove('is-locked');
+      check.removeAttribute('aria-disabled');
+      status.textContent='Texto lido até o fim. Agora marque a confirmação de leitura.';
+      status.classList.add('is-done');
+      showWarn(warn,'');
+    }else{
+      status.textContent='Role o texto até o fim para liberar a confirmação · '+Math.round(pct*100)+'% lido';
+    }
+  }
+  function syncContinue(){setDisabled(cont,!(reachedEnd&&check.checked))}
+  function syncGo(){setDisabled(vGo,!vCheck.checked)}
+
+  function resetFlow(){
+    reachedEnd=false;
+    check.checked=false;check.setAttribute('aria-disabled','true');
+    checkWrap.classList.add('is-locked');
+    status.classList.remove('is-done');
+    showWarn(warn,'');syncContinue();
+    vCheck.checked=false;showWarn(vWarn,'');syncGo();
+  }
+  function lock(){root.classList.add('athlete-modal-open')}
+  function unlockIfIdle(){if(!readDlg.open&&!videoDlg.open)root.classList.remove('athlete-modal-open')}
+
+  cta.addEventListener('click',function(){
+    resetFlow();lock();
+    readDlg.showModal();
+    box.scrollTop=0;box.focus({preventScroll:true});
+    requestAnimationFrame(updateRead);
+  });
+
+  box.addEventListener('scroll',updateRead,{passive:true});
+  window.addEventListener('resize',function(){if(readDlg.open)updateRead()});
+
+  check.addEventListener('click',function(e){
+    if(!reachedEnd){e.preventDefault();showWarn(warn,'Leia o texto todo antes: role a caixa até o fim para liberar a confirmação.')}
+  });
+  check.addEventListener('change',function(){syncContinue();if(check.checked)showWarn(warn,'')});
+
+  cont.addEventListener('click',function(){
+    if(!(reachedEnd&&check.checked)){
+      showWarn(warn,'Para continuar, leia o texto até o fim e marque a confirmação de leitura.');
+      return;
+    }
+    readDlg.close();
+    vCheck.checked=false;showWarn(vWarn,'');syncGo();
+    lock();videoDlg.showModal();
+  });
+
+  vCheck.addEventListener('change',function(){syncGo();if(vCheck.checked)showWarn(vWarn,'')});
+  vGo.addEventListener('click',function(){
+    if(!vCheck.checked){showWarn(vWarn,'Marque que entendeu o aviso para seguir para a inscrição.');return}
+    window.open(REG_URL,'_blank','noopener');
+    videoDlg.close();
+  });
+  vBack.addEventListener('click',function(){
+    videoDlg.close();lock();readDlg.showModal();
+  });
+
+  document.querySelectorAll('[data-athlete-close]').forEach(function(btn){
+    btn.addEventListener('click',function(){btn.closest('dialog').close()});
+  });
+  [readDlg,videoDlg].forEach(function(d){d.addEventListener('close',unlockIfIdle)});
+  document.addEventListener('keydown',function(e){
+    if(e.key!=='Escape')return;
+    if(videoDlg.open){e.preventDefault();videoDlg.close()}
+    else if(readDlg.open){e.preventDefault();readDlg.close()}
   });
 })();
