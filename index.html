@@ -13,7 +13,7 @@
   <link rel="preload" as="image" href="assets/opening/background-foreground-transparent.webp">
   <link rel="preload" as="image" href="assets/opening/otimizados/01-titulo.png">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2307141f'/%3E%3Cpath d='M15 14h36L31 52H18l17-27H15z' fill='%23ffd20a'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20261002c">
+  <link rel="stylesheet" href="styles.css?v=20261002d">
   <script>document.documentElement.classList.add('js');</script>
 </head>
 <body class="intro-active">
@@ -295,7 +295,7 @@
     <section class="section section--faq" id="duvidas" data-header-tone="white">
       <div class="section-heading reveal"><div><p class="eyebrow">Perguntas frequentes</p><h2>Antes de ir para a arena.</h2></div></div>
       <div class="faq-list reveal">
-        <details><summary>Preciso me inscrever para assistir?<span>+</span></summary><p>Sim. Use o cadastro de interesse do site. A organização enviará a confirmação e as orientações de entrada pelo canal informado.</p></details>
+        <details><summary>Preciso me inscrever para assistir?<span>+</span></summary><p>Sim. Use o cadastro de interesse do site. A organização enviará a confirmação e as orientações de entrada pelo canal informado. E traga 1 kg de alimento não perecível para doação.</p></details>
         <details><summary>Onde os atletas fazem a inscrição?<span>+</span></summary><p>A inscrição esportiva é feita nos canais oficiais da CONBRAKS e da federação responsável. O botão “Sou atleta” leva à seção de inscrição de atletas. Lá você lê as orientações da federação e é direcionado à ficha no site da CONBRAKS.</p></details>
         <details><summary>O local do evento já está confirmado?<span>+</span></summary><p>Sim. O evento será realizado no Círculo Militar do Recife, na Av. Gov. Agamenon Magalhães, 2807, Boa Vista, Recife/PE.</p></details>
         <details><summary>O ponto para ciclistas e os shows estão confirmados?<span>+</span></summary><p>Não. Nesta versão, as duas experiências são propostas em avaliação para a organização do evento.</p></details>
@@ -349,6 +349,10 @@
             <label class="public-field">Idade<input type="number" name="idade" inputmode="numeric" min="1" max="120" required><small class="public-error" hidden></small></label>
             <label class="public-field">Telefone (WhatsApp)<input type="tel" name="telefone" autocomplete="tel-national" inputmode="tel" placeholder="(81) 9.9999-9999" required maxlength="16"><small class="public-error" hidden></small></label>
           </div>
+          <div class="public-donation">
+            <svg class="donation-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 21.5s-8.5-5.2-8.5-10.8c0-3 2.3-5.2 5-5.2 1.5 0 2.8.7 3.5 1.9.7-1.2 2-1.9 3.5-1.9 2.7 0 5 2.2 5 5.2 0 5.6-8.5 10.8-8.5 10.8z" fill="currentColor"/><path d="M5 29.5h6.5l7-2.5h8.2a3 3 0 0 1 0 6H19" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.5 41.5H24l15.6-9.4a3 3 0 0 0-3.2-5.1L27 32.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 27v16" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg>
+            <p><b>Traga 1 kg de alimento não perecível.</b><span>Sua doação será destinada a uma instituição de caridade.</span></p>
+          </div>
         </fieldset>
 
         <fieldset class="public-step public-step--2">
@@ -389,6 +393,10 @@
         <div class="public-success__icon" aria-hidden="true">✓</div>
         <h3>Inscrição recebida!</h3>
         <p>Obrigado. A organização entrará em contato pelo telefone informado com as orientações de acesso.</p>
+        <div class="public-donation public-donation--success">
+          <svg class="donation-icon" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 21.5s-8.5-5.2-8.5-10.8c0-3 2.3-5.2 5-5.2 1.5 0 2.8.7 3.5 1.9.7-1.2 2-1.9 3.5-1.9 2.7 0 5 2.2 5 5.2 0 5.6-8.5 10.8-8.5 10.8z" fill="currentColor"/><path d="M5 29.5h6.5l7-2.5h8.2a3 3 0 0 1 0 6H19" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M11.5 41.5H24l15.6-9.4a3 3 0 0 0-3.2-5.1L27 32.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 27v16" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg>
+          <p><b>Não esqueça: traga 1 kg de alimento não perecível para doação.</b></p>
+        </div>
         <button class="button button--yellow" type="button" data-close-dialog>Fechar</button>
       </div>
 
@@ -678,6 +686,6 @@
   </dialog>
 
   <dialog class="lightbox" id="galleryDialog" aria-label="Foto ampliada"><button type="button" data-close-gallery aria-label="Fechar">×</button><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt=""></dialog>
-  <script src="script.js?v=20261002b"></script>
+  <script src="script.js?v=20261002c"></script>
 </body>
 </html>

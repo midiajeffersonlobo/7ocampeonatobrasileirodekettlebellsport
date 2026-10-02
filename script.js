@@ -294,7 +294,7 @@ const registrationDialog = document.querySelector('#registrationDialog');
     let firstInvalid = null;
     checks.forEach(([input, message]) => { setError(input, message); if (message && !firstInvalid) firstInvalid = input; });
     if (firstInvalid) {
-      showWarn('Preencha corretamente os campos obrigatórios: nome, idade e telefone.');
+      showWarn('');
       firstInvalid.focus();
       return false;
     }
