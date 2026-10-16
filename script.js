@@ -1,3 +1,38 @@
+// Modais: saída animada (o fechamento real só acontece depois da animação de 3s)
+(() => {
+  const proto = HTMLDialogElement.prototype;
+  const nativeClose = proto.close;
+  const nativeShow = proto.showModal;
+  const timers = new WeakMap();
+  const duration = () => (window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 3000);
+  proto.close = function (returnValue) {
+    if (!this.open || timers.has(this)) return;
+    const ms = duration();
+    if (!ms) { nativeClose.call(this, returnValue); return; }
+    this.classList.add('is-closing');
+    timers.set(this, window.setTimeout(() => {
+      timers.delete(this);
+      this.classList.remove('is-closing');
+      nativeClose.call(this, returnValue);
+    }, ms));
+  };
+  proto.showModal = function () {
+    if (timers.has(this)) {
+      window.clearTimeout(timers.get(this));
+      timers.delete(this);
+      this.classList.remove('is-closing');
+      return;
+    }
+    nativeShow.call(this);
+  };
+  document.addEventListener('cancel', (event) => {
+    if (event.target instanceof HTMLDialogElement) {
+      event.preventDefault();
+      event.target.close();
+    }
+  }, true);
+})();
+
 const opening = document.querySelector('.opening');
 const shimmer = document.querySelector('.opening__shimmer img');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -51,10 +86,7 @@ mobileLayout.addEventListener?.('change', syncMobileTriggers);
 
 let openingStarted = false;
 const videoOpacityStates = [
-  { opacity: .2, holdDuration: 3000 },
-  { opacity: .1, holdDuration: 4000 },
-  { opacity: 0, holdDuration: 6000 },
-  { opacity: .1, holdDuration: 4000 }
+  { opacity: .45, holdDuration: 0 }
 ];
 const videoOpacityTransitionDuration = 1500;
 let videoOpacityIndex = 0;
@@ -68,7 +100,7 @@ function stopVideoOpacityCycle() {
 
 function scheduleVideoOpacityCycle() {
   stopVideoOpacityCycle();
-  if (!continuationActive || !openingIsVisible || document.hidden || reducedMotion.matches) return;
+  if (videoOpacityStates.length < 2 || !continuationActive || !openingIsVisible || document.hidden || reducedMotion.matches) return;
 
   const currentState = videoOpacityStates[videoOpacityIndex];
   videoOpacityTimer = window.setTimeout(() => {
@@ -599,4 +631,19 @@ document.addEventListener('keydown', (event) => {
     if(videoDlg.open){e.preventDefault();videoDlg.close()}
     else if(readDlg.open){e.preventDefault();readDlg.close()}
   });
+})();
+
+
+(() => {
+  const dialog = document.querySelector('#sponsorDialog');
+  if (!dialog) return;
+  const root = document.documentElement;
+  document.querySelectorAll('[data-open-sponsor]').forEach((button) => {
+    button.addEventListener('click', () => {
+      root.classList.add('athlete-modal-open');
+      dialog.showModal();
+    });
+  });
+  dialog.querySelectorAll('[data-close-sponsor]').forEach((button) => button.addEventListener('click', () => dialog.close()));
+  dialog.addEventListener('close', () => root.classList.remove('athlete-modal-open'));
 })();
