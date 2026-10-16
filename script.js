@@ -1,10 +1,10 @@
-// Modais: saída animada (o fechamento real só acontece depois da animação de 3s)
+// Modais: saída animada (o fechamento real só acontece depois da animação de 1s)
 (() => {
   const proto = HTMLDialogElement.prototype;
   const nativeClose = proto.close;
   const nativeShow = proto.showModal;
   const timers = new WeakMap();
-  const duration = () => (window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 3000);
+  const duration = () => (window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1000);
   proto.close = function (returnValue) {
     if (!this.open || timers.has(this)) return;
     const ms = duration();
@@ -638,12 +638,29 @@ document.addEventListener('keydown', (event) => {
   const dialog = document.querySelector('#sponsorDialog');
   if (!dialog) return;
   const root = document.documentElement;
+  const tab = document.querySelector('.opening__sponsor-tab');
+  const opening = document.querySelector('#inicio');
   document.querySelectorAll('[data-open-sponsor]').forEach((button) => {
     button.addEventListener('click', () => {
       root.classList.add('athlete-modal-open');
+      if (button === tab) tab.classList.add('is-clicked');
       dialog.showModal();
     });
   });
+  // A aba "espia" uma vez assim que a abertura fica pronta.
+  if (tab && opening) {
+    const peek = () => {
+      window.setTimeout(() => tab.classList.add('is-peeking'), 1000);
+      window.setTimeout(() => tab.classList.remove('is-peeking'), 4000);
+    };
+    if (opening.classList.contains('is-ready')) peek();
+    else {
+      const watcher = new MutationObserver(() => {
+        if (opening.classList.contains('is-ready')) { watcher.disconnect(); peek(); }
+      });
+      watcher.observe(opening, { attributes: true, attributeFilter: ['class'] });
+    }
+  }
   dialog.querySelectorAll('[data-close-sponsor]').forEach((button) => button.addEventListener('click', () => dialog.close()));
-  dialog.addEventListener('close', () => root.classList.remove('athlete-modal-open'));
+  dialog.addEventListener('close', () => { root.classList.remove('athlete-modal-open'); tab?.classList.remove('is-clicked'); });
 })();
