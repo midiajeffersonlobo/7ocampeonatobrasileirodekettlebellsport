@@ -147,14 +147,19 @@
     </section>
 
     <section class="section section--athletes" id="atletas" aria-labelledby="atletas-title" data-header-tone="white">
-      <div class="athletes-head reveal">
-        <p class="eyebrow">Atletas confirmados</p>
-        <h2 id="atletas-title" data-photo-after-text="Nos vemos na arena.">Sua foto. Sua cidade. Sua história.</h2>
-        <p data-photo-after-text="As inscrições terminaram em 10/10/2026. Abaixo estão as datas, categorias e cargas do Campeonato Brasileiro 2026 e da Seletiva para o Mundial WKSF 2027.">As inscrições terminaram em 10/10. Agora estamos preparando os posts que apresentam ao Brasil os atletas confirmados do 7º Brasileiro. Envie sua foto até <b>01/11</b> e faça parte dessa apresentação.</p>
-        <button class="button button--yellow" type="button" data-athlete-cta aria-haspopup="dialog">Quero me inscrever como atleta</button>
-        <button class="button button--yellow" type="button" data-photo-cta aria-haspopup="dialog">Enviar minha foto</button>
-        <div class="athletes-closed" data-photo-closed hidden><b>Envio de fotos encerrado</b><span>O prazo para envio das fotos terminou em 01/11/2026. Em caso de dúvida, fale com a organização.</span></div>
-        <div class="athletes-closed" data-athlete-closed hidden><b>Inscrições encerradas</b><span>O período de inscrições terminou em 10/10/2026. Em caso de dúvida, fale com a organização.</span></div>
+      <div class="athletes-head athletes-head--photo reveal">
+        <div class="athletes-head__copy">
+          <p class="eyebrow">Atletas confirmados</p>
+          <h2 id="atletas-title" data-photo-after-text="Inscrições encerradas. Nos vemos na arena.">Inscrições encerradas. <span>Agora é a hora da sua foto.</span></h2>
+          <p data-photo-after-text="As inscrições terminaram em 10/10/2026. Abaixo estão as datas, categorias e cargas do Campeonato Brasileiro 2026 e da Seletiva para o Mundial WKSF 2027.">Estamos preparando os posts que apresentam ao Brasil os atletas confirmados do 7º Brasileiro. <b>Sua foto. Sua cidade. Sua história.</b> Envie até <b>01/11</b> e faça parte dessa apresentação.</p>
+          <button class="button button--yellow" type="button" data-athlete-cta aria-haspopup="dialog">Quero me inscrever como atleta</button>
+          <div class="athletes-closed" data-photo-closed hidden><b>Envio de fotos encerrado</b><span>O prazo para envio das fotos terminou em 01/11/2026. Em caso de dúvida, fale com a organização.</span></div>
+          <div class="athletes-closed" data-athlete-closed hidden><b>Inscrições encerradas</b><span>O período de inscrições terminou em 10/10/2026. Em caso de dúvida, fale com a organização.</span></div>
+        </div>
+        <figure class="athletes-photo" data-photo-only>
+          <img src="assets/inscricao/exemplo-foto-rack.webp" alt="Exemplo de foto: atleta de corpo inteiro segurando dois kettlebells em posição de rack" width="733" height="917" loading="lazy">
+          <button class="button button--yellow athletes-photo__cta" type="button" data-photo-cta aria-haspopup="dialog">Enviar minha foto ↗</button>
+        </figure>
       </div>
       <div class="athletes-grid" hidden data-temp-hidden>
         <div class="reveal">

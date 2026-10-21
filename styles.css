@@ -572,8 +572,29 @@ dialog.athlete-modal.is-closing::backdrop,dialog.lightbox.is-closing::backdrop,d
 
 
 /* Atletas confirmados · envio da foto para as artes */
-.athletes-head [data-photo-cta]~.athletes-closed{margin-top:18px}
-.athletes-head [data-photo-cta]~.athletes-closed b{font-size:1.15rem}
+/* Topo da seção de atletas: texto à esquerda, foto de exemplo à direita, botão sobre a foto */
+.athletes-head--photo{max-width:none;display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,400px);gap:clamp(40px,7vw,110px);align-items:center}
+.athletes-head--photo h2{font-size:clamp(2.8rem,5.6vw,5.8rem)}
+.athletes-head--photo h2 span{display:block;color:var(--yellow)}
+.athletes-head__copy>p:not(.eyebrow){max-width:640px;color:#fff;font-size:1.07rem}
+.athletes-head--photo [data-athlete-closed]{display:none}
+.athletes-head--photo .athletes-closed{max-width:640px;margin-top:18px}
+.athletes-photo{position:relative;margin:0 0 0 auto;width:100%}
+.athletes-photo img{display:block;width:100%;height:auto;border:5px solid var(--yellow);box-shadow:14px 14px 0 var(--green),-14px -14px 0 var(--blue-bright)}
+.athletes-photo .athletes-photo__cta{position:absolute;left:0;bottom:12%;margin:0;transform:translateX(-64%);padding:22px 34px;font-size:1.05rem;letter-spacing:.06em;white-space:nowrap;box-shadow:7px 7px 0 var(--green)}
+.athletes-photo .athletes-photo__cta:hover{transform:translateX(-64%) translateY(-2px)}
+@media(min-width:901px){
+  .athletes-head__copy>p:not(.eyebrow){max-width:min(640px,calc(100% - 220px))}
+  .athletes-photo .athletes-photo__cta{bottom:7%;padding:32px 52px;font-size:clamp(1.3rem,1.6vw,1.7rem);letter-spacing:.07em;box-shadow:10px 10px 0 var(--green);transform:translateX(-66%)}
+  .athletes-photo .athletes-photo__cta:hover{transform:translateX(-66%) translateY(-3px)}
+}
+@media(max-width:900px){
+  .athletes-head--photo{grid-template-columns:1fr;gap:48px}
+  .athletes-photo{max-width:340px;margin:0 auto 40px}
+  .athletes-photo img{box-shadow:9px 9px 0 var(--green),-9px -9px 0 var(--blue-bright)}
+  .athletes-photo .athletes-photo__cta{left:50%;bottom:0;transform:translate(-50%,62%);width:max-content}
+  .athletes-photo .athletes-photo__cta:hover{transform:translate(-50%,62%)}
+}
 
 /* Modal da foto: metade de cima branca, metade de baixo colorida */
 .photo-modal{--pb:var(--navy);--px:clamp(18px,4vw,64px);color:var(--ink)}
