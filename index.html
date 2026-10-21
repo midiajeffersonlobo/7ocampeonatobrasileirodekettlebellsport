@@ -13,8 +13,19 @@
   <link rel="preload" as="image" href="assets/opening/background-foreground-transparent.webp">
   <link rel="preload" as="image" href="assets/opening/otimizados/01-titulo.png">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2307141f'/%3E%3Cpath d='M15 14h36L31 52H18l17-27H15z' fill='%23ffd20a'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20261002d">
-  <script>document.documentElement.classList.add('js');</script>
+  <link rel="stylesheet" href="styles.css?v=20261016i">
+  <script>document.documentElement.classList.add('js');
+  // Ao atualizar a página (F5), sempre volta para o topo.
+  try {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    var nav = performance.getEntriesByType('navigation')[0];
+    if (nav && nav.type === 'reload') {
+      if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+      window.scrollTo(0, 0);
+      window.addEventListener('load', function () { window.scrollTo(0, 0); });
+    }
+  } catch (_) {}
+  </script>
 </head>
 <body class="intro-active">
   <section class="video-intro" id="videoIntro" aria-label="Vídeo de introdução do evento">
@@ -36,7 +47,7 @@
     <nav class="site-nav" id="siteNav" aria-label="Navegação principal">
       <a href="#evento">O evento</a>
       <a href="#programacao">Programação</a>
-      <a href="#experiencias">Experiências</a>
+      <a href="#experiencias" hidden data-temp-hidden>Experiências</a>
       <a href="#local">Local</a>
       <a href="#duvidas">Dúvidas</a>
     </nav>
@@ -60,6 +71,11 @@
     </video>
     <img class="opening__foreground" src="assets/opening/background-foreground-transparent.webp" alt="" width="3840" height="2160" aria-hidden="true" decoding="async">
     <div class="opening__water" aria-hidden="true"><span></span><i></i></div>
+
+      <button class="opening__sponsor-tab" type="button" data-open-sponsor aria-haspopup="dialog" aria-label="Patrocinador e expositor">
+        <span class="opening__sponsor-tab__handle" aria-hidden="true">◂</span>
+        <span class="opening__sponsor-tab__label">PATROCINADOR / EXPOSITOR</span>
+      </button>
 
     <div class="opening__stage">
       <div class="opening__layer opening__layer--title" aria-hidden="true"><img src="assets/opening/otimizados/01-titulo.png" alt="" width="1278" height="373"></div>
@@ -89,7 +105,7 @@
     </section>
 
     <section class="section section--intro" id="evento" data-header-tone="white">
-      <div class="section-label"><span>O campeonato</span><b>RECIFE 2026</b></div>
+      <div class="section-label"><span>O campeonato</span></div>
       <div class="intro-grid">
         <div class="intro-copy reveal">
           <p class="eyebrow">Pela primeira vez no Nordeste</p>
@@ -124,21 +140,28 @@
           <span class="route-number">02</span>
           <p class="route-kicker">Competidores</p>
           <h3>Sou atleta</h3>
-          <p>Inscrições, regulamento e categorias são administrados pela CONBRAKS e pela federação responsável.</p>
-          <a class="button button--outline-light" href="#atletas">Ver como se inscrever ↓</a>
+          <p data-photo-after-text="Inscrições encerradas. Datas, categorias e cargas estão na seção de atletas.">Inscrições encerradas. Atleta confirmado? Envie sua foto para as artes do evento.</p>
+          <a class="button button--outline-light" href="#atletas" data-photo-after-text="Ver informações ↓">Enviar minha foto ↓</a>
         </article>
       </div>
     </section>
 
     <section class="section section--athletes" id="atletas" aria-labelledby="atletas-title" data-header-tone="white">
-      <div class="athletes-head reveal">
-        <p class="eyebrow">Inscrição de atletas</p>
-        <h2 id="atletas-title">Antes de preencher a ficha.</h2>
-        <p>Campeonato Brasileiro 2026 e Seletiva para o Mundial WKSF 2027. A ficha é preenchida no site oficial da CONBRAKS; aqui está o que você precisa saber antes de ir.</p>
-        <button class="button button--yellow" type="button" data-athlete-cta aria-haspopup="dialog">Quero me inscrever como atleta</button>
-        <div class="athletes-closed" data-athlete-closed hidden><b>Inscrições encerradas</b><span>O período de inscrições terminou em 10/10/2026. Em caso de dúvida, fale com a organização.</span></div>
+      <div class="athletes-head athletes-head--photo reveal">
+        <div class="athletes-head__copy">
+          <p class="eyebrow">Atletas confirmados</p>
+          <h2 id="atletas-title" data-photo-after-text="Inscrições encerradas. Nos vemos na arena.">Inscrições encerradas. <span>Agora é a hora da sua foto.</span></h2>
+          <p data-photo-after-text="As inscrições terminaram em 10/10/2026. Abaixo estão as datas, categorias e cargas do Campeonato Brasileiro 2026 e da Seletiva para o Mundial WKSF 2027.">Estamos preparando os posts que apresentam ao Brasil os atletas confirmados do 7º Brasileiro. <b>Sua foto. Sua cidade. Sua história.</b> Envie até <b>01/11</b> e faça parte dessa apresentação.</p>
+          <button class="button button--yellow" type="button" data-athlete-cta aria-haspopup="dialog">Quero me inscrever como atleta</button>
+          <div class="athletes-closed" data-photo-closed hidden><b>Envio de fotos encerrado</b><span>O prazo para envio das fotos terminou em 01/11/2026. Em caso de dúvida, fale com a organização.</span></div>
+          <div class="athletes-closed" data-athlete-closed hidden><b>Inscrições encerradas</b><span>O período de inscrições terminou em 10/10/2026. Em caso de dúvida, fale com a organização.</span></div>
+        </div>
+        <figure class="athletes-photo" data-photo-only>
+          <img src="assets/inscricao/exemplo-foto-rack.webp" alt="Exemplo de foto: atleta de corpo inteiro segurando dois kettlebells em posição de rack" width="733" height="917" loading="lazy">
+          <button class="button button--yellow athletes-photo__cta" type="button" data-photo-cta aria-haspopup="dialog">Enviar minha foto ↗</button>
+        </figure>
       </div>
-      <div class="athletes-grid">
+      <div class="athletes-grid" hidden data-temp-hidden>
         <div class="reveal">
           <h3>Valores por prova</h3>
           <ol class="lot-list">
@@ -223,7 +246,8 @@
       </div>
     </section>
 
-    <section class="section section--experiences" id="experiencias" data-header-tone="yellow">
+    <!-- OCULTO ATÉ CONFIRMAR: remova o atributo hidden (e data-temp-hidden) desta seção, do link "Experiências" no menu e da pergunta do FAQ para exibir de novo -->
+    <section class="section section--experiences" id="experiencias" data-header-tone="yellow" hidden data-temp-hidden>
       <div class="section-heading reveal">
         <div><p class="eyebrow">Muito além da competição</p><h2>Ideias para ampliar a experiência do evento.</h2></div>
         <p>As propostas abaixo ainda estão em avaliação e aparecem nesta versão para visualização e decisão da organização.</p>
@@ -288,7 +312,7 @@
       </div>
       <div class="sponsor-call reveal">
         <div><small>Empresas e instituições</small><h2>Sua marca pode fazer parte desta edição.</h2></div>
-        <a class="button button--yellow" href="https://wa.me/5581996484250?text=Ol%C3%A1%2C%20quero%20conhecer%20as%20oportunidades%20de%20patroc%C3%ADnio%20do%207%C2%BA%20Campeonato%20Brasileiro%20de%20Kettlebell%20Sport." target="_blank" rel="noopener">Quero patrocinar ↗</a>
+        <button class="button button--yellow" type="button" data-open-sponsor aria-haspopup="dialog">Quero patrocinar</button>
       </div>
     </section>
 
@@ -296,9 +320,10 @@
       <div class="section-heading reveal"><div><p class="eyebrow">Perguntas frequentes</p><h2>Antes de ir para a arena.</h2></div></div>
       <div class="faq-list reveal">
         <details><summary>Preciso me inscrever para assistir?<span>+</span></summary><p>Sim. Use o cadastro de interesse do site. A organização enviará a confirmação e as orientações de entrada pelo canal informado. E traga 1 kg de alimento não perecível para doação.</p></details>
-        <details><summary>Onde os atletas fazem a inscrição?<span>+</span></summary><p>A inscrição esportiva é feita nos canais oficiais da CONBRAKS e da federação responsável. O botão “Sou atleta” leva à seção de inscrição de atletas. Lá você lê as orientações da federação e é direcionado à ficha no site da CONBRAKS.</p></details>
+        <details><summary>Onde os atletas fazem a inscrição?<span>+</span></summary><p>As inscrições de atletas foram feitas pelo site da CONBRAKS e encerraram em 10/10/2026. Em caso de dúvida sobre a sua inscrição, fale com a organização.</p></details>
+        <details data-photo-only><summary>Como envio minha foto para as artes?<span>+</span></summary><p>Se você é atleta confirmado, use o botão “Enviar minha foto” na seção de atletas até 01/11/2026. O envio é feito por um formulário do Google, que pede nome completo, Instagram, cidade e estado que você representará e a foto, de preferência em posição de rack com o kettlebell e de corpo inteiro.</p></details>
         <details><summary>O local do evento já está confirmado?<span>+</span></summary><p>Sim. O evento será realizado no Círculo Militar do Recife, na Av. Gov. Agamenon Magalhães, 2807, Boa Vista, Recife/PE.</p></details>
-        <details><summary>O ponto para ciclistas e os shows estão confirmados?<span>+</span></summary><p>Não. Nesta versão, as duas experiências são propostas em avaliação para a organização do evento.</p></details>
+        <details hidden data-temp-hidden><summary>O ponto para ciclistas e os shows estão confirmados?<span>+</span></summary><p>Não. Nesta versão, as duas experiências são propostas em avaliação para a organização do evento.</p></details>
         <details><summary>Como acompanho as atualizações?<span>+</span></summary><p>Siga @conbraks e @fpeksport no Instagram. As informações confirmadas também serão atualizadas neste site.</p></details>
       </div>
     </section>
@@ -685,7 +710,75 @@
     </div>
   </dialog>
 
+  <!-- Atletas confirmados: orientações antes de abrir o Google Forms de envio da foto -->
+  <dialog class="athlete-modal photo-modal" id="photoDialog" aria-labelledby="photoTitle">
+    <div class="athlete-modal__card">
+      <button class="dialog-close" type="button" data-photo-close aria-label="Fechar">×</button>
+      <div class="photo-scroll">
+        <div class="photo-top">
+          <div class="photo-top__copy">
+            <p class="eyebrow">Atletas confirmados · Foto para as artes</p>
+            <h2 id="photoTitle">Antes de enviar sua foto</h2>
+            <p>Sua foto vai para os posts que apresentam os atletas confirmados nas redes do evento. Envie até <b>01/11/2026</b>.</p>
+            <h3 class="photo-subtitle">Como deve ser a foto</h3>
+            <ol class="photo-list">
+              <li><span><b>Em posição de rack</b> com o kettlebell, de preferência de corpo inteiro, como no exemplo.</span></li>
+              <li><span>Só você na foto, nítida, com boa luz e sem filtros.</span></li>
+              <li><span>Arquivo original (não print de tela), com até 10 MB.</span></li>
+            </ol>
+          </div>
+          <figure class="photo-figure">
+            <img src="assets/inscricao/exemplo-foto-rack.webp" alt="Exemplo: atleta em pé, de corpo inteiro, segurando dois kettlebells em posição de rack na altura do peito" width="733" height="917" loading="lazy">
+            <figcaption>Exemplo: posição de rack, corpo inteiro</figcaption>
+          </figure>
+        </div>
+        <div class="photo-bottom">
+          <div class="photo-bottom__copy">
+            <h3 class="photo-subtitle">O formulário vai pedir</h3>
+            <ul class="photo-fields"><li>Nome completo</li><li>Instagram</li><li>Cidade e estado que você representará</li><li>Sua foto</li></ul>
+            <p class="photo-google"><b>O formulário abre no Google Forms, numa nova aba.</b> Para enviar arquivos, o Google pede que você entre com uma conta Google. O nome e o e-mail da conta ficam registrados junto com a foto.</p>
+          </div>
+        </div>
+      </div>
+      <footer class="photo-foot">
+        <button class="button button--ghost" type="button" data-photo-close>Voltar</button>
+        <a class="button button--yellow" href="https://forms.gle/1gFrZ7hqMEJDT6ma6" target="_blank" rel="noopener" data-photo-go>Abrir formulário ↗</a>
+      </footer>
+    </div>
+  </dialog>
+
+  <dialog class="athlete-modal sponsor-modal" id="sponsorDialog" aria-labelledby="sponsorTitle">
+    <div class="athlete-modal__card">
+      <button class="dialog-close" type="button" data-close-sponsor aria-label="Fechar">×</button>
+      <header class="athlete-modal__head">
+        <p class="eyebrow">Empresas e instituições</p>
+        <h2 id="sponsorTitle">Patrocinador e expositor</h2>
+        <p>Sua marca pode fazer parte do 7º Campeonato Brasileiro de Kettlebell Sport, de 19 a 22 de novembro de 2026, em Recife. Escolha como quer participar e fale direto com a organização.</p>
+      </header>
+      <div class="sponsor-body">
+        <article class="public-step public-step--1">
+          <p class="eyebrow">Patrocínio</p>
+          <h3>Associe sua marca ao campeonato.</h3>
+          <p>Empresas e instituições que apoiam o evento ganham visibilidade junto a atletas, técnicos, árbitros e ao público presente em Recife.</p>
+          <ul><li>Presença da marca no evento</li><li>Cotas e contrapartidas apresentadas pela organização</li><li>Atendimento direto com a equipe do evento</li></ul>
+          <a class="button button--yellow" href="https://wa.me/5581996484250?text=Ol%C3%A1%2C%20quero%20conhecer%20as%20oportunidades%20de%20patroc%C3%ADnio%20do%207%C2%BA%20Campeonato%20Brasileiro%20de%20Kettlebell%20Sport." target="_blank" rel="noopener">Quero patrocinar ↗</a>
+        </article>
+        <article class="public-step sponsor-card--expo">
+          <p class="eyebrow">Exposição</p>
+          <h3>Tenha um espaço para mostrar seu trabalho.</h3>
+          <p>Apresente produtos e serviços para quem vive o Kettlebell Sport e para o público que acompanha a competição.</p>
+          <ul><li>Contato direto com atletas e público</li><li>Espaço e condições apresentados pela organização</li><li>Atendimento direto com a equipe do evento</li></ul>
+          <a class="button button--yellow" href="https://wa.me/5581996484250?text=Ol%C3%A1%2C%20quero%20ser%20expositor%20no%207%C2%BA%20Campeonato%20Brasileiro%20de%20Kettlebell%20Sport%20e%20conhecer%20as%20condi%C3%A7%C3%B5es." target="_blank" rel="noopener">Quero expor ↗</a>
+        </article>
+      </div>
+      <footer class="athlete-modal__foot sponsor-foot">
+        <a class="button button--ghost" href="https://wa.me/5581996484250?text=Ol%C3%A1%2C%20quero%20falar%20com%20a%20organiza%C3%A7%C3%A3o%20sobre%20patroc%C3%ADnio%20ou%20exposi%C3%A7%C3%A3o%20no%207%C2%BA%20Campeonato%20Brasileiro%20de%20Kettlebell%20Sport." target="_blank" rel="noopener">Falar com a organização ↗</a>
+        <button class="button button--ghost" type="button" data-close-sponsor>Fechar</button>
+      </footer>
+    </div>
+  </dialog>
+
   <dialog class="lightbox" id="galleryDialog" aria-label="Foto ampliada"><button type="button" data-close-gallery aria-label="Fechar">×</button><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt=""></dialog>
-  <script src="script.js?v=20261002c"></script>
+  <script src="script.js?v=20261016c"></script>
 </body>
 </html>

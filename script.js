@@ -1,3 +1,38 @@
+// Modais: saída animada (o fechamento real só acontece depois da animação de 1s)
+(() => {
+  const proto = HTMLDialogElement.prototype;
+  const nativeClose = proto.close;
+  const nativeShow = proto.showModal;
+  const timers = new WeakMap();
+  const duration = () => (window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1000);
+  proto.close = function (returnValue) {
+    if (!this.open || timers.has(this)) return;
+    const ms = duration();
+    if (!ms) { nativeClose.call(this, returnValue); return; }
+    this.classList.add('is-closing');
+    timers.set(this, window.setTimeout(() => {
+      timers.delete(this);
+      this.classList.remove('is-closing');
+      nativeClose.call(this, returnValue);
+    }, ms));
+  };
+  proto.showModal = function () {
+    if (timers.has(this)) {
+      window.clearTimeout(timers.get(this));
+      timers.delete(this);
+      this.classList.remove('is-closing');
+      return;
+    }
+    nativeShow.call(this);
+  };
+  document.addEventListener('cancel', (event) => {
+    if (event.target instanceof HTMLDialogElement) {
+      event.preventDefault();
+      event.target.close();
+    }
+  }, true);
+})();
+
 const opening = document.querySelector('.opening');
 const shimmer = document.querySelector('.opening__shimmer img');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -51,10 +86,7 @@ mobileLayout.addEventListener?.('change', syncMobileTriggers);
 
 let openingStarted = false;
 const videoOpacityStates = [
-  { opacity: .2, holdDuration: 3000 },
-  { opacity: .1, holdDuration: 4000 },
-  { opacity: 0, holdDuration: 6000 },
-  { opacity: .1, holdDuration: 4000 }
+  { opacity: .45, holdDuration: 0 }
 ];
 const videoOpacityTransitionDuration = 1500;
 let videoOpacityIndex = 0;
@@ -68,7 +100,7 @@ function stopVideoOpacityCycle() {
 
 function scheduleVideoOpacityCycle() {
   stopVideoOpacityCycle();
-  if (!continuationActive || !openingIsVisible || document.hidden || reducedMotion.matches) return;
+  if (videoOpacityStates.length < 2 || !continuationActive || !openingIsVisible || document.hidden || reducedMotion.matches) return;
 
   const currentState = videoOpacityStates[videoOpacityIndex];
   videoOpacityTimer = window.setTimeout(() => {
@@ -599,4 +631,60 @@ document.addEventListener('keydown', (event) => {
     if(videoDlg.open){e.preventDefault();videoDlg.close()}
     else if(readDlg.open){e.preventDefault();readDlg.close()}
   });
+})();
+
+
+(() => {
+  const dialog = document.querySelector('#sponsorDialog');
+  if (!dialog) return;
+  const root = document.documentElement;
+  const tab = document.querySelector('.opening__sponsor-tab');
+  const opening = document.querySelector('#inicio');
+  document.querySelectorAll('[data-open-sponsor]').forEach((button) => {
+    button.addEventListener('click', () => {
+      root.classList.add('athlete-modal-open');
+      if (button === tab) tab.classList.add('is-clicked');
+      dialog.showModal();
+    });
+  });
+  // A aba "espia" uma vez assim que a abertura fica pronta.
+  if (tab && opening) {
+    const peek = () => {
+      window.setTimeout(() => tab.classList.add('is-peeking'), 1000);
+      window.setTimeout(() => tab.classList.remove('is-peeking'), 4000);
+    };
+    if (opening.classList.contains('is-ready')) peek();
+    else {
+      const watcher = new MutationObserver(() => {
+        if (opening.classList.contains('is-ready')) { watcher.disconnect(); peek(); }
+      });
+      watcher.observe(opening, { attributes: true, attributeFilter: ['class'] });
+    }
+  }
+  dialog.querySelectorAll('[data-close-sponsor]').forEach((button) => button.addEventListener('click', () => dialog.close()));
+  dialog.addEventListener('close', () => { root.classList.remove('athlete-modal-open'); tab?.classList.remove('is-clicked'); });
+})();
+
+
+/* Atletas confirmados: envio da foto para as artes (Google Forms externo).
+   O botão abre um modal de orientações e o formulário abre em nova aba.
+   Depois de PHOTO_CLOSE_AT o botão some e os textos trocam para a versão "encerrado". */
+(function(){
+  var PHOTO_CLOSE_AT=new Date('2026-11-01T23:59:59-03:00').getTime(); /* encerra em 02/11 às 00h, horário de Brasília */
+  var cta=document.querySelector('[data-photo-cta]');
+  var dlg=document.querySelector('#photoDialog');
+  if(Date.now()>PHOTO_CLOSE_AT){
+    if(cta)cta.remove();
+    var closed=document.querySelector('[data-photo-closed]');if(closed)closed.hidden=false;
+    document.querySelectorAll('[data-photo-only]').forEach(function(el){el.hidden=true});
+    document.querySelectorAll('[data-photo-after-text]').forEach(function(el){el.textContent=el.dataset.photoAfterText});
+    return;
+  }
+  if(!cta||!dlg)return;
+  var root=document.documentElement;
+  cta.addEventListener('click',function(){root.classList.add('athlete-modal-open');dlg.showModal()});
+  dlg.querySelectorAll('[data-photo-close]').forEach(function(b){b.addEventListener('click',function(){dlg.close()})});
+  dlg.querySelector('[data-photo-go]').addEventListener('click',function(){setTimeout(function(){dlg.close()},0)});
+  dlg.addEventListener('click',function(e){if(e.target===dlg)dlg.close()});
+  dlg.addEventListener('close',function(){root.classList.remove('athlete-modal-open');cta.focus({preventScroll:true})});
 })();
