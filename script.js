@@ -664,3 +664,27 @@ document.addEventListener('keydown', (event) => {
   dialog.querySelectorAll('[data-close-sponsor]').forEach((button) => button.addEventListener('click', () => dialog.close()));
   dialog.addEventListener('close', () => { root.classList.remove('athlete-modal-open'); tab?.classList.remove('is-clicked'); });
 })();
+
+
+/* Atletas confirmados: envio da foto para as artes (Google Forms externo).
+   O botão abre um modal de orientações e o formulário abre em nova aba.
+   Depois de PHOTO_CLOSE_AT o botão some e os textos trocam para a versão "encerrado". */
+(function(){
+  var PHOTO_CLOSE_AT=new Date('2026-11-01T23:59:59-03:00').getTime(); /* encerra em 02/11 às 00h, horário de Brasília */
+  var cta=document.querySelector('[data-photo-cta]');
+  var dlg=document.querySelector('#photoDialog');
+  if(Date.now()>PHOTO_CLOSE_AT){
+    if(cta)cta.remove();
+    var closed=document.querySelector('[data-photo-closed]');if(closed)closed.hidden=false;
+    document.querySelectorAll('[data-photo-only]').forEach(function(el){el.hidden=true});
+    document.querySelectorAll('[data-photo-after-text]').forEach(function(el){el.textContent=el.dataset.photoAfterText});
+    return;
+  }
+  if(!cta||!dlg)return;
+  var root=document.documentElement;
+  cta.addEventListener('click',function(){root.classList.add('athlete-modal-open');dlg.showModal()});
+  dlg.querySelectorAll('[data-photo-close]').forEach(function(b){b.addEventListener('click',function(){dlg.close()})});
+  dlg.querySelector('[data-photo-go]').addEventListener('click',function(){setTimeout(function(){dlg.close()},0)});
+  dlg.addEventListener('click',function(e){if(e.target===dlg)dlg.close()});
+  dlg.addEventListener('close',function(){root.classList.remove('athlete-modal-open');cta.focus({preventScroll:true})});
+})();

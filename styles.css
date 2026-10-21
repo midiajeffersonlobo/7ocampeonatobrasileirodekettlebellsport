@@ -569,3 +569,53 @@ dialog.athlete-modal.is-closing::backdrop,dialog.lightbox.is-closing::backdrop,d
 /* Logos do rodapé alinhadas verticalmente pelo centro da primeira */
 .footer-logos span:nth-child(2) img{transform:translateY(-18%)}
 .footer-logos span:nth-child(3) img{transform:none}
+
+
+/* Atletas confirmados · envio da foto para as artes */
+.athletes-head [data-photo-cta]~.athletes-closed{margin-top:18px}
+.athletes-head [data-photo-cta]~.athletes-closed b{font-size:1.15rem}
+
+/* Modal da foto: metade de cima branca, metade de baixo colorida */
+.photo-modal{--pb:var(--navy);--px:clamp(18px,4vw,64px);color:var(--ink)}
+.photo-modal .athlete-modal__card{display:grid;grid-template-rows:minmax(0,1fr) auto;padding:0;background:#fff;border-top:8px solid var(--yellow)}
+.photo-modal .athlete-modal__card:before{content:"";position:absolute;top:-8px;left:0;width:min(220px,40%);height:8px;background:var(--green)}
+.photo-modal .dialog-close{border-color:var(--ink);color:var(--ink);background:#fff}
+.photo-modal .dialog-close:hover{background:var(--yellow);border-color:var(--yellow)}
+.photo-scroll{min-height:0;overflow-y:auto;display:flex;flex-direction:column}
+.photo-top{flex:none;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(20px,4vw,56px);align-items:end;padding:clamp(28px,4vw,48px) calc(var(--px) + 56px) 0 var(--px)}
+.photo-top__copy{padding-bottom:28px}
+.photo-modal .eyebrow{color:var(--green)}
+.photo-modal h2{color:var(--blue)}
+.photo-top__copy>p:not(.eyebrow){color:#3d4b66;font-size:1.02rem}
+.photo-top__copy b{color:var(--ink)}
+.photo-modal .photo-subtitle{display:flex;align-items:center;gap:10px;margin:22px 0 6px;color:var(--blue);font:800 .78rem var(--body);letter-spacing:.12em;text-transform:uppercase}
+.photo-modal .photo-subtitle:before{content:"";width:22px;height:4px;background:var(--yellow)}
+.photo-list{counter-reset:pl;margin:0;padding:0;list-style:none}
+.photo-list li{counter-increment:pl;display:grid;grid-template-columns:40px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid rgba(4,23,71,.12);color:#3d4b66}
+.photo-list li:before{content:counter(pl);color:var(--green);font:900 1.7rem/1 var(--display)}
+.photo-figure{position:relative;z-index:2;margin:0 0 -150px;justify-self:center}
+.photo-figure img{display:block;width:auto;max-width:100%;max-height:48vh;border:4px solid var(--yellow);box-shadow:10px 10px 0 var(--green),-10px -10px 0 var(--blue)}
+.photo-figure figcaption{margin-top:14px;color:#fff;font-size:.72rem;font-weight:800;letter-spacing:.12em;text-align:center;text-transform:uppercase}
+.photo-bottom{flex:1;align-content:center;position:relative;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(20px,4vw,56px);padding:8px calc(var(--px) + 56px) 18px var(--px);background:var(--pb);min-height:200px;color:#fff;border-top:4px solid var(--yellow)}
+.photo-bottom:before{content:"";position:absolute;top:-4px;left:var(--px);width:90px;height:4px;background:var(--green)}
+.photo-bottom .photo-subtitle{color:#fff}
+.photo-fields{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.photo-fields li{padding:7px 12px;border:2px solid rgba(255,255,255,.85);color:#fff;font-size:.82rem;font-weight:800}
+.photo-fields li:last-child{border-color:var(--yellow);background:var(--yellow);color:var(--ink)}
+.photo-google{margin:16px 0 0;padding:14px 16px;border-left:5px solid var(--yellow);background:rgba(255,255,255,.1);color:#e8eefc;font-size:.92rem}
+.photo-google b{color:var(--yellow)}
+.photo-foot{display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap;padding:14px var(--px) 20px;background:var(--pb)}
+.photo-foot .button--ghost{border:2px solid #fff;background:transparent;color:#fff}
+.photo-foot .button--ghost:hover{background:#fff;color:var(--ink)}
+.photo-foot .button--yellow{color:var(--ink)}
+@media(max-width:767px){
+  .photo-top{grid-template-columns:1fr;gap:0;padding:22px var(--px) 28px;align-items:start}
+  .photo-top__copy{padding-right:52px;padding-bottom:0}
+  .photo-top__copy .photo-list,.photo-top__copy .photo-subtitle{margin-right:-52px}
+  .photo-figure{margin:22px 0 0}
+  .photo-figure img{max-height:42vh;box-shadow:6px 6px 0 var(--green),-6px -6px 0 var(--blue)}
+  .photo-figure figcaption{color:var(--green)}
+  .photo-bottom{grid-template-columns:1fr;align-content:start;padding:10px var(--px) 22px}
+  .photo-foot{flex-direction:column-reverse;padding:12px var(--px) 16px}
+  .photo-foot .button{width:100%}
+}

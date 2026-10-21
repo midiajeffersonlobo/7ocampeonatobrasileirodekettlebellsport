@@ -140,21 +140,23 @@
           <span class="route-number">02</span>
           <p class="route-kicker">Competidores</p>
           <h3>Sou atleta</h3>
-          <p>Inscrições, regulamento e categorias são administrados pela CONBRAKS e pela federação responsável.</p>
-          <a class="button button--outline-light" href="#atletas">Ver como se inscrever ↓</a>
+          <p data-photo-after-text="Inscrições encerradas. Datas, categorias e cargas estão na seção de atletas.">Inscrições encerradas. Atleta confirmado? Envie sua foto para as artes do evento.</p>
+          <a class="button button--outline-light" href="#atletas" data-photo-after-text="Ver informações ↓">Enviar minha foto ↓</a>
         </article>
       </div>
     </section>
 
     <section class="section section--athletes" id="atletas" aria-labelledby="atletas-title" data-header-tone="white">
       <div class="athletes-head reveal">
-        <p class="eyebrow">Inscrição de atletas</p>
-        <h2 id="atletas-title">Antes de preencher a ficha.</h2>
-        <p>Campeonato Brasileiro 2026 e Seletiva para o Mundial WKSF 2027. A ficha é preenchida no site oficial da CONBRAKS; aqui está o que você precisa saber antes de ir.</p>
+        <p class="eyebrow">Atletas confirmados</p>
+        <h2 id="atletas-title" data-photo-after-text="Nos vemos na arena.">Sua foto. Sua cidade. Sua história.</h2>
+        <p data-photo-after-text="As inscrições terminaram em 10/10/2026. Abaixo estão as datas, categorias e cargas do Campeonato Brasileiro 2026 e da Seletiva para o Mundial WKSF 2027.">As inscrições terminaram em 10/10. Agora estamos preparando os posts que apresentam ao Brasil os atletas confirmados do 7º Brasileiro. Envie sua foto até <b>01/11</b> e faça parte dessa apresentação.</p>
         <button class="button button--yellow" type="button" data-athlete-cta aria-haspopup="dialog">Quero me inscrever como atleta</button>
+        <button class="button button--yellow" type="button" data-photo-cta aria-haspopup="dialog">Enviar minha foto</button>
+        <div class="athletes-closed" data-photo-closed hidden><b>Envio de fotos encerrado</b><span>O prazo para envio das fotos terminou em 01/11/2026. Em caso de dúvida, fale com a organização.</span></div>
         <div class="athletes-closed" data-athlete-closed hidden><b>Inscrições encerradas</b><span>O período de inscrições terminou em 10/10/2026. Em caso de dúvida, fale com a organização.</span></div>
       </div>
-      <div class="athletes-grid">
+      <div class="athletes-grid" hidden data-temp-hidden>
         <div class="reveal">
           <h3>Valores por prova</h3>
           <ol class="lot-list">
@@ -313,7 +315,8 @@
       <div class="section-heading reveal"><div><p class="eyebrow">Perguntas frequentes</p><h2>Antes de ir para a arena.</h2></div></div>
       <div class="faq-list reveal">
         <details><summary>Preciso me inscrever para assistir?<span>+</span></summary><p>Sim. Use o cadastro de interesse do site. A organização enviará a confirmação e as orientações de entrada pelo canal informado. E traga 1 kg de alimento não perecível para doação.</p></details>
-        <details><summary>Onde os atletas fazem a inscrição?<span>+</span></summary><p>A inscrição esportiva é feita nos canais oficiais da CONBRAKS e da federação responsável. O botão “Sou atleta” leva à seção de inscrição de atletas. Lá você lê as orientações da federação e é direcionado à ficha no site da CONBRAKS.</p></details>
+        <details><summary>Onde os atletas fazem a inscrição?<span>+</span></summary><p>As inscrições de atletas foram feitas pelo site da CONBRAKS e encerraram em 10/10/2026. Em caso de dúvida sobre a sua inscrição, fale com a organização.</p></details>
+        <details data-photo-only><summary>Como envio minha foto para as artes?<span>+</span></summary><p>Se você é atleta confirmado, use o botão “Enviar minha foto” na seção de atletas até 01/11/2026. O envio é feito por um formulário do Google, que pede nome completo, Instagram, cidade e estado que você representará e a foto, de preferência em posição de rack com o kettlebell e de corpo inteiro.</p></details>
         <details><summary>O local do evento já está confirmado?<span>+</span></summary><p>Sim. O evento será realizado no Círculo Militar do Recife, na Av. Gov. Agamenon Magalhães, 2807, Boa Vista, Recife/PE.</p></details>
         <details hidden data-temp-hidden><summary>O ponto para ciclistas e os shows estão confirmados?<span>+</span></summary><p>Não. Nesta versão, as duas experiências são propostas em avaliação para a organização do evento.</p></details>
         <details><summary>Como acompanho as atualizações?<span>+</span></summary><p>Siga @conbraks e @fpeksport no Instagram. As informações confirmadas também serão atualizadas neste site.</p></details>
@@ -698,6 +701,43 @@
           </div>
         </div>
         <p class="athlete-warn" data-video-warn role="alert" hidden></p>
+      </footer>
+    </div>
+  </dialog>
+
+  <!-- Atletas confirmados: orientações antes de abrir o Google Forms de envio da foto -->
+  <dialog class="athlete-modal photo-modal" id="photoDialog" aria-labelledby="photoTitle">
+    <div class="athlete-modal__card">
+      <button class="dialog-close" type="button" data-photo-close aria-label="Fechar">×</button>
+      <div class="photo-scroll">
+        <div class="photo-top">
+          <div class="photo-top__copy">
+            <p class="eyebrow">Atletas confirmados · Foto para as artes</p>
+            <h2 id="photoTitle">Antes de enviar sua foto</h2>
+            <p>Sua foto vai para os posts que apresentam os atletas confirmados nas redes do evento. Envie até <b>01/11/2026</b>.</p>
+            <h3 class="photo-subtitle">Como deve ser a foto</h3>
+            <ol class="photo-list">
+              <li><span><b>Em posição de rack</b> com o kettlebell, de preferência de corpo inteiro, como no exemplo.</span></li>
+              <li><span>Só você na foto, nítida, com boa luz e sem filtros.</span></li>
+              <li><span>Arquivo original (não print de tela), com até 10 MB.</span></li>
+            </ol>
+          </div>
+          <figure class="photo-figure">
+            <img src="assets/inscricao/exemplo-foto-rack.webp" alt="Exemplo: atleta em pé, de corpo inteiro, segurando dois kettlebells em posição de rack na altura do peito" width="733" height="917" loading="lazy">
+            <figcaption>Exemplo: posição de rack, corpo inteiro</figcaption>
+          </figure>
+        </div>
+        <div class="photo-bottom">
+          <div class="photo-bottom__copy">
+            <h3 class="photo-subtitle">O formulário vai pedir</h3>
+            <ul class="photo-fields"><li>Nome completo</li><li>Instagram</li><li>Cidade e estado que você representará</li><li>Sua foto</li></ul>
+            <p class="photo-google"><b>O formulário abre no Google Forms, numa nova aba.</b> Para enviar arquivos, o Google pede que você entre com uma conta Google. O nome e o e-mail da conta ficam registrados junto com a foto.</p>
+          </div>
+        </div>
+      </div>
+      <footer class="photo-foot">
+        <button class="button button--ghost" type="button" data-photo-close>Voltar</button>
+        <a class="button button--yellow" href="https://forms.gle/1gFrZ7hqMEJDT6ma6" target="_blank" rel="noopener" data-photo-go>Abrir formulário ↗</a>
       </footer>
     </div>
   </dialog>
