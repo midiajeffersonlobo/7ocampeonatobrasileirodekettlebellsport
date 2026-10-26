@@ -688,3 +688,192 @@ document.addEventListener('keydown', (event) => {
   dlg.addEventListener('click',function(e){if(e.target===dlg)dlg.close()});
   dlg.addEventListener('close',function(){root.classList.remove('athlete-modal-open');cta.focus({preventScroll:true})});
 })();
+
+/* ===== Entenda a modalidade: vídeo do YouTube ===== */
+(() => {
+  const box = document.querySelector('#sportVideo');
+  if (!box) return;
+  const VIDEO_ID = box.dataset.videoId;
+  const frame = box.querySelector('.sport-video__frame');
+  const poster = box.querySelector('.sport-video__poster');
+  const mount = box.querySelector('#sportVideoPlayer');
+  const soundBtn = box.querySelector('.sport-video__sound');
+  const soundTxt = soundBtn.querySelector('span');
+  const fsBtn = box.querySelector('.sport-video__fs');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const canFullscreen = !!(document.fullscreenEnabled || document.webkitFullscreenEnabled);
+  let player = null;
+  let ready = false;
+  let visible = false;
+  let finished = false;
+  let userPaused = false;
+  let autoPaused = false;
+  let requested = false;
+
+  function syncSound() {
+    if (!ready) return;
+    let muted = true;
+    try { muted = player.isMuted(); } catch (_) {}
+    if (!muted) { soundBtn.hidden = true; return; }
+    soundTxt.textContent = player.getPlayerState() === 1
+      ? '🔇 Clique no vídeo para assistir com som'
+      : '▶ Clique para assistir com som';
+    soundBtn.hidden = false;
+  }
+
+  function tryPlay() {
+    if (!ready || !visible || finished || userPaused || reduced.matches) return;
+    if (player.getPlayerState() !== 1) player.playVideo();
+  }
+
+  function withSound() {
+    player.unMute();
+    player.setVolume(100);
+    if (player.getPlayerState() !== 1) player.playVideo();
+    soundBtn.hidden = true;
+  }
+
+  function onReady() {
+    ready = true;
+    player.mute();
+    poster.hidden = true;
+    if (canFullscreen) fsBtn.hidden = false;
+    syncSound();
+    tryPlay();
+  }
+
+  function onState(event) {
+    if (event.data === 1) { finished = false; userPaused = false; }
+    if (event.data === 2) { userPaused = !autoPaused; autoPaused = false; }
+    if (event.data === 0) {
+      // Fim do vídeo: volta para a capa, já com som, e não reinicia sozinho.
+      finished = true;
+      player.unMute();
+      player.cueVideoById(VIDEO_ID);
+    }
+    syncSound();
+  }
+
+  function onError() {
+    // Se o YouTube não permitir o player, a capa vira link direto para o vídeo.
+    ready = false;
+    poster.hidden = false;
+    soundBtn.hidden = true;
+    fsBtn.hidden = true;
+  }
+
+  function createPlayer() {
+    if (requested) return;
+    requested = true;
+    const make = () => {
+      const vars = { rel: 0, playsinline: 1, modestbranding: 1, fs: 1, iv_load_policy: 3, hl: 'pt-BR' };
+      if (/^https?:$/.test(location.protocol)) vars.origin = location.origin;
+      player = new YT.Player(mount, {
+        videoId: VIDEO_ID,
+        width: '100%',
+        height: '100%',
+        playerVars: vars,
+        events: { onReady, onStateChange: onState, onError }
+      });
+    };
+    if (window.YT && window.YT.Player) { make(); return; }
+    const previous = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => { if (previous) previous(); make(); };
+    const script = document.createElement('script');
+    script.src = 'https://www.youtube.com/iframe_api';
+    script.async = true;
+    document.head.appendChild(script);
+  }
+
+  // O player só é carregado perto da seção, para não pesar o início do site.
+  new IntersectionObserver((entries, observer) => {
+    if (entries.some((entry) => entry.isIntersecting)) { observer.disconnect(); createPlayer(); }
+  }, { rootMargin: '700px 0px' }).observe(box);
+
+  // Toca (mudo) ao entrar na tela e pausa ao sair.
+  new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      visible = entry.intersectionRatio >= 0.5;
+      if (!ready) return;
+      if (visible) tryPlay();
+      else if (player.getPlayerState() === 1) { autoPaused = true; player.pauseVideo(); }
+    });
+  }, { threshold: [0, 0.25, 0.5, 0.75, 1] }).observe(frame);
+
+  soundBtn.addEventListener('click', () => { if (ready) withSound(); });
+
+  fsBtn.addEventListener('click', () => {
+    if (!ready) return;
+    withSound();
+    const el = player.getIframe();
+    const request = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (request) { const result = request.call(el); if (result && result.catch) result.catch(() => {}); }
+  });
+  document.addEventListener('fullscreenchange', syncSound);
+})();
+
+/* ===== Workshop de arbitragem: modal, aba do Hero e atalhos ===== */
+(() => {
+  const dialog = document.querySelector('#workshopDialog');
+  if (!dialog) return;
+  const root = document.documentElement;
+  const tab = document.querySelector('.opening__workshop-tab');
+  const opening = document.querySelector('#inicio');
+
+  document.querySelectorAll('[data-open-workshop]').forEach((trigger) => {
+    trigger.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (trigger === tab) tab.classList.add('is-clicked');
+      root.classList.add('athlete-modal-open');
+      if (!dialog.open) dialog.showModal();
+    });
+  });
+
+  // A aba "espia" uma vez, alguns segundos depois da aba de patrocínio.
+  if (tab && opening) {
+    const peek = () => {
+      window.setTimeout(() => tab.classList.add('is-peeking'), 5500);
+      window.setTimeout(() => tab.classList.remove('is-peeking'), 8500);
+    };
+    if (opening.classList.contains('is-ready')) peek();
+    else {
+      const watcher = new MutationObserver(() => {
+        if (opening.classList.contains('is-ready')) { watcher.disconnect(); peek(); }
+      });
+      watcher.observe(opening, { attributes: true, attributeFilter: ['class'] });
+    }
+  }
+
+  dialog.querySelectorAll('[data-close-workshop]').forEach((button) => button.addEventListener('click', () => dialog.close()));
+  dialog.addEventListener('close', () => { root.classList.remove('athlete-modal-open'); tab?.classList.remove('is-clicked'); });
+
+  // Copiar a chave PIX (somente números).
+  const copyBtn = dialog.querySelector('[data-copy-pix]');
+  const status = dialog.querySelector('[data-copy-status]');
+  if (copyBtn) {
+    const value = copyBtn.dataset.copyPix;
+    const done = (ok) => {
+      if (!status) return;
+      status.textContent = ok ? 'CNPJ copiado!' : 'Não foi possível copiar. Selecione o número e copie.';
+      window.setTimeout(() => { status.textContent = ''; }, 3500);
+    };
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(value);
+        done(true);
+      } catch (_) {
+        try {
+          const field = document.createElement('textarea');
+          field.value = value;
+          field.setAttribute('readonly', '');
+          field.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+          dialog.appendChild(field);
+          field.select();
+          const ok = document.execCommand('copy');
+          field.remove();
+          done(ok);
+        } catch (__) { done(false); }
+      }
+    });
+  }
+})();
