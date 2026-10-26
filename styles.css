@@ -640,3 +640,73 @@ dialog.athlete-modal.is-closing::backdrop,dialog.lightbox.is-closing::backdrop,d
   .photo-foot{flex-direction:column-reverse;padding:12px var(--px) 16px}
   .photo-foot .button{width:100%}
 }
+
+/* ===== Entenda a modalidade: vídeo + números ===== */
+.sport-video{min-width:0;align-self:center}
+.sport-video [hidden]{display:none!important}
+.sport-video__frame{position:relative;aspect-ratio:16/9;background:#000;border:6px solid var(--paper,#fff);box-shadow:14px 14px 0 var(--yellow);overflow:hidden}
+.sport-video__frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.sport-video__poster{position:absolute;inset:0;z-index:2;display:block;background:#000}
+.sport-video__poster img{display:block;width:100%;height:100%;object-fit:cover}
+.sport-video__play{position:absolute;left:50%;top:50%;display:grid;place-items:center;width:84px;height:84px;padding-left:6px;transform:translate(-50%,-50%);background:var(--yellow);color:var(--ink);font-size:1.9rem;box-shadow:5px 5px 0 var(--green);transition:transform .2s}
+.sport-video__poster:hover .sport-video__play{transform:translate(-50%,-50%) scale(1.07)}
+.sport-video__sound{position:absolute;inset:0;z-index:3;display:block;width:100%;padding:0;border:0;background:rgba(2,27,99,.12);cursor:pointer}
+.sport-video__sound span{position:absolute;left:14px;top:14px;max-width:calc(100% - 28px);padding:10px 14px;background:var(--yellow);color:var(--ink);font:900 .8rem/1.25 var(--body);letter-spacing:.06em;text-align:left;text-transform:uppercase;box-shadow:4px 4px 0 var(--green);animation:sound-nudge 1.8s ease-in-out infinite}
+.sport-video__sound:hover span,.sport-video__sound:focus-visible span{background:#fff}
+.sport-video__sound:focus-visible{outline:4px solid #fff;outline-offset:-8px}
+@keyframes sound-nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.sport-video__bar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:26px;color:#fff;font-size:.88rem;font-weight:700}
+.sport-video__fs{flex:none;padding:10px 14px;border:2px solid #fff;background:transparent;color:#fff;font:800 .72rem/1 var(--body);letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.sport-video__fs:hover,.sport-video__fs:focus-visible{background:var(--yellow);border-color:var(--yellow);color:var(--ink)}
+.section--sport .sport-facts{grid-column:1/-1;margin-top:clamp(14px,3vw,40px);transform:rotate(-.6deg)}
+.section--sport .sport-facts article{min-height:0;padding:26px 30px}
+.section--sport .sport-facts strong{font-size:clamp(3.4rem,6vw,5.6rem)}
+.section--sport .sport-facts span{margin-top:14px}
+@media(max-width:767px){
+  .sport-video__frame{border-width:4px;box-shadow:9px 9px 0 var(--yellow)}
+  .sport-video__play{width:64px;height:64px;font-size:1.5rem}
+  .sport-video__sound span{left:8px;top:8px;max-width:calc(100% - 16px);padding:7px 10px;font-size:.66rem}
+  .sport-video__bar{margin-top:20px;flex-wrap:wrap}
+  .section--sport .sport-facts{transform:none}
+}
+
+/* ===== Workshop de arbitragem ===== */
+.opening__workshop-tab{--tab-handle:46px;--tab-x:-100%;--tab-y:-50%;position:absolute;z-index:25;left:0;top:50%;display:flex;align-items:center;gap:12px;height:54px;padding:0 0 0 20px;border:2px solid var(--navy);border-left:0;background:#fff;color:var(--navy);font:900 .8rem/1 var(--body);letter-spacing:.12em;white-space:nowrap;cursor:pointer;box-shadow:5px 5px 0 rgba(2,27,99,.45);opacity:0;pointer-events:none;transform:translate(var(--tab-x),var(--tab-y));transition:transform 1s cubic-bezier(.65,0,.35,1),opacity 1s ease}
+.opening__workshop-tab__handle{display:grid;place-items:center;width:var(--tab-handle);height:100%;background:var(--blue);color:#fff;font-size:1.15rem}
+.opening.is-ready .opening__workshop-tab{--tab-x:calc(-100% + var(--tab-handle));opacity:1;pointer-events:auto}
+.opening.is-ready .opening__workshop-tab:hover,.opening.is-ready .opening__workshop-tab:focus-visible,.opening.is-ready .opening__workshop-tab.is-peeking{--tab-x:0px}
+.opening.is-ready .opening__workshop-tab.is-clicked,.opening.is-ready .opening__workshop-tab.is-clicked:hover{--tab-x:-100%;pointer-events:none}
+.opening__workshop-tab:focus-visible{outline:3px solid var(--yellow);outline-offset:-6px}
+@media(max-width:767px){.opening__workshop-tab{--tab-handle:40px;--tab-y:0px;top:auto;bottom:calc(24% + 58px);height:46px;font-size:.7rem;padding-left:14px}}
+@media(prefers-reduced-motion:reduce){.opening__workshop-tab{transition-duration:.01s}}
+
+.schedule-seal{display:inline-flex;width:fit-content;max-width:100%;flex-wrap:wrap;align-items:center;gap:4px 12px;margin-top:16px;padding:10px 18px;background:var(--yellow);color:var(--ink);font:800 .78rem/1.25 var(--body);letter-spacing:.06em;text-align:left;text-decoration:none;text-transform:uppercase;cursor:pointer;clip-path:polygon(7px 0,100% 0,calc(100% - 7px) 100%,0 100%);transition:background .2s}
+.schedule-seal b{font:900 1.25rem/1 var(--display);letter-spacing:.04em}
+.schedule-seal em{font-style:normal;text-decoration:underline;text-underline-offset:3px}
+.schedule-seal:hover{background:#fff}
+.schedule-seal:focus-visible{outline:3px solid #fff;outline-offset:3px}
+
+.workshop-body{min-height:0;overflow:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2.4vw,28px);align-content:start;padding:4px 10px 14px 0}
+.workshop-body .public-step{align-content:start;gap:12px}
+.workshop-body .eyebrow{margin:0}
+.workshop-body h3{margin:0;font:800 clamp(1.4rem,2.4vw,2rem)/1.05 var(--display);text-transform:uppercase}
+.workshop-body p:not(.eyebrow){margin:0;color:#dce8ff}
+.workshop-body .workshop-deadline{color:var(--yellow);font-weight:800}
+.workshop-body .button{justify-self:start}
+.workshop-prices{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.workshop-prices li{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:6px 14px;padding:10px 12px;border:2px solid rgba(255,255,255,.35);background:rgba(2,27,99,.4)}
+.workshop-prices strong{color:var(--yellow);font:900 1.9rem/1 var(--display);white-space:nowrap}
+.workshop-prices span{color:#fff;font-size:.88rem;font-weight:600}
+.workshop-steps{display:grid;gap:16px;margin:0;padding:0;list-style:none;counter-reset:ws}
+.workshop-steps li{display:grid;gap:8px;justify-items:start;counter-increment:ws;padding-left:46px;position:relative}
+.workshop-steps li:before{content:counter(ws);position:absolute;left:0;top:0;display:grid;place-items:center;width:34px;height:34px;background:var(--yellow);color:var(--ink);font:900 1.2rem/1 var(--display)}
+.workshop-steps b{color:#fff;font:800 1.2rem/1.1 var(--display);text-transform:uppercase;letter-spacing:.02em}
+.workshop-steps span{color:#dce8ff;font-size:.92rem}
+.workshop-pix{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.workshop-pix code{padding:9px 12px;border:2px solid rgba(255,255,255,.5);background:rgba(2,27,99,.6);color:#fff;font:700 1rem/1 var(--body);letter-spacing:.04em}
+.workshop-copy-status{color:var(--yellow);font-size:.8rem;font-weight:800}
+.faq-list a.text-link{display:inline-block;margin-top:8px}
+@media(max-width:767px){.workshop-body{grid-template-columns:1fr}.workshop-prices strong{font-size:1.6rem}}
+.workshop-steps .nowrap{white-space:nowrap;color:#fff;font-weight:700}
+@media(min-width:1101px) and (max-width:1240px){.site-nav{gap:10px}.site-nav a{font-size:.76rem}}
+@media(min-width:1241px) and (max-width:1340px){.site-nav{gap:16px}.site-nav a{font-size:.82rem}}
