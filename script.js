@@ -261,19 +261,7 @@ document.querySelectorAll('.reveal').forEach((element) => observer.observe(eleme
    Em telas pequenas (ou baixas) o formulário vira duas etapas para caber sem rolagem. */
 const registrationDialog = document.querySelector('#registrationDialog');
 (() => {
-  const FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSd6-iEpmzYzax9vq_uNYFHXV3ZPPMA8jFhDw2IMvPw2T9z0vw/formResponse';
-  const ENTRY = {
-    nome: 'entry.1754534373',
-    idade: 'entry.986654450',
-    telefone: 'entry.373158959',
-    sexo: 'entry.791056516',
-    cidade: 'entry.1478208802',
-    bairro: 'entry.504945486',
-    atividade: 'entry.580061454',
-    qual: 'entry.2047383611',
-    conhecia: 'entry.1268736641',
-    contato: 'entry.518672639',
-  };
+  const FORM_ACTION = 'https://script.google.com/macros/s/AKfycbw04lQNjf_MEgleSLvtfx7r4A3kbBYWwCGZ49EgHRRgJYs4CtgBwPngUHhj0i1PZoE/exec';
   const OPTIONAL = ['sexo', 'cidade', 'bairro', 'atividade', 'qual', 'conhecia', 'contato'];
 
   const form = document.querySelector('#registrationForm');
@@ -377,21 +365,30 @@ const registrationDialog = document.querySelector('#registrationDialog');
   async function send() {
     if (sending) return;
     if (!validateRequired()) { if (isStepped()) setStep(1); return; }
-    const params = new URLSearchParams();
-    params.append(ENTRY.nome, field('nome').value.trim());
-    params.append(ENTRY.idade, String(+field('idade').value));
-    params.append(ENTRY.telefone, formatPhone(field('telefone').value));
+    const payload = {
+      kind: 'publico',
+      protocolo: 'PUB-' + new Date().toISOString().slice(0, 10).replace(/-/g, '') + '-' + Math.random().toString(36).slice(2, 6).toUpperCase(),
+      origem: 'site',
+      nome: field('nome').value.trim(),
+      idade: String(+field('idade').value),
+      telefone: formatPhone(field('telefone').value),
+    };
     OPTIONAL.forEach((name) => {
       const input = form.querySelector(`[name="${name}"]:checked`) || form.querySelector(`input[type="text"][name="${name}"]`);
       const value = input ? input.value.trim() : '';
-      if (value) params.append(ENTRY[name], value);
+      if (value) payload[name] = value;
     });
     sending = true;
     btnSubmit.disabled = true;
     btnSubmit.textContent = 'Enviando…';
     showWarn('');
     try {
-      await fetch(FORM_ACTION, { method: 'POST', mode: 'no-cors', body: params });
+      const ctrl = new AbortController();
+      const timer = window.setTimeout(() => ctrl.abort(), 20000);
+      const res = await fetch(FORM_ACTION, { method: 'POST', redirect: 'follow', body: JSON.stringify(payload), signal: ctrl.signal });
+      window.clearTimeout(timer);
+      const out = await res.json();
+      if (!out || !out.ok) throw new Error('rejeitado');
       body.hidden = true;
       foot.hidden = true;
       success.hidden = false;
@@ -829,11 +826,11 @@ document.addEventListener('keydown', (event) => {
     });
   });
 
-  // A aba "espia" uma vez, alguns segundos depois da aba de patrocínio.
+  // A aba "espia" uma vez, junto com a aba de patrocínio (mesmos tempos).
   if (tab && opening) {
     const peek = () => {
-      window.setTimeout(() => tab.classList.add('is-peeking'), 5500);
-      window.setTimeout(() => tab.classList.remove('is-peeking'), 8500);
+      window.setTimeout(() => tab.classList.add('is-peeking'), 1000);
+      window.setTimeout(() => tab.classList.remove('is-peeking'), 4000);
     };
     if (opening.classList.contains('is-ready')) peek();
     else {
