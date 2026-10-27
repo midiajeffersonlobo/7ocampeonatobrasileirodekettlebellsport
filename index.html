@@ -13,7 +13,7 @@
   <link rel="preload" as="image" href="assets/opening/background-foreground-transparent.webp">
   <link rel="preload" as="image" href="assets/opening/otimizados/01-titulo.png">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2307141f'/%3E%3Cpath d='M15 14h36L31 52H18l17-27H15z' fill='%23ffd20a'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20261026a">
+  <link rel="stylesheet" href="styles.css?v=20261027a">
   <script>document.documentElement.classList.add('js');
   // Ao atualizar a página (F5), sempre volta para o topo.
   try {
@@ -820,6 +820,7 @@
             <li><strong>R$ 120</strong><span>Filiados na CONBRAKS, federações estaduais ou associações de kettlebell</span></li>
             <li><strong>R$ 150</strong><span>Não participantes do campeonato e não filiados</span></li>
           </ul>
+          <a class="button button--ghost ws-doubts" href="https://wa.me/5555999765702?text=Ol%C3%A1%2C%20Christian!%20Tenho%20d%C3%BAvidas%20sobre%20o%20workshop%20de%20arbitragem%20CONBRAKS%20Level%201%20durante%20o%207%C2%BA%20Campeonato%20Brasileiro%20de%20Kettlebell%20Sport." target="_blank" rel="noopener">Dúvidas sobre o curso ↗</a>
         </article>
         <article class="public-step sponsor-card--expo">
           <p class="eyebrow">Como se inscrever</p>
@@ -828,7 +829,7 @@
             <li>
               <b>Preencha o formulário</b>
               <span>Faça a inscrição até 19 de novembro.</span>
-              <a class="button button--yellow" href="https://forms.gle/z4wRWLJM5zc8unM97" target="_blank" rel="noopener">Abrir formulário ↗</a>
+              <button class="button button--yellow" type="button" data-ws-open-form>Abrir formulário</button>
             </li>
             <li>
               <b>Faça o PIX</b>
@@ -841,20 +842,138 @@
             </li>
             <li>
               <b>Envie o comprovante</b>
-              <span>Mande o comprovante pelo WhatsApp para Christian Thier, no número <span class="nowrap">(55) 99976-5702</span>.</span>
-              <a class="button button--yellow" href="https://wa.me/5555999765702?text=Ol%C3%A1%2C%20Christian!%20Segue%20o%20comprovante%20da%20minha%20inscri%C3%A7%C3%A3o%20no%20workshop%20de%20arbitragem%20CONBRAKS%20Level%201%20(20%2F11)." target="_blank" rel="noopener">Enviar comprovante ↗</a>
+              <span>Anexe o comprovante do Pix aqui no site. Se preferir, envie pelo WhatsApp para Christian Thier, <span class="nowrap">(55) 99976-5702</span>.</span>
+              <button class="button button--yellow" type="button" data-ws-open-proof>Enviar comprovante</button>
             </li>
           </ol>
         </article>
       </div>
-      <footer class="athlete-modal__foot sponsor-foot">
-        <a class="button button--ghost" href="https://wa.me/5555999765702?text=Ol%C3%A1%2C%20Christian!%20Tenho%20d%C3%BAvidas%20sobre%20o%20workshop%20de%20arbitragem%20CONBRAKS%20Level%201%20durante%20o%207%C2%BA%20Campeonato%20Brasileiro%20de%20Kettlebell%20Sport." target="_blank" rel="noopener">Dúvidas sobre o curso ↗</a>
-        <button class="button button--ghost" type="button" data-close-workshop>Fechar</button>
+    </div>
+  </dialog>
+
+  <!-- Workshop · passo 1: formulário de inscrição (dentro do site, grava na planilha única) -->
+  <dialog class="athlete-modal public-modal ws-modal" id="wsFormDialog" aria-labelledby="wsFormTitle">
+    <form class="athlete-modal__card" id="wsForm" novalidate>
+      <button class="dialog-close" type="button" data-ws-close aria-label="Fechar">×</button>
+      <header class="athlete-modal__head">
+        <p class="eyebrow">Workshop de arbitragem · Passo 1 de 3</p>
+        <h2 id="wsFormTitle">Inscrição no curso</h2>
+        <p>Inscrição individual no curso de arbitragem Level 1 da CONBRAKS · 20 de novembro, 17h30.</p>
+      </header>
+      <div class="public-body ws-formbody">
+        <fieldset class="public-step public-step--1">
+          <legend>Seus dados <span>Obrigatório</span></legend>
+          <label class="public-field">Nome<input type="text" name="nome" autocomplete="name" required maxlength="120"><small class="public-error" hidden></small></label>
+          <label class="public-field">E-mail<input type="email" name="email" autocomplete="email" inputmode="email" required maxlength="120"><small class="public-error" hidden></small></label>
+          <label class="public-field">Cidade / Estado<input type="text" name="cidade_estado" autocomplete="address-level2" placeholder="Ex.: Recife / PE" required maxlength="80"><small class="public-error" hidden></small></label>
+          <label class="public-field">Telefone com DDD <em class="ws-opt-tag">opcional</em><input type="tel" name="telefone" autocomplete="tel-national" inputmode="tel" placeholder="(81) 9.9999-9999" maxlength="16"></label>
+        </fieldset>
+        <fieldset class="public-step ws-step-b">
+          <legend>Sua inscrição <span>Obrigatório</span></legend>
+          <label class="public-field">É filiado à CONBRAKS ou a alguma federação ou associação de kettlebell? Se sim, qual? <em class="ws-opt-tag">opcional</em><input type="text" name="filiacao" maxlength="120"></label>
+          <div class="ws-cats" role="radiogroup" aria-label="Opção e valor de investimento no curso">
+            <span class="public-choice__label">Selecione a opção / valor de investimento no curso</span>
+            <label class="ws-cat"><input type="radio" name="categoria" value="atleta"><span><strong>R$ 80</strong>Atleta participante do 7º Campeonato Brasileiro Recife 2026</span></label>
+            <label class="ws-cat"><input type="radio" name="categoria" value="filiado"><span><strong>R$ 120</strong>Atleta filiado à CONBRAKS, federação ou associação de kettlebell</span></label>
+            <label class="ws-cat"><input type="radio" name="categoria" value="geral"><span><strong>R$ 150</strong>Não filiado e não participante do campeonato</span></label>
+            <small class="public-error" data-ws-cat-error hidden></small>
+          </div>
+          <label class="ws-check"><input type="checkbox" name="ciente" required><span>Estou ciente de que o curso tem 2 horas, começa às 17h30 do dia 20/11, no Ginásio do Círculo Militar do Recife.</span></label>
+          <label class="ws-check"><input type="checkbox" name="lgpd" required><span>Autorizo o uso dos meus dados pela organização apenas para esta inscrição (LGPD).</span></label>
+          <small class="public-error" data-ws-check-error hidden></small>
+        </fieldset>
+        <input class="ws-hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      </div>
+      <footer class="athlete-modal__foot public-foot">
+        <p class="athlete-warn" data-ws-warn role="alert" hidden></p>
+        <div class="public-actions">
+          <button class="button button--ghost" type="button" data-ws-close>← Voltar</button>
+          <button class="button button--yellow" type="submit" data-ws-submit>Enviar e ir para o pagamento →</button>
+        </div>
+        <small class="public-privacy">Seus dados serão usados apenas pela organização do evento.</small>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- Workshop · passo 2: pagamento por Pix -->
+  <dialog class="athlete-modal public-modal ws-modal" id="wsPixDialog" aria-labelledby="wsPixTitle">
+    <div class="athlete-modal__card">
+      <button class="dialog-close" type="button" data-ws-close aria-label="Fechar">×</button>
+      <header class="athlete-modal__head" data-ws-pay-head>
+        <p class="eyebrow">Workshop de arbitragem · Passo 2 de 3</p>
+        <h2 id="wsPixTitle">Faça o PIX</h2>
+        <p>Inscrição <b data-ws-proto>—</b> registrada. Falta o pagamento para confirmar sua vaga: pague até 19 de novembro.</p>
+      </header>
+      <div class="public-body ws-paybody" data-ws-pay>
+        <div class="public-step public-step--1 ws-amount">
+          <p class="eyebrow">Valor da sua inscrição</p>
+          <strong class="ws-amount__value" data-ws-valor>R$ —</strong>
+          <span data-ws-categoria>—</span>
+        </div>
+        <div class="public-step ws-pixbox">
+          <p class="eyebrow">Chave Pix · CNPJ</p>
+          <div class="workshop-pix">
+            <code>53.107.237/0001-32</code>
+            <button class="button button--ghost" type="button" data-ws-copy="53107237000132">Copiar CNPJ</button>
+            <span class="workshop-copy-status" data-ws-copy-status role="status" aria-live="polite"></span>
+          </div>
+          <p>Favorecido: Confederação Brasileira de Kettlebell Sport (CONBRAKS) · Banco Sicredi.</p>
+          <p class="workshop-deadline">Depois de pagar, envie o comprovante no próximo passo.</p>
+        </div>
+      </div>
+      <div class="public-success" data-ws-later hidden>
+        <div class="public-success__icon" aria-hidden="true">✓</div>
+        <h3>Inscrição registrada!</h3>
+        <p>Seu protocolo é <b data-ws-proto>—</b>. Você pode pagar até 19 de novembro e enviar o comprovante depois, no passo 3 do workshop. Enviamos os dados de pagamento para o seu e-mail.</p>
+        <button class="button button--yellow" type="button" data-ws-close>Fechar</button>
+      </div>
+      <footer class="athlete-modal__foot public-foot" data-ws-pay-foot>
+        <div class="public-actions">
+          <button class="button button--ghost" type="button" data-ws-later-btn>Pagar depois</button>
+          <button class="button button--yellow" type="button" data-ws-to-proof>Já paguei, enviar comprovante →</button>
+        </div>
       </footer>
     </div>
   </dialog>
 
+  <!-- Workshop · passo 3: envio do comprovante -->
+  <dialog class="athlete-modal public-modal ws-modal" id="wsProofDialog" aria-labelledby="wsProofTitle">
+    <form class="athlete-modal__card" id="wsProofForm" novalidate>
+      <button class="dialog-close" type="button" data-ws-close aria-label="Fechar">×</button>
+      <header class="athlete-modal__head" data-ws-proof-head>
+        <p class="eyebrow">Workshop de arbitragem · Passo 3 de 3</p>
+        <h2 id="wsProofTitle">Envie o comprovante</h2>
+        <p data-ws-proof-intro>Anexe a foto ou o PDF do comprovante do Pix para confirmar sua inscrição.</p>
+      </header>
+      <div class="public-body ws-single" data-ws-proof-body>
+        <div class="public-step public-step--1">
+          <div class="ws-lookup" data-ws-lookup hidden>
+            <p class="ws-hint">Informe o protocolo recebido ao se inscrever (WSH-…) e o e-mail usado na inscrição.</p>
+            <label class="public-field">Protocolo<input type="text" name="protocolo" placeholder="WSH-20261120-AB12" maxlength="40" autocapitalize="characters"><small class="public-error" hidden></small></label>
+            <label class="public-field">E-mail da inscrição<input type="email" name="email" autocomplete="email" maxlength="120"><small class="public-error" hidden></small></label>
+          </div>
+          <p class="ws-hint" data-ws-known hidden>Inscrição <b data-ws-proto>—</b></p>
+          <label class="public-field ws-file">Comprovante (JPG, PNG ou PDF, até 5 MB)<input type="file" name="arquivo" accept="image/jpeg,image/png,image/webp,application/pdf"><small class="public-error" hidden></small></label>
+          <a class="button button--ghost ws-alt" href="https://wa.me/5555999765702?text=Ol%C3%A1%2C%20Christian!%20Segue%20o%20comprovante%20da%20minha%20inscri%C3%A7%C3%A3o%20no%20workshop%20de%20arbitragem%20CONBRAKS%20Level%201%20(20%2F11)." target="_blank" rel="noopener">Prefiro enviar por WhatsApp ↗</a>
+        </div>
+      </div>
+      <div class="public-success" data-ws-proof-done hidden>
+        <div class="public-success__icon" aria-hidden="true">✓</div>
+        <h3>Comprovante recebido!</h3>
+        <p>Obrigado. A organização confere o pagamento e confirma a sua vaga. Protocolo <b data-ws-proto>—</b>.</p>
+        <button class="button button--yellow" type="button" data-ws-close>Fechar</button>
+      </div>
+      <footer class="athlete-modal__foot public-foot" data-ws-proof-foot>
+        <p class="athlete-warn" data-ws-warn role="alert" hidden></p>
+        <div class="public-actions">
+          <button class="button button--ghost" type="button" data-ws-close>← Voltar</button>
+          <button class="button button--yellow" type="submit" data-ws-proof-submit>Enviar comprovante</button>
+        </div>
+      </footer>
+    </form>
+  </dialog>
+
   <dialog class="lightbox" id="galleryDialog" aria-label="Foto ampliada"><button type="button" data-close-gallery aria-label="Fechar">×</button><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt=""></dialog>
-  <script src="script.js?v=20261026a"></script>
+  <script src="script.js?v=20261027a"></script>
 </body>
 </html>

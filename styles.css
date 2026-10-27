@@ -710,3 +710,42 @@ dialog.athlete-modal.is-closing::backdrop,dialog.lightbox.is-closing::backdrop,d
 .workshop-steps .nowrap{white-space:nowrap;color:#fff;font-weight:700}
 @media(min-width:1101px) and (max-width:1240px){.site-nav{gap:10px}.site-nav a{font-size:.76rem}}
 @media(min-width:1241px) and (max-width:1340px){.site-nav{gap:16px}.site-nav a{font-size:.82rem}}
+
+/* ===== Workshop: formulário, Pix e comprovante em modais próprios ===== */
+.workshop-body .ws-doubts{justify-self:start;min-height:40px;padding:8px 16px;font-size:.78rem}
+.ws-modal{z-index:60}
+.ws-formbody{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}
+.ws-formbody .ws-hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.ws-opt-tag{font-style:normal;font-weight:600;font-size:.7rem;color:rgba(220,232,255,.65);letter-spacing:.06em;text-transform:uppercase}
+.ws-step-b{gap:12px}
+.ws-cats{display:grid;gap:8px}
+.ws-cat{position:relative;display:block;cursor:pointer}
+.ws-cat input{position:absolute;opacity:0;width:1px;height:1px}
+.ws-cat span{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:4px 14px;padding:10px 12px;border:2px solid rgba(255,255,255,.45);background:rgba(2,27,99,.4);color:#fff;font-size:.86rem;font-weight:600;line-height:1.3;transition:border-color .15s,background .15s}
+.ws-cat strong{color:var(--yellow);font:900 1.6rem/1 var(--display);white-space:nowrap}
+.ws-cat:hover span{border-color:#fff}
+.ws-cat input:checked+span{border-color:var(--yellow);background:rgba(255,213,0,.14)}
+.ws-cat input:focus-visible+span{outline:3px solid var(--yellow);outline-offset:2px}
+.ws-check{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;color:#dce8ff;font-size:.84rem;font-weight:600;line-height:1.35;cursor:pointer}
+.ws-check input{width:20px;height:20px;margin:1px 0 0;accent-color:var(--yellow)}
+.ws-paybody{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr)}
+.ws-amount{align-content:center;justify-items:start}
+.ws-amount .eyebrow,.ws-pixbox .eyebrow{margin:0}
+.ws-amount__value{font:900 clamp(3rem,7vw,5.2rem)/1 var(--display);color:var(--yellow)}
+.ws-amount span{color:#fff;font-weight:600}
+.ws-pixbox p:not(.eyebrow){margin:0;color:#dce8ff}
+.ws-single{grid-template-columns:minmax(0,640px);justify-content:center}
+.ws-hint{margin:0;color:#dce8ff;font-size:.9rem}
+.ws-file input{height:auto;padding:12px;font-size:.9rem}
+.ws-alt{justify-self:start}
+@media(max-width:767px){.ws-formbody,.ws-paybody{grid-template-columns:1fr}.ws-cat strong{font-size:1.35rem}}
+
+/* Workshop: compacta o modal para caber sem rolagem em notebooks (1366×768) */
+.workshop-modal h2{font-size:clamp(1.7rem,3.1vw,2.5rem);margin-bottom:4px}
+.workshop-modal .athlete-modal__head{margin-bottom:12px}
+.workshop-body .public-step{padding:16px 20px;gap:10px}
+.workshop-steps{gap:12px}
+.workshop-body .workshop-prices li{padding:8px 12px}
+.workshop-body .workshop-prices strong{font-size:1.7rem}
+.ws-formbody .public-step{gap:10px;padding:14px 18px}
+.ws-formbody .public-field input{height:42px}

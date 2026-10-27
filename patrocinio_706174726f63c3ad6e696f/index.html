@@ -57,6 +57,10 @@ background:linear-gradient(112deg,var(--navy) 0 58%,var(--green) 58% 59.1%,var(-
 .hero:before{content:"7";position:absolute;z-index:-1;right:1vw;top:-5vw;color:rgba(255,213,0,.15);font:900 min(62vw,680px)/.8 var(--display);transform:skew(-7deg);pointer-events:none}
 .hero__in{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 clamp(24px,5vw,72px);align-items:center}
 .hero__plate{margin:0;display:grid;place-items:center;width:clamp(260px,26vw,340px);aspect-ratio:1.28;padding:clamp(22px,2.6vw,34px);background:#fff;box-shadow:10px 10px 0 var(--green)}
+.hd__home{flex:none;margin:0;min-height:42px;padding:9px 16px;font-size:.74rem;letter-spacing:.1em;white-space:nowrap}
+.hero__plate.hero__plate--photo{position:relative;padding:0;overflow:visible;margin-bottom:26px}
+.hero__plate.hero__plate--photo img{width:100%;height:100%;object-fit:cover}
+.hero__plate--photo figcaption{position:absolute;left:0;top:calc(100% + 16px);font:600 .62rem/1 var(--body);letter-spacing:.08em;text-transform:lowercase;color:rgba(255,255,255,.6)}
 .hero__plate img{display:block;max-width:100%;max-height:100%;object-fit:contain}
 .kick{margin:0 0 18px;color:var(--yellow);font:800 .76rem/1.3 var(--body);letter-spacing:.18em;text-transform:uppercase}
 .hero h1{max-width:11ch;margin:0 0 22px;font:900 clamp(3.7rem,12.5vw,6rem)/.88 var(--display);letter-spacing:-.01em;text-transform:uppercase;text-wrap:balance;text-shadow:4px 4px 0 var(--navy-d)}
@@ -190,6 +194,7 @@ summary:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 }
 @media(max-width:620px){
  .hd__logos img{width:36px;height:36px}.btn{width:auto}
+ .hero h1{max-width:none;font-size:clamp(2rem,11.5vw,3.4rem)}
  .hero__cta .btn{flex:1 1 100%}
  .btn--home-ft{justify-self:stretch}
  .panel{box-shadow:7px 7px 0 var(--green)}.pix{box-shadow:7px 7px 0 var(--green)}
@@ -321,7 +326,7 @@ html.lb-open{overflow:hidden}
 <body>
 <a class="skip" href="#proposta">Pular para o conteúdo</a>
 <header class="hd" id="hd">
-  <a class="hd__logos" href="#topo" aria-label="Início da proposta"><img src="/assets/logos/logo-conbraks.svg" alt="CONBRAKS" width="46" height="46"><img src="/assets/logos/logo-fpeks.svg" alt="FPEKSPORT" width="46" height="46"><img src="/assets/logos/logo-wksf.svg" alt="WKSF Brasil" width="46" height="46"></a>
+  <a class="btn btn--ghost btn--home hd__home" href="/"><span aria-hidden="true">←</span> Página principal</a>
   <div class="hd__ttl"><b>Proposta de patrocínio</b><small>7º Brasileiro de Kettlebell Sport</small></div>
   <nav id="nav" aria-label="Seções da proposta"><a href="#resumo">Resumo</a><a href="#porque">Por que patrocinar</a><a href="#cotas">Cotas</a><a href="#ativacao">Ativação</a><a href="#ambiente">Ambiente</a><a href="#condicoes">Condições</a><a href="#participar">Como participar</a><a href="#interesse">Enviar interesse</a></nav>
   <a class="btn btn--sm" href="#interesse">Quero patrocinar</a>
@@ -330,7 +335,6 @@ html.lb-open{overflow:hidden}
 
 <section class="hero" id="topo">
   <div class="hero__in">
-   <a class="btn btn--ghost btn--home" href="/"><span aria-hidden="true">←</span> Página principal</a>
    <div class="hero__txt">
     <p class="kick">Proposta de patrocínio</p>
     <h1>Seja patrocinador</h1>
@@ -338,7 +342,7 @@ html.lb-open{overflow:hidden}
     <p class="hero__ev">7º Campeonato Brasileiro de Kettlebell Sport · Recife, 19 a 22 de novembro de 2026</p>
     <div class="hero__cta"><a class="btn " href="#interesse">Quero patrocinar</a> <a class="btn btn--ghost" href="Proposta_Patrocinio_2026.pdf" data-pdf="Proposta_Patrocinio_2026.pdf" download>Baixar proposta em PDF</a> <a class="btn btn--ghost" href="https://wa.me/5581996484250?text=Ol%C3%A1%2C%20quero%20falar%20com%20a%20organiza%C3%A7%C3%A3o%20sobre%20patroc%C3%ADnio%20ou%20exposi%C3%A7%C3%A3o%20no%207%C2%BA%20Campeonato%20Brasileiro%20de%20Kettlebell%20Sport." target="_blank" rel="noopener">Falar no WhatsApp</a></div>
    </div>
-   <figure class="hero__plate"><img src="/assets/logos/logo-conbraks.svg" alt="Logomarca CONBRAKS"></figure>
+   <figure class="hero__plate hero__plate--photo"><img src="/assets/galeria/03-arena-sinalizacao.jpg" alt="Ilustração da sinalização e dos patrocinadores na arena do campeonato" width="1600" height="639" fetchpriority="high"><figcaption>imagem meramente ilustrativa</figcaption></figure>
   </div>
 </section>
 
