@@ -874,3 +874,31 @@ document.addEventListener('keydown', (event) => {
     });
   }
 })();
+
+/* ===== Abas laterais do Hero no celular: mesmo comportamento do desktop =====
+   No desktop a aba se expande ao passar o mouse e recolhe ao sair. No toque não existe "hover":
+   o 1º toque expande a aba (recolhe sozinha após alguns segundos ou ao tocar fora) e o 2º toque, com a aba aberta, abre o modal. */
+(() => {
+  if (!window.matchMedia('(hover: none)').matches) return;
+  const tabs = [...document.querySelectorAll('.opening__sponsor-tab, .opening__workshop-tab')];
+  if (!tabs.length) return;
+  const timers = new WeakMap();
+  const collapse = (tab) => { window.clearTimeout(timers.get(tab)); tab.classList.remove('is-peeking'); };
+  const expand = (tab) => {
+    tabs.forEach((other) => { if (other !== tab) collapse(other); });
+    tab.classList.add('is-peeking');
+    window.clearTimeout(timers.get(tab));
+    timers.set(tab, window.setTimeout(() => collapse(tab), 3500));
+  };
+  document.addEventListener('click', (event) => {
+    const tab = event.target.closest('.opening__sponsor-tab, .opening__workshop-tab');
+    if (!tab) { tabs.forEach(collapse); return; }
+    if (!tab.classList.contains('is-peeking')) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      expand(tab);
+    } else {
+      collapse(tab); // 2º toque: deixa o clique seguir e abrir o modal
+    }
+  }, true);
+})();
