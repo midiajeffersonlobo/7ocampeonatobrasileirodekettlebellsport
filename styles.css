@@ -749,3 +749,38 @@ dialog.athlete-modal.is-closing::backdrop,dialog.lightbox.is-closing::backdrop,d
 .workshop-body .workshop-prices strong{font-size:1.7rem}
 .ws-formbody .public-step{gap:10px;padding:14px 18px}
 .ws-formbody .public-field input{height:42px}
+
+/* Realização e organização: faixa única com os 3 fundos coloridos em degradê (sem círculos) */
+.section--organizers .logo-row{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;
+  min-height:0;padding:clamp(18px,2.6vw,34px) 0;border:0;overflow:visible;
+  background:linear-gradient(90deg,#031c68 0%,#031c68 20%,#0643a0 42%,#0643a0 58%,#07883f 80%,#07883f 100%);
+  box-shadow:14px 14px 0 #056a31;outline:1px solid rgba(255,255,255,.14);outline-offset:-1px;
+}
+.section--organizers .logo-row a:nth-child(n){
+  position:relative;display:block;justify-self:stretch;width:auto;min-width:0;
+  height:clamp(170px,19vw,260px);aspect-ratio:auto;padding:0;
+  border:0;border-radius:0;overflow:visible;box-shadow:none;background:none;
+}
+.section--organizers .logo-row a:nth-child(n) img{
+  position:absolute;top:0;bottom:0;left:clamp(8px,1.5vw,24px);right:clamp(8px,1.5vw,24px);
+  width:calc(100% - 2*clamp(8px,1.5vw,24px));height:100%;max-width:none;max-height:none;object-fit:contain;
+  transform-origin:center;filter:drop-shadow(0 6px 10px rgba(0,10,43,.30));
+}
+.section--organizers .logo-row a:nth-child(1) img{transform:scale(1.06)}
+.section--organizers .logo-row a:nth-child(2) img{transform:scale(1.5)}
+.section--organizers .logo-row a:nth-child(3) img{transform:scale(1.2)}
+@media(max-width:1100px){
+  .section--organizers .logo-row{box-shadow:10px 10px 0 #056a31}
+}
+@media(max-width:767px){
+  .section--organizers .logo-row{
+    grid-template-columns:1fr;padding:14px 0;box-shadow:8px 8px 0 #056a31;
+    background:linear-gradient(180deg,#031c68 0%,#031c68 20%,#0643a0 42%,#0643a0 58%,#07883f 80%,#07883f 100%);
+  }
+  .section--organizers .logo-row a:nth-child(n){width:auto;height:min(190px,46vw)}
+  .section--organizers .logo-row a:nth-child(n) img{left:16px;right:16px;width:calc(100% - 32px)}
+  .section--organizers .logo-row a:nth-child(2) img{transform:scale(1.9)}
+  .section--organizers .logo-row a:nth-child(3) img{transform:scale(1.4)}
+  .section--organizers .logo-row a:nth-child(1) img{transform:scale(1.1)}
+}
