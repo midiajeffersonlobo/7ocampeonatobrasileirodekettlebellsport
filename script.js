@@ -902,3 +902,239 @@ document.addEventListener('keydown', (event) => {
     }
   }, true);
 })();
+
+/* ===== Workshop: inscrição dentro do site (1 formulário → 2 Pix → 3 comprovante) =====
+   Tudo grava na planilha única (aba "Workshop") pelo mesmo endpoint dos outros formulários. */
+(() => {
+  const ENDPOINT = 'https://script.google.com/macros/s/AKfycbw04lQNjf_MEgleSLvtfx7r4A3kbBYWwCGZ49EgHRRgJYs4CtgBwPngUHhj0i1PZoE/exec';
+  const WA = 'https://wa.me/5555999765702';
+  const CATS = {
+    atleta: { valor: 80, label: 'Atleta participante do 7º Campeonato Brasileiro Recife 2026' },
+    filiado: { valor: 120, label: 'Atleta filiado à CONBRAKS, federação ou associação de kettlebell' },
+    geral: { valor: 150, label: 'Não filiado e não participante do campeonato' },
+  };
+  const $ = (id) => document.getElementById(id);
+  const dlgForm = $('wsFormDialog'), dlgPix = $('wsPixDialog'), dlgProof = $('wsProofDialog');
+  if (!dlgForm || !dlgPix || !dlgProof) return;
+  const form = $('wsForm'), proofForm = $('wsProofForm');
+  const state = { protocolo: '', email: '', valor: 0, categoria: '' };
+  const wait = (ms) => new Promise((r) => window.setTimeout(r, ms));
+  const emailOk = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+
+  function maskPhone(v) {
+    const d = v.replace(/\D/g, '').slice(0, 11);
+    if (d.length <= 2) return d;
+    if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+    if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+    return `(${d.slice(0, 2)}) ${d.slice(2, 3)}.${d.slice(3, 7)}-${d.slice(7)}`;
+  }
+  const phone = form.elements.telefone;
+  phone.addEventListener('input', () => { phone.value = maskPhone(phone.value); });
+
+  const err = (input, msg) => {
+    const small = input.closest('label')?.querySelector('.public-error');
+    input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+    if (small) { small.textContent = msg || ''; small.hidden = !msg; }
+  };
+  const warn = (dlg, html) => {
+    const p = dlg.querySelector('[data-ws-warn]');
+    if (!p) return;
+    p.innerHTML = html || '';
+    p.hidden = !html;
+  };
+  const fillProto = () => {
+    document.querySelectorAll('[data-ws-proto]').forEach((el) => { el.textContent = state.protocolo || '—'; });
+  };
+  const open = (dlg) => { if (!dlg.open) dlg.showModal(); };
+
+  document.querySelectorAll('[data-ws-close]').forEach((btn) => {
+    btn.addEventListener('click', () => btn.closest('dialog').close());
+  });
+
+  /* limpa os avisos de erro assim que a pessoa corrige o campo */
+  form.addEventListener('input', (event) => {
+    const t = event.target;
+    if (t.getAttribute && t.getAttribute('aria-invalid') === 'true') err(t, '');
+    if (t.name === 'categoria') { const c = form.querySelector('[data-ws-cat-error]'); c.hidden = true; }
+    if (t.name === 'ciente' || t.name === 'lgpd') { const c = form.querySelector('[data-ws-check-error]'); if (form.elements.ciente.checked && form.elements.lgpd.checked) c.hidden = true; }
+    if (!form.querySelector('[aria-invalid="true"]') && form.querySelector('[data-ws-cat-error]').hidden && form.querySelector('[data-ws-check-error]').hidden) warn(dlgForm, '');
+  });
+  form.addEventListener('change', (event) => { if (event.target.type === 'radio' || event.target.type === 'checkbox') form.dispatchEvent(new Event('input')); });
+
+  /* Passo 1 · abrir o formulário */
+  document.querySelectorAll('[data-ws-open-form]').forEach((btn) => btn.addEventListener('click', () => {
+    form.dataset.t0 = String(Date.now());
+    warn(dlgForm, '');
+    open(dlgForm);
+    form.elements.nome.focus({ preventScroll: true });
+  }));
+
+  async function post(payload) {
+    const ctrl = new AbortController();
+    const timer = window.setTimeout(() => ctrl.abort(), 30000);
+    try {
+      const res = await fetch(ENDPOINT, { method: 'POST', redirect: 'follow', body: JSON.stringify(payload), signal: ctrl.signal });
+      const out = await res.json();
+      if (!out || !out.ok) throw new Error((out && out.erro) || 'rejeitado');
+      return out;
+    } finally { window.clearTimeout(timer); }
+  }
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const f = form.elements;
+    let first = null;
+    const bad = (input, msg) => { err(input, msg); if (!first) first = input; };
+    ['nome', 'email', 'cidade_estado'].forEach((n) => err(f[n], ''));
+    if (f.nome.value.trim().length < 3) bad(f.nome, 'Informe seu nome.');
+    if (!emailOk(f.email.value.trim())) bad(f.email, 'Informe um e-mail válido.');
+    if (f.cidade_estado.value.trim().length < 2) bad(f.cidade_estado, 'Informe cidade e estado.');
+    const cat = form.querySelector('input[name="categoria"]:checked');
+    const catErr = form.querySelector('[data-ws-cat-error]');
+    catErr.hidden = !!cat; catErr.textContent = cat ? '' : 'Escolha uma opção de investimento.';
+    if (!cat && !first) first = form.querySelector('input[name="categoria"]');
+    const chkErr = form.querySelector('[data-ws-check-error]');
+    const checksOk = f.ciente.checked && f.lgpd.checked;
+    chkErr.hidden = checksOk; chkErr.textContent = checksOk ? '' : 'Marque as duas confirmações para continuar.';
+    if (!checksOk && !first) first = f.ciente;
+    if (first || !cat) { first?.focus(); warn(dlgForm, 'Confira os campos destacados.'); return; }
+    warn(dlgForm, '');
+
+    const btn = form.querySelector('[data-ws-submit]');
+    const label = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Enviando…';
+    const spent = Date.now() - Number(form.dataset.t0 || 0);
+    if (spent < 2500) await wait(2500 - spent); // atraso mínimo contra robôs
+    const protocolo = 'WSH-' + new Date().toISOString().slice(0, 10).replace(/-/g, '') + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    try {
+      await post({
+        kind: 'workshop', protocolo, origem: 'site', website: f.website.value,
+        nome: f.nome.value.trim(), email: f.email.value.trim(), cidade_estado: f.cidade_estado.value.trim(),
+        telefone: f.telefone.value.trim(), filiacao: f.filiacao.value.trim(), categoria: cat.value,
+        ciente: 'Sim, estou ciente', lgpd: 'Sim',
+      });
+      Object.assign(state, { protocolo, email: f.email.value.trim(), valor: CATS[cat.value].valor, categoria: CATS[cat.value].label });
+      form.reset();
+      dlgPix.querySelector('[data-ws-valor]').textContent = 'R$ ' + state.valor;
+      dlgPix.querySelector('[data-ws-categoria]').textContent = state.categoria;
+      dlgPix.querySelector('[data-ws-pay-head]').hidden = false;
+      dlgPix.querySelector('[data-ws-pay]').hidden = false;
+      dlgPix.querySelector('[data-ws-pay-foot]').hidden = false;
+      dlgPix.querySelector('[data-ws-later]').hidden = true;
+      fillProto();
+      dlgForm.close();
+      open(dlgPix);
+    } catch (e) {
+      const txt = encodeURIComponent(`Olá, Christian! Quero me inscrever no workshop de arbitragem CONBRAKS Level 1 (20/11). Nome: ${f.nome.value.trim()}.`);
+      warn(dlgForm, `Não foi possível enviar agora. Tente de novo ou <a href="${WA}?text=${txt}" target="_blank" rel="noopener">fale com a organização pelo WhatsApp</a>.`);
+    } finally { btn.disabled = false; btn.textContent = label; }
+  });
+
+  /* Passo 2 · Pix */
+  const copyBtn = dlgPix.querySelector('[data-ws-copy]');
+  const copyStatus = dlgPix.querySelector('[data-ws-copy-status]');
+  copyBtn.addEventListener('click', async () => {
+    const value = copyBtn.dataset.wsCopy;
+    let ok = false;
+    try { await navigator.clipboard.writeText(value); ok = true; } catch (e) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = value; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select(); ok = document.execCommand('copy'); ta.remove();
+      } catch (x) { ok = false; }
+    }
+    copyStatus.textContent = ok ? 'CNPJ copiado!' : 'Não foi possível copiar. Selecione o número e copie.';
+    window.setTimeout(() => { copyStatus.textContent = ''; }, 3500);
+  });
+  dlgPix.querySelector('[data-ws-later-btn]').addEventListener('click', () => {
+    dlgPix.querySelector('[data-ws-pay-head]').hidden = true;
+    dlgPix.querySelector('[data-ws-pay]').hidden = true;
+    dlgPix.querySelector('[data-ws-pay-foot]').hidden = true;
+    dlgPix.querySelector('[data-ws-later]').hidden = false;
+  });
+  dlgPix.querySelector('[data-ws-to-proof]').addEventListener('click', () => { openProof(true); });
+
+  /* Passo 3 · comprovante */
+  function openProof(known) {
+    const lookup = dlgProof.querySelector('[data-ws-lookup]');
+    const knownEl = dlgProof.querySelector('[data-ws-known]');
+    const hasState = known && state.protocolo;
+    lookup.hidden = !!hasState;
+    knownEl.hidden = !hasState;
+    proofForm.elements.protocolo.value = hasState ? state.protocolo : '';
+    proofForm.elements.email.value = hasState ? state.email : '';
+    proofForm.elements.arquivo.value = '';
+    proofForm.querySelectorAll('.public-error').forEach((s) => { s.hidden = true; });
+    warn(dlgProof, '');
+    dlgProof.querySelector('[data-ws-proof-head]').hidden = false;
+    dlgProof.querySelector('[data-ws-proof-body]').hidden = false;
+    dlgProof.querySelector('[data-ws-proof-foot]').hidden = false;
+    dlgProof.querySelector('[data-ws-proof-done]').hidden = true;
+    fillProto();
+    if (dlgPix.open) dlgPix.close();
+    open(dlgProof);
+  }
+  document.querySelectorAll('[data-ws-open-proof]').forEach((btn) => btn.addEventListener('click', () => openProof(false)));
+
+  const readB64 = (blob) => new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result).split(',')[1] || '');
+    r.onerror = reject;
+    r.readAsDataURL(blob);
+  });
+  async function prepare(file) {
+    if (file.type === 'application/pdf') {
+      if (file.size > 4 * 1024 * 1024) throw new Error('O PDF passa de 4 MB. Envie uma foto do comprovante ou use o WhatsApp.');
+      return { nome: file.name, tipo: file.type, b64: await readB64(file) };
+    }
+    const url = URL.createObjectURL(file);
+    try {
+      const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+      const scale = Math.min(1, 1800 / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.naturalWidth * scale); c.height = Math.round(img.naturalHeight * scale);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      const blob = await new Promise((res) => c.toBlob(res, 'image/jpeg', 0.82));
+      return { nome: file.name.replace(/\.[^.]+$/, '') + '.jpg', tipo: 'image/jpeg', b64: await readB64(blob) };
+    } finally { URL.revokeObjectURL(url); }
+  }
+
+  proofForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const f = proofForm.elements;
+    const lookupVisible = !dlgProof.querySelector('[data-ws-lookup]').hidden;
+    let first = null;
+    const bad = (input, msg) => { err(input, msg); if (!first) first = input; };
+    ['protocolo', 'email', 'arquivo'].forEach((n) => err(f[n], ''));
+    const proto = f.protocolo.value.trim().toUpperCase();
+    if (lookupVisible && !/^WSH-\d{8}-[A-Z0-9]{4}$/.test(proto)) bad(f.protocolo, 'Informe o protocolo no formato WSH-20261120-AB12.');
+    if (lookupVisible && !emailOk(f.email.value.trim())) bad(f.email, 'Informe o e-mail usado na inscrição.');
+    const file = f.arquivo.files[0];
+    if (!file) bad(f.arquivo, 'Anexe o comprovante.');
+    else if (!/^(image\/(jpeg|png|webp)|application\/pdf)$/.test(file.type)) bad(f.arquivo, 'Use JPG, PNG ou PDF.');
+    else if (file.size > 12 * 1024 * 1024) bad(f.arquivo, 'Arquivo muito grande.');
+    if (first) { first.focus(); warn(dlgProof, 'Confira os campos destacados.'); return; }
+    warn(dlgProof, '');
+
+    const btn = proofForm.querySelector('[data-ws-proof-submit]');
+    const label = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Enviando…';
+    try {
+      const arq = await prepare(file);
+      await post({
+        kind: 'comprovante', protocolo: lookupVisible ? proto : state.protocolo,
+        email: lookupVisible ? f.email.value.trim() : state.email,
+        arquivo_nome: arq.nome, arquivo_tipo: arq.tipo, arquivo_base64: arq.b64,
+      });
+      if (lookupVisible) { state.protocolo = proto; fillProto(); }
+      dlgProof.querySelector('[data-ws-proof-head]').hidden = true;
+      dlgProof.querySelector('[data-ws-proof-body]').hidden = true;
+      dlgProof.querySelector('[data-ws-proof-foot]').hidden = true;
+      dlgProof.querySelector('[data-ws-proof-done]').hidden = false;
+    } catch (e) {
+      const msg = /PDF passa/.test(e.message) ? e.message : 'Não foi possível enviar agora. Confira o protocolo e o e-mail, tente de novo ou use o botão de WhatsApp.';
+      warn(dlgProof, msg);
+    } finally { btn.disabled = false; btn.textContent = label; }
+  });
+
+})();
