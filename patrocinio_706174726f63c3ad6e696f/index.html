@@ -57,7 +57,6 @@ background:linear-gradient(112deg,var(--navy) 0 58%,var(--green) 58% 59.1%,var(-
 .hero:before{content:"7";position:absolute;z-index:-1;right:1vw;top:-5vw;color:rgba(255,213,0,.15);font:900 min(62vw,680px)/.8 var(--display);transform:skew(-7deg);pointer-events:none}
 .hero__in{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:0 clamp(24px,5vw,72px);align-items:center}
 .hero__plate{margin:0;display:grid;place-items:center;width:clamp(260px,26vw,340px);aspect-ratio:1.28;padding:clamp(22px,2.6vw,34px);background:#fff;box-shadow:10px 10px 0 var(--green)}
-.hd__home{flex:none;margin:0;min-height:42px;padding:9px 16px;font-size:.74rem;letter-spacing:.1em;white-space:nowrap}
 .hero__plate.hero__plate--photo{position:relative;padding:0;overflow:visible;margin-bottom:26px}
 .hero__plate.hero__plate--photo img{width:100%;height:100%;object-fit:cover}
 .hero__plate--photo figcaption{position:absolute;left:0;top:calc(100% + 16px);font:600 .62rem/1 var(--body);letter-spacing:.08em;text-transform:lowercase;color:rgba(255,255,255,.6)}
@@ -321,14 +320,53 @@ html.lb-open{overflow:hidden}
 .frm-msg .btn--ghost{background:none;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
 .termo{margin:0 0 28px;padding:18px 20px;background:var(--paper-2);border:1px solid var(--line-ink);font-size:.95rem;color:var(--ink)}
 @media(max-width:700px){.frm{grid-template-columns:1fr}.frm-wrap,.frm-msg{box-shadow:7px 7px 0 var(--green)}}
+
+/* Cabeçalho: botão Voltar (quadrado) + Página principal, no lugar dos logos */
+.hd__nav{display:flex;align-items:center;gap:8px;flex:none}
+.hd .hd__nav .btn{margin:0}
+.btn--back{width:46px;height:46px;min-height:46px;padding:0;clip-path:none;flex:none}
+.hd .hd__nav .hd__home{min-height:46px;padding:0 18px;font-size:.74rem;letter-spacing:.1em;white-space:nowrap}
+@media(max-width:620px){.btn--back{width:42px;height:42px;min-height:42px}.btn--back svg{width:22px;height:22px}.hd .hd__nav .hd__home{min-height:42px;padding:0 12px;font-size:.68rem;letter-spacing:.06em}.hd__nav{gap:6px}}
+
+/* ===== Conheça a modalidade ===== */
+.cm{background:var(--navy);color:#fff}
+.cm__top{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(36px,6vw,96px);align-items:center}
+.cm__video{min-width:0}
+.cm__video [hidden]{display:none!important}
+.cm__frame{position:relative;aspect-ratio:16/9;background:#000;border:6px solid var(--paper);box-shadow:14px 14px 0 var(--yellow);overflow:hidden}
+.cm__frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.cm__poster{position:absolute;inset:0;z-index:2;display:block;background:#000}
+.cm__poster img{display:block;width:100%;height:100%;object-fit:cover}
+.cm__play{position:absolute;left:50%;top:50%;display:grid;place-items:center;width:84px;height:84px;padding-left:6px;transform:translate(-50%,-50%);background:var(--yellow);color:var(--ink);font-size:1.9rem;box-shadow:5px 5px 0 var(--green);transition:transform .2s}
+.cm__poster:hover .cm__play{transform:translate(-50%,-50%) scale(1.07)}
+.cm__poster:focus-visible{outline:4px solid var(--yellow);outline-offset:-8px}
+.cm__sound{position:absolute;inset:0;z-index:3;display:block;width:100%;padding:0;border:0;background:rgba(2,27,99,.12);cursor:pointer}
+.cm__sound span{position:absolute;left:14px;top:14px;max-width:calc(100% - 28px);padding:10px 14px;background:var(--yellow);color:var(--ink);font:900 .8rem/1.25 var(--body);letter-spacing:.06em;text-align:left;text-transform:uppercase;box-shadow:4px 4px 0 var(--green);animation:cmnudge 1.8s ease-in-out infinite}
+.cm__sound:hover span,.cm__sound:focus-visible span{background:#fff}
+.cm__sound:focus-visible{outline:4px solid #fff;outline-offset:-8px}
+@keyframes cmnudge{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.cm__bar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:26px;color:#fff;font-size:.88rem;font-weight:700}
+.cm__fs{flex:none;padding:10px 14px;border:2px solid #fff;background:transparent;color:#fff;font:800 .72rem/1 var(--body);letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.cm__fs:hover,.cm__fs:focus-visible{background:var(--yellow);border-color:var(--yellow);color:var(--ink)}
+.cm__txt h2.t{font-size:clamp(2.1rem,4vw,3.4rem)}
+.cm__txt p:not(.kick){max-width:52ch;color:var(--soft);font-size:1.08rem}
+.cm__link{display:inline-block;margin-top:6px;padding-bottom:4px;border-bottom:3px solid var(--yellow);color:#fff;font:800 .8rem var(--body);letter-spacing:.1em;text-transform:uppercase;text-decoration:none}
+.cm__link:hover{color:var(--yellow)}.cm__link:focus-visible{outline:3px solid var(--yellow);outline-offset:4px}
+.cm__more{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(20px,3vw,44px);margin-top:clamp(48px,6vw,84px)}
+.cm__more article{padding-top:18px;border-top:4px solid var(--yellow)}
+.cm__more h3{margin:0 0 12px;color:var(--yellow);font:900 clamp(1.3rem,2vw,1.7rem)/1.05 var(--display);letter-spacing:.02em;text-transform:uppercase}
+.cm__more p{margin:0;color:var(--soft);font-size:1rem;line-height:1.6}
+@media(max-width:960px){.cm__top{grid-template-columns:1fr}.cm__more{grid-template-columns:1fr;gap:26px}}
+@media(max-width:620px){.cm__frame{border-width:4px;box-shadow:9px 9px 0 var(--yellow)}.cm__play{width:64px;height:64px;font-size:1.5rem}.cm__sound span{left:8px;top:8px;max-width:calc(100% - 16px);padding:7px 10px;font-size:.66rem}.cm__bar{margin-top:20px;flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){.cm__sound span{animation:none}}
 </style>
 </head>
 <body>
 <a class="skip" href="#proposta">Pular para o conteúdo</a>
 <header class="hd" id="hd">
-  <a class="btn btn--ghost btn--home hd__home" href="/"><span aria-hidden="true">←</span> Página principal</a>
+  <div class="hd__nav"><a class="btn btn--ghost btn--back" href="/" data-back aria-label="Voltar"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter" aria-hidden="true"><path d="M20 12H5M11 5l-7 7 7 7"/></svg></a><a class="btn btn--ghost btn--home hd__home" href="/">Página principal</a></div>
   <div class="hd__ttl"><b>Proposta de patrocínio</b><small>7º Brasileiro de Kettlebell Sport</small></div>
-  <nav id="nav" aria-label="Seções da proposta"><a href="#resumo">Resumo</a><a href="#porque">Por que patrocinar</a><a href="#cotas">Cotas</a><a href="#ativacao">Ativação</a><a href="#ambiente">Ambiente</a><a href="#condicoes">Condições</a><a href="#participar">Como participar</a><a href="#interesse">Enviar interesse</a></nav>
+  <nav id="nav" aria-label="Seções da proposta"><a href="#resumo">Resumo</a><a href="#conheca">Modalidade</a><a href="#porque">Por que patrocinar</a><a href="#cotas">Cotas</a><a href="#ativacao">Ativação</a><a href="#ambiente">Ambiente</a><a href="#condicoes">Condições</a><a href="#participar">Como participar</a><a href="#interesse">Enviar interesse</a></nav>
   <a class="btn btn--sm" href="#interesse">Quero patrocinar</a>
   <div class="hd__bar" aria-hidden="true"><i id="prog"></i></div>
 </header>
@@ -354,6 +392,39 @@ html.lb-open{overflow:hidden}
 </div>
 
 <main id="proposta">
+<section class="sec sec--navy cm" id="conheca" aria-labelledby="cm-t"><div class="in">
+  <div class="cm__top">
+    <div class="cm__video rv" id="cmVideo" data-video-id="84U-6PaxbOI">
+      <div class="cm__frame">
+        <a class="cm__poster" href="https://youtu.be/84U-6PaxbOI" target="_blank" rel="noopener" aria-label="Assistir ao vídeo sobre Kettlebell Sport no YouTube"><img src="https://i.ytimg.com/vi/84U-6PaxbOI/hqdefault.jpg" alt="" width="480" height="360" loading="lazy"><span class="cm__play" aria-hidden="true">▶</span></a>
+        <div id="cmPlayer"></div>
+        <button class="cm__sound" type="button" hidden aria-label="Ativar o som do vídeo"><span></span></button>
+      </div>
+      <div class="cm__bar"><span>Kettlebell Sport explicado para o público em geral</span><button class="cm__fs" type="button" hidden aria-label="Ver o vídeo em tela cheia">⛶ Tela cheia</button></div>
+    </div>
+    <div class="cm__txt rv">
+      <p class="kick">Conheça a modalidade</p>
+      <h2 class="t" id="cm-t">O esporte que você vai apoiar.</h2>
+      <p>O Kettlebell Sport reúne força, resistência e técnica: em 10 minutos, o atleta executa movimentos contínuos com o kettlebell e conquista o resultado repetição a repetição. Pela primeira vez, o Brasileiro chega ao Norte e Nordeste, e o patrocinador apoia o esporte em um momento histórico para a modalidade. Assista ao vídeo antes de conhecer as cotas.</p>
+      <a class="cm__link" href="#cotas">Ver as modalidades de patrocínio ↓</a>
+    </div>
+  </div>
+  <div class="cm__more rv">
+    <article>
+      <h3>Uma modalidade que cresce no Brasil</h3>
+      <p>Muito praticado na Europa, o Kettlebell Sport ganha espaço no Brasil desde 2014. De lá para cá, o país cresceu em número de atletas e na qualidade técnica deles, e hoje é apontado como referência internacional na modalidade.</p>
+    </article>
+    <article>
+      <h3>Como são as provas</h3>
+      <p>O atleta pode competir sozinho ou contra um adversário, mas muitas vezes o recorde a ser batido é o seu próprio. As provas clássicas duram 10 minutos, com possibilidade de uma troca de mão. Há também provas mais longas, como a Meia Maratona, de 30 minutos, com possibilidade de mais de uma troca, e a Maratona, de 1 hora. Os pesos que dão nome ao esporte, os kettlebells, se diferenciam por cor.</p>
+    </article>
+    <article>
+      <h3>Mais do que força</h3>
+      <p>A técnica é indispensável, mas o desafio também é mental e emocional: provar a si mesmo que é capaz de chegar até o fim. O esporte é inclusivo e pode ser praticado por pessoas de várias idades, de crianças a adultos. Há até atletas com deficiência visual na seleção brasileira. Ao final de cada prova, fica mais do que o resultado: cada levantamento abre um novo capítulo de histórias e superações.</p>
+    </article>
+  </div>
+</div></section>
+
 <section class="sec sec--paper" id="apresentacao"><div class="in split">
   <h2 class="t rv" style="margin:0">Pela primeira vez, o Brasileiro chega ao Norte e Nordeste.</h2>
   <div class="rv"><p>A Federação Pernambucana de Kettlebell Sport (FPEKSPORT) convida empresas, instituições e empreendedores a apoiar o desenvolvimento do esporte e a associar suas marcas a uma iniciativa esportiva de alcance nacional.</p><p>O 7º Campeonato Brasileiro de Kettlebell Sport – CONBRAKS / WKSF Brasil 2026 será realizado no Círculo Militar do Recife, com o apoio da Secretaria de Esportes do Recife (Prefeitura do Recife) para o uso do ginásio. O evento reunirá atletas, treinadores, árbitros, equipes, representantes do esporte e público interessado.</p><p>Uma oportunidade de fortalecer a modalidade em Pernambuco e no Brasil e aproximar empresas de uma comunidade ligada à disciplina, à saúde, à dedicação e à superação.</p></div>
@@ -468,7 +539,7 @@ html.lb-open{overflow:hidden}
   <div class="ft__logos"><img src="/assets/logos/logo-conbraks.svg" alt="CONBRAKS"><img src="/assets/logos/logo-fpeks.svg" alt="FPEKSPORT"><img src="/assets/logos/logo-wksf.svg" alt="WKSF Brasil"></div>
   <p>7º Campeonato Brasileiro de Kettlebell Sport<br>Recife · Pernambuco · 2026</p>
   <nav aria-label="Contatos"><a href="https://instagram.com/conbraks" target="_blank" rel="noopener">@conbraks</a><a href="https://instagram.com/fpeksport" target="_blank" rel="noopener">@fpeksport</a><a href="https://wa.me/5581996484250" target="_blank" rel="noopener">WhatsApp</a></nav>
-  <a class="btn btn--ghost btn--home btn--home-ft" href="/"><span aria-hidden="true">←</span> Página principal</a>
+  <a class="btn btn--ghost btn--home btn--home-ft" href="/">Página principal</a>
   <p class="cr">© 2026 <b>Jefferson Lôbo</b>. Todos os direitos reservados. Uma criação de <a href="https://kupimdigital.com.br/" target="_blank" rel="noopener"><b>Kupim Digital</b></a>.</p>
 </footer>
 <script>
@@ -601,5 +672,70 @@ window.FORM_CFG={"kind": "patrocinio", "prefix": "PAT", "label": "patrocínio", 
  f.addEventListener('submit',function(e){e.preventDefault();send()});
  $('retry').addEventListener('click',function(){$('frmfail').hidden=true;$('frmwrap').hidden=false;$('frmwrap').scrollIntoView({block:'center'})});
 })();
-</script></body>
+</script><script>document.querySelectorAll('[data-back]').forEach(function(a){a.addEventListener('click',function(e){try{if(document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1){e.preventDefault();history.back();}}catch(_){}});});</script>
+<script>
+/* Conheça a modalidade: vídeo do YouTube (mesmo comportamento da página principal) */
+(function(){
+ var box=document.getElementById('cmVideo');if(!box)return;
+ var VIDEO_ID=box.getAttribute('data-video-id');
+ var frame=box.querySelector('.cm__frame'),poster=box.querySelector('.cm__poster'),mount=document.getElementById('cmPlayer'),
+  soundBtn=box.querySelector('.cm__sound'),soundTxt=soundBtn.querySelector('span'),fsBtn=box.querySelector('.cm__fs');
+ var reduced=matchMedia('(prefers-reduced-motion:reduce)');
+ var canFs=!!(document.fullscreenEnabled||document.webkitFullscreenEnabled);
+ var player=null,ready=false,visible=false,finished=false,userPaused=false,autoPaused=false,requested=false;
+ function syncSound(){
+  if(!ready)return;var muted=true;
+  try{muted=player.isMuted()}catch(_){}
+  if(!muted){soundBtn.hidden=true;return}
+  soundTxt.textContent=player.getPlayerState()===1?'🔇 Clique no vídeo para assistir com som':'▶ Clique para assistir com som';
+  soundBtn.hidden=false}
+ function tryPlay(){
+  if(!ready||!visible||finished||userPaused||reduced.matches)return;
+  if(player.getPlayerState()!==1)player.playVideo()}
+ function withSound(){
+  player.unMute();player.setVolume(100);
+  if(player.getPlayerState()!==1)player.playVideo();
+  soundBtn.hidden=true}
+ function onReady(){
+  ready=true;player.mute();poster.hidden=true;
+  if(canFs)fsBtn.hidden=false;
+  syncSound();tryPlay()}
+ function onState(e){
+  if(e.data===1){finished=false;userPaused=false}
+  if(e.data===2){userPaused=!autoPaused;autoPaused=false}
+  if(e.data===0){finished=true;player.unMute();player.cueVideoById(VIDEO_ID)}
+  syncSound()}
+ function onError(){
+  ready=false;poster.hidden=false;soundBtn.hidden=true;fsBtn.hidden=true}
+ function createPlayer(){
+  if(requested)return;requested=true;
+  function make(){
+   var vars={rel:0,playsinline:1,modestbranding:1,fs:1,iv_load_policy:3,hl:'pt-BR'};
+   if(/^https?:$/.test(location.protocol))vars.origin=location.origin;
+   player=new YT.Player(mount,{videoId:VIDEO_ID,width:'100%',height:'100%',playerVars:vars,
+    events:{onReady:onReady,onStateChange:onState,onError:onError}})}
+  if(window.YT&&window.YT.Player){make();return}
+  var previous=window.onYouTubeIframeAPIReady;
+  window.onYouTubeIframeAPIReady=function(){if(previous)previous();make()};
+  var s=document.createElement('script');s.src='https://www.youtube.com/iframe_api';s.async=true;document.head.appendChild(s)}
+ if(!('IntersectionObserver' in window))return;
+ // O player só é carregado perto da seção, para não pesar o início da página.
+ new IntersectionObserver(function(es,o){
+  if(es.some(function(x){return x.isIntersecting})){o.disconnect();createPlayer()}},{rootMargin:'700px 0px'}).observe(box);
+ // Toca (mudo) ao entrar na tela e pausa ao sair.
+ new IntersectionObserver(function(es){
+  es.forEach(function(x){
+   visible=x.intersectionRatio>=.5;
+   if(!ready)return;
+   if(visible)tryPlay();
+   else if(player.getPlayerState()===1){autoPaused=true;player.pauseVideo()}})},{threshold:[0,.25,.5,.75,1]}).observe(frame);
+ soundBtn.addEventListener('click',function(){if(ready)withSound()});
+ fsBtn.addEventListener('click',function(){
+  if(!ready)return;withSound();
+  var el=player.getIframe(),rq=el.requestFullscreen||el.webkitRequestFullscreen;
+  if(rq){var r=rq.call(el);if(r&&r.catch)r.catch(function(){})}});
+ document.addEventListener('fullscreenchange',syncSound);
+})();
+</script>
+</body>
 </html>

@@ -4,6 +4,8 @@
 
 /* Vídeo de introdução */
 body.intro-active{overflow:hidden}
+html.intro-seen body.intro-active{overflow:auto}
+html.intro-seen .video-intro{display:none!important}
 .video-intro{position:fixed;z-index:2000;inset:0;display:grid;place-items:center;overflow:hidden;background:#021b63;cursor:pointer;opacity:1;visibility:visible;transition:opacity .9s ease,visibility .9s ease}
 .video-intro.is-leaving{opacity:0;visibility:hidden;pointer-events:none}
 .video-intro__media{position:absolute;top:50%;left:50%;width:177.777778vh;height:56.25vw;min-width:100%;min-height:100%;max-width:none;transform:translate(-50%,-50%) scale(1.09);object-fit:cover;pointer-events:none}
@@ -669,6 +671,13 @@ dialog.athlete-modal.is-closing::backdrop,dialog.lightbox.is-closing::backdrop,d
   .sport-video__bar{margin-top:20px;flex-wrap:wrap}
   .section--sport .sport-facts{transform:none}
 }
+
+/* ===== Conheça a modalidade: texto complementar ===== */
+.section--sport .sport-more{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(20px,3vw,44px);margin-top:clamp(14px,3vw,40px)}
+.sport-more article{padding-top:18px;border-top:4px solid var(--yellow)}
+.sport-more h3{margin:0 0 12px;color:var(--yellow);font:900 clamp(1.35rem,2vw,1.8rem)/1.05 var(--display);letter-spacing:.02em;text-transform:uppercase}
+.sport-more p{margin:0;color:#fff;font-size:1rem;line-height:1.6}
+@media(max-width:900px){.section--sport .sport-more{grid-template-columns:1fr;gap:26px}}
 
 /* ===== Workshop de arbitragem ===== */
 .opening__workshop-tab{--tab-handle:46px;--tab-x:-100%;--tab-y:-50%;position:absolute;z-index:25;left:0;top:50%;display:flex;align-items:center;gap:12px;height:54px;padding:0 0 0 20px;border:2px solid var(--navy);border-left:0;background:#fff;color:var(--navy);font:900 .8rem/1 var(--body);letter-spacing:.12em;white-space:nowrap;cursor:pointer;box-shadow:5px 5px 0 rgba(2,27,99,.45);opacity:0;pointer-events:none;transform:translate(var(--tab-x),var(--tab-y));transition:transform 1s cubic-bezier(.65,0,.35,1),opacity 1s ease}

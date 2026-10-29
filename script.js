@@ -175,6 +175,8 @@ function finishIntro() {
   }, reducedMotion.matches ? 20 : 900);
 }
 
+try { sessionStorage.setItem('introSeen', '1'); } catch (_) {}
+
 videoIntro.addEventListener('click', finishIntro);
 videoIntroSkip.addEventListener('click', (event) => {
   event.stopPropagation();
@@ -189,7 +191,12 @@ document.addEventListener('keydown', (event) => {
   }
 });
 
-videoIntroMedia.play().catch(() => {});
+if (document.documentElement.classList.contains('intro-seen')) {
+  // Intro já exibida nesta aba: vai direto para a abertura do site.
+  finishIntro();
+} else {
+  videoIntroMedia.play().catch(() => {});
+}
 
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {

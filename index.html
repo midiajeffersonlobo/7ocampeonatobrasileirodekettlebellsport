@@ -13,8 +13,10 @@
   <link rel="preload" as="image" href="assets/opening/background-foreground-transparent.webp">
   <link rel="preload" as="image" href="assets/opening/otimizados/01-titulo.png">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2307141f'/%3E%3Cpath d='M15 14h36L31 52H18l17-27H15z' fill='%23ffd20a'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="styles.css?v=20261027b">
+  <link rel="stylesheet" href="styles.css?v=20261027c">
   <script>document.documentElement.classList.add('js');
+  // Intro: só na primeira entrada pelo link (por aba). Não repete ao voltar de outras páginas nem com F5.
+  try{if(sessionStorage.getItem('introSeen')==='1')document.documentElement.classList.add('intro-seen');}catch(_){}
   // Ao atualizar a página (F5), sempre volta para o topo.
   try {
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
@@ -46,7 +48,7 @@
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="siteNav"><span></span><span></span><span></span><span class="sr-only">Abrir menu</span></button>
     <nav class="site-nav" id="siteNav" aria-label="Navegação principal">
       <a href="#evento">O evento</a>
-      <a href="#entenda">Entenda a modalidade</a>
+      <a href="#entenda">Conheça a modalidade</a>
       <a href="#programacao">Programação</a>
       <a href="#experiencias" hidden data-temp-hidden>Experiências</a>
       <a href="#local">Local</a>
@@ -119,13 +121,54 @@
           <p>De 19 a 22 de novembro, Recife recebe atletas, técnicos, árbitros e apaixonados pelo Kettlebell Sport. Uma edição para acompanhar de perto, conhecer a modalidade e viver a energia de uma arena nacional.</p>
           <div class="button-row">
             <button class="button button--yellow" type="button" data-open-registration>Inscrição do público</button>
-            <a class="text-link" href="#entenda">Como funciona o esporte →</a>
+            <a class="text-link" href="#entenda">Como funciona a modalidade ↓</a>
           </div>
         </div>
         <figure class="photo-frame reveal">
           <img src="assets/fotos/foto-05.avif" alt="Atletas de Kettlebell Sport competindo em plataformas com arbitragem" width="1600" height="900" loading="lazy">
           <figcaption><span>Competição oficial</span><b>Técnica. Ritmo. Controle.</b></figcaption>
         </figure>
+      </div>
+    </section>
+
+    <section class="section section--sport" id="entenda" data-header-tone="yellow">
+      <div class="sport-copy reveal">
+        <p class="eyebrow">Conheça a modalidade</p>
+        <h2>Dez minutos que exigem o corpo inteiro.</h2>
+        <p>No Kettlebell Sport, atletas executam movimentos contínuos com pesos dentro de um tempo definido. Vence quem combina mais repetições válidas, técnica consistente e controle do ritmo.</p>
+      </div>
+      <div class="sport-video reveal" id="sportVideo" data-video-id="84U-6PaxbOI">
+        <div class="sport-video__frame">
+          <a class="sport-video__poster" href="https://youtu.be/84U-6PaxbOI" target="_blank" rel="noopener" aria-label="Assistir ao vídeo sobre Kettlebell Sport no YouTube">
+            <img src="https://i.ytimg.com/vi/84U-6PaxbOI/hqdefault.jpg" alt="" width="480" height="360" loading="lazy">
+            <span class="sport-video__play" aria-hidden="true">▶</span>
+          </a>
+          <div id="sportVideoPlayer"></div>
+          <button class="sport-video__sound" type="button" hidden aria-label="Ativar o som do vídeo"><span></span></button>
+        </div>
+        <div class="sport-video__bar">
+          <span>Kettlebell Sport explicado para o público em geral</span>
+          <button class="sport-video__fs" type="button" hidden aria-label="Ver o vídeo em tela cheia">⛶ Tela cheia</button>
+        </div>
+      </div>
+      <div class="sport-more reveal">
+        <article>
+          <h3>Uma modalidade que cresce no Brasil</h3>
+          <p>Muito praticado na Europa, o Kettlebell Sport ganha espaço no Brasil desde 2014. De lá para cá, o país cresceu em número de atletas e na qualidade técnica deles, e hoje é apontado como referência internacional na modalidade.</p>
+        </article>
+        <article>
+          <h3>Como são as provas</h3>
+          <p>O atleta pode competir sozinho ou contra um adversário, mas muitas vezes o recorde a ser batido é o seu próprio. As provas clássicas duram 10 minutos, com possibilidade de uma troca de mão. Há também provas mais longas, como a Meia Maratona, de 30 minutos, com possibilidade de mais de uma troca, e a Maratona, de 1 hora. Os pesos que dão nome ao esporte, os kettlebells, se diferenciam por cor.</p>
+        </article>
+        <article>
+          <h3>Mais do que força</h3>
+          <p>A técnica é indispensável, mas o desafio também é mental e emocional: provar a si mesmo que é capaz de chegar até o fim. O esporte é inclusivo e pode ser praticado por pessoas de várias idades, de crianças a adultos. Há até atletas com deficiência visual na seleção brasileira. Ao final de cada prova, fica mais do que o resultado: cada levantamento abre um novo capítulo de histórias e superações.</p>
+        </article>
+      </div>
+      <div class="sport-facts reveal">
+        <article><strong>10'</strong><span>Duração tradicional de uma série</span></article>
+        <article><strong>3</strong><span>Movimentos centrais: jerk, snatch e long cycle</span></article>
+        <article><strong>1</strong><span>Objetivo: o maior número de repetições válidas</span></article>
       </div>
     </section>
 
@@ -226,32 +269,6 @@
       </div>
     </section>
 
-    <section class="section section--sport" id="entenda" data-header-tone="yellow">
-      <div class="sport-copy reveal">
-        <p class="eyebrow">Entenda a modalidade</p>
-        <h2>Dez minutos que exigem o corpo inteiro.</h2>
-        <p>No Kettlebell Sport, atletas executam movimentos contínuos com pesos dentro de um tempo definido. Vence quem combina mais repetições válidas, técnica consistente e controle do ritmo.</p>
-      </div>
-      <div class="sport-video reveal" id="sportVideo" data-video-id="84U-6PaxbOI">
-        <div class="sport-video__frame">
-          <a class="sport-video__poster" href="https://youtu.be/84U-6PaxbOI" target="_blank" rel="noopener" aria-label="Assistir ao vídeo sobre Kettlebell Sport no YouTube">
-            <img src="https://i.ytimg.com/vi/84U-6PaxbOI/hqdefault.jpg" alt="" width="480" height="360" loading="lazy">
-            <span class="sport-video__play" aria-hidden="true">▶</span>
-          </a>
-          <div id="sportVideoPlayer"></div>
-          <button class="sport-video__sound" type="button" hidden aria-label="Ativar o som do vídeo"><span></span></button>
-        </div>
-        <div class="sport-video__bar">
-          <span>Kettlebell Sport explicado para o público em geral</span>
-          <button class="sport-video__fs" type="button" hidden aria-label="Ver o vídeo em tela cheia">⛶ Tela cheia</button>
-        </div>
-      </div>
-      <div class="sport-facts reveal">
-        <article><strong>10'</strong><span>Duração tradicional de uma série</span></article>
-        <article><strong>3</strong><span>Movimentos centrais: jerk, snatch e long cycle</span></article>
-        <article><strong>1</strong><span>Objetivo: o maior número de repetições válidas</span></article>
-      </div>
-    </section>
 
     <section class="section section--schedule" id="programacao" data-header-tone="white">
       <div class="section-heading reveal">
@@ -974,6 +991,6 @@
   </dialog>
 
   <dialog class="lightbox" id="galleryDialog" aria-label="Foto ampliada"><button type="button" data-close-gallery aria-label="Fechar">×</button><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt=""></dialog>
-  <script src="script.js?v=20261027a"></script>
+  <script src="script.js?v=20261027b"></script>
 </body>
 </html>
