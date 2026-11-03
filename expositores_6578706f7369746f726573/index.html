@@ -167,7 +167,7 @@ summary:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
 .fin .row{display:flex;flex-wrap:wrap;gap:12px;margin:36px 0 0}
 .sign{max-width:560px;margin-top:44px;padding-top:22px;border-top:1px solid var(--line)}
 .sign b{display:block;font:800 1.5rem/1.1 var(--display);text-transform:uppercase;letter-spacing:.02em}
-.sign span{display:block;color:var(--soft);font-size:.9rem}.sign .ct{margin-top:10px;color:var(--muted);font-size:.84rem}
+.sign span{display:block;color:var(--soft);font-size:.9rem}.sign .ct{margin-top:10px;color:var(--muted);font-size:.84rem}.sign .ct a{color:inherit;text-decoration:underline;text-underline-offset:3px}
 
 /* Rodapé (como no site) */
 .ft{display:grid;grid-template-columns:auto 1fr auto;gap:30px 48px;align-items:center;padding:42px max(clamp(20px,6vw,96px),calc((100vw - 1180px)/2));border-top:10px solid var(--yellow);background:var(--navy-d);color:var(--muted);font-size:.78rem}
@@ -300,6 +300,7 @@ html.lb-open{overflow:hidden}
 .frm-act .btn{background:var(--ink);color:#fff}.frm-act .btn:hover{background:var(--blue)}
 .frm-act .btn[disabled]{opacity:.6;cursor:wait}
 .frm-act p{margin:0;color:var(--ink-2);font-size:.88rem}
+.frm-act p.req{flex:1 1 100%;color:#d10000;font-weight:600}
 .frm-msg{padding:clamp(22px,4vw,40px);background:var(--paper);color:var(--ink);box-shadow:12px 12px 0 var(--green)}
 .frm-msg[hidden]{display:none}
 .frm-msg h3{margin:0 0 10px;font:900 clamp(1.8rem,3.4vw,2.6rem)/1 var(--display);text-transform:uppercase;color:var(--blue)}
@@ -349,6 +350,54 @@ html.lb-open{overflow:hidden}
 @media(max-width:620px){.cm__frame{border-width:4px;box-shadow:9px 9px 0 var(--yellow)}.cm__play{width:64px;height:64px;font-size:1.5rem}.cm__sound span{left:8px;top:8px;max-width:calc(100% - 16px);padding:7px 10px;font-size:.66rem}.cm__bar{margin-top:20px;flex-wrap:wrap}}
 @media(prefers-reduced-motion:reduce){.cm__sound span{animation:none}}
 </style>
+
+<style id="mobile-extra">
+.mx>summary{display:none}
+.mxb,.mside{display:none}
+.mxf{display:contents}
+.sign .ctico{display:none}
+@media(max-width:620px){
+.mhide{display:none!important}
+.mx{margin-top:20px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.06)}
+.sec--paper .mx,.pix .mx{border-color:rgba(4,23,71,.28);background:rgba(4,23,71,.05)}
+.mx>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:0 16px;cursor:pointer;list-style:none;font:800 .8rem var(--body);letter-spacing:.08em;text-transform:uppercase;-webkit-tap-highlight-color:transparent}
+.mx>summary::-webkit-details-marker{display:none}
+.mx>summary:after{content:"+";font:900 1.5rem/1 var(--display);color:var(--yellow)}
+.sec--paper .mx>summary:after,.pix .mx>summary:after{color:var(--blue)}
+.mx[open]>summary:after{content:"\2013"}
+.mx>summary:focus-visible{outline:3px solid var(--yellow);outline-offset:-3px}
+.mx>.mxc{padding:2px 16px 16px}
+.mx .cm__more{margin-top:8px}
+.mx .mxc>p:last-child{margin-bottom:0}
+.mx .steps-nt{margin-top:0!important}
+.mx .cp{margin:0;padding-top:0;border-top:0}
+.mxl:not(.open)>li:nth-child(n+4){display:none}
+.mxb{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:48px;margin-top:14px;padding:0 16px;background:transparent;color:inherit;border:1.5px solid currentColor;font:800 .8rem var(--body);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+.mxb:after{content:"\2193"}
+.mxb[aria-expanded=true]:after{content:"\2191"}
+.frm .mxb{margin:0;grid-column:1/-1}
+.mxf:not(.open){display:none}
+.mxf.open{display:grid;gap:18px;grid-column:1/-1}
+.f .hint:not(#h-necessidades){display:none}
+.gal__head .lead,.gal__hint{display:none}
+.cols{gap:16px}.col{padding-top:12px}.col h3{font-size:1.3rem;margin-bottom:4px}.col p{font-size:.94rem}
+#porque .cols{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -20px;padding:0 20px 8px;scrollbar-width:none}
+#porque .cols::-webkit-scrollbar{display:none}
+#porque .col{flex:0 0 80%;scroll-snap-align:start}
+.steps li{padding:10px 0}
+.cta-line{margin-top:28px}.cta-line p{display:none}
+.hero__cta a[href*="wa.me"],.cta-line a[href*="wa.me"],.fin .row a[href*="wa.me"]{display:none}
+#tab-comp{display:none}
+.sign .ct{display:none}
+.sign .ctico{display:flex;gap:12px;margin-top:16px}
+.sign .ctico a{display:grid;place-items:center;width:46px;height:46px;border:1.5px solid var(--yellow);color:var(--yellow)}
+.sign .ctico svg{width:22px;height:22px}
+.mside{position:fixed;z-index:90;top:44%;align-items:center;justify-content:center;padding:18px 9px;font:900 .72rem var(--body);letter-spacing:.14em;text-transform:uppercase;text-decoration:none;writing-mode:vertical-rl;box-shadow:0 3px 14px rgba(0,0,0,.35);transition:opacity .25s,visibility .25s}
+.mside--r{display:flex;right:0;transform:translateY(-50%);background:var(--yellow);color:var(--ink)}
+.mside--l{display:flex;left:0;transform:translateY(-50%) rotate(180deg);background:var(--green);color:#fff}
+.mside.off{opacity:0;visibility:hidden;pointer-events:none}
+}
+</style>
 </head>
 <body>
 <a class="skip" href="#proposta">Pular para o conteúdo</a>
@@ -394,11 +443,11 @@ html.lb-open{overflow:hidden}
     <div class="cm__txt rv">
       <p class="kick">Conheça a modalidade</p>
       <h2 class="t" id="cm-t">O esporte que recebe a sua marca.</h2>
-      <p>No Kettlebell Sport, atletas executam movimentos contínuos com o kettlebell por 10 minutos, e vence quem soma mais repetições válidas. Durante os três dias do campeonato, o espaço de expositores fica em meio a atletas, técnicos, árbitros e visitantes que vão acompanhar a modalidade de perto. Assista ao vídeo e conheça o esporte e o público que você vai encontrar.</p>
+      <p>Durante os três dias do campeonato, o espaço de expositores fica em meio a atletas, técnicos, árbitros e visitantes que vão acompanhar a modalidade de perto. <span class="mhide">Assista ao vídeo e conheça o esporte e o público que você vai encontrar.</span></p>
       <a class="cm__link" href="#beneficios">Ver o que o expositor recebe ↓</a>
     </div>
   </div>
-  <div class="cm__more rv">
+  <details class="mx" open><summary>Saiba mais sobre a modalidade</summary><div class="mxc"><div class="cm__more">
     <article>
       <h3>Uma modalidade que cresce no Brasil</h3>
       <p>Muito praticado na Europa, o Kettlebell Sport ganha espaço no Brasil desde 2014. De lá para cá, o país cresceu em número de atletas e na qualidade técnica deles, e hoje é apontado como referência internacional na modalidade.</p>
@@ -411,18 +460,18 @@ html.lb-open{overflow:hidden}
       <h3>Mais do que força</h3>
       <p>A técnica é indispensável, mas o desafio também é mental e emocional: provar a si mesmo que é capaz de chegar até o fim. O esporte é inclusivo e pode ser praticado por pessoas de várias idades, de crianças a adultos. Há até atletas com deficiência visual na seleção brasileira. Ao final de cada prova, fica mais do que o resultado: cada levantamento abre um novo capítulo de histórias e superações.</p>
     </article>
-  </div>
+  </div></div></details>
 </div></section>
 
 <section class="sec sec--paper" id="apresentacao"><div class="in split">
   <h2 class="t rv" style="margin:0">Sua marca no Brasileiro de Kettlebell Sport.</h2>
-  <div class="rv"><p>A área de expositores reúne empresas e profissionais que querem exibir, divulgar e comercializar produtos ou serviços durante os três dias do 7º Campeonato Brasileiro de Kettlebell Sport 2026, no Círculo Militar do Recife.</p><p>A adesão é formalizada pelo Termo de Adesão e Compromisso para Expositores, apresentado nesta página. O evento é organizado pela Federação Pernambucana de Kettlebell Sport – FPEKSPORT, com o apoio da Secretaria de Esportes do Recife (Prefeitura do Recife) para o uso do ginásio.</p></div>
+  <div class="rv"><p>A área de expositores reúne empresas e profissionais que querem exibir, divulgar e comercializar produtos ou serviços durante os três dias do 7º Campeonato Brasileiro de Kettlebell Sport 2026, no Círculo Militar do Recife.</p><details class="mx" open><summary>Sobre a adesão e a organização</summary><div class="mxc"><p>A adesão é formalizada pelo Termo de Adesão e Compromisso para Expositores, apresentado nesta página. O evento é organizado pela Federação Pernambucana de Kettlebell Sport – FPEKSPORT, com o apoio da Secretaria de Esportes do Recife (Prefeitura do Recife) para o uso do ginásio.</p></div></details></div>
 </div></section>
 
 <section class="sec sec--blue" id="beneficios"><div class="in">
   <h2 class="t rv">O que o expositor recebe.</h2>
   <div class="cols"><div class="col rv"><h3>Espaço de exposição</h3><p>Espaço para exposição e comercialização durante os três dias do campeonato, conforme disponibilidade e autorização do local.</p></div><div class="col rv"><h3>Contato direto</h3><p>Aproximação com atletas, treinadores, profissionais do esporte e visitantes, para divulgar a marca, apresentar produtos e conquistar novos clientes.</p></div><div class="col rv"><h3>Possibilidade de vendas</h3><p>Oportunidade de realizar vendas e ampliar o relacionamento comercial.</p></div></div>
-  <p class="steps-nt rv" style="margin-top:28px">A participação não garante quantidade de visitantes, vendas ou retorno financeiro. A divulgação institucional da marca pela organização depende das ações previamente acordadas.</p>
+  <details class="mx" open><summary>Avisos</summary><div class="mxc"><p class="steps-nt rv" style="margin-top:28px">*A participação não garante quantidade de visitantes, vendas ou retorno financeiro.<br>A divulgação institucional da marca pela organização depende das ações previamente acordadas.</p></div></details>
 </div></section>
 
 <section class="sec sec--navy" id="valor"><div class="in">
@@ -431,21 +480,21 @@ html.lb-open{overflow:hidden}
     <div class="rv">
       <div class="prices prices--1"><div class="price"><small>Participação · três dias</small><strong>R$ 300,00</strong><p>Equivale a R$ 100,00 por dia.</p></div></div>
       <ol class="steps"><li>Envie o formulário no fim desta página</li><li>A organização analisa e aprova a participação</li><li>Pagamento via Pix</li><li>Confirmação da reserva do espaço</li></ol>
-      <p class="steps-nt">A reserva só é confirmada após a aprovação da participação pela organização e a confirmação do pagamento.</p>
+      <p class="steps-nt">*A reserva só é confirmada após a aprovação da participação pela organização e a confirmação do pagamento.</p>
     </div>
     <div class="pix rv">
       <small>Chave Pix (CNPJ)</small>
       <code id="pixkey">53.107.237/0001-32</code>
       <p class="ben">Confederação Brasileira de Kettlebell Sport – CONBRAKS · Banco Sicredi</p>
       <button class="btn" id="copy" type="button">Copiar chave Pix</button>
-      <p class="cp">Pague somente depois da aprovação. Envie o comprovante pelo WhatsApp <a href="https://wa.me/5555999765702" target="_blank" rel="noopener">(55) 99976-5702</a> · Christian Thier, vice-presidente da CONBRAKS.</p>
+      <details class="mx" open><summary>Como enviar o comprovante</summary><div class="mxc"><p class="cp">Pague somente depois da aprovação. Envie o comprovante pelo WhatsApp <a href="https://wa.me/5555999765702" target="_blank" rel="noopener">(55) 99976-5702</a><br>(Christian Thier, vice-presidente da CONBRAKS).</p></div></details>
     </div>
   </div>
 </div></section>
 
 <section class="sec sec--paper" id="regras"><div class="in">
   <h2 class="t rv">O que se espera do expositor.</h2>
-  <ul class="goals rv"><li>Respeitar as orientações da organização e as regras do local.</li><li>Comercializar apenas produtos e serviços autorizados e legalmente regularizados.</li><li>Levar seus próprios produtos, equipamentos e materiais de exposição, salvo acordo diferente.</li><li>Manter o espaço limpo e organizado.</li><li>Responsabilizar-se por seus produtos, equipamentos, vendas e atendimento aos consumidores.</li><li>Cumprir os horários de montagem, funcionamento e desmontagem informados pela organização.</li></ul>
+  <ul class="goals rv" data-more="3" data-label="Ver todas as regras"><li>Respeitar as orientações da organização e as regras do local.</li><li>Comercializar apenas produtos e serviços autorizados e legalmente regularizados.</li><li>Levar seus próprios produtos, equipamentos e materiais de exposição, salvo acordo diferente.</li><li>Manter o espaço limpo e organizado.</li><li>Responsabilizar-se por seus produtos, equipamentos, vendas e atendimento aos consumidores.</li><li>Cumprir os horários de montagem, funcionamento e desmontagem informados pela organização.</li></ul>
   <p class="warn rv">Mesas, cadeiras, energia elétrica, mobiliário ou outras estruturas dependem de confirmação expressa da organização.</p>
 </div></section>
 
@@ -475,17 +524,17 @@ html.lb-open{overflow:hidden}
 
 <section class="sec sec--blue" id="cancelamento"><div class="in split">
   <h2 class="t rv" style="margin:0">Cancelamento e disposições gerais.</h2>
-  <div class="rv"><p style="color:var(--soft)">Em caso de desistência após a confirmação do pagamento, o expositor deve comunicar a organização por escrito. Nessa hipótese, será realizado o reembolso de 50% (cinquenta por cento) do valor pago, considerando a disponibilidade limitada de espaços e os custos envolvidos no planejamento e na realização do campeonato.</p><p style="color:var(--soft)">A participação está condicionada à disponibilidade de espaço e às autorizações necessárias para a realização da atividade comercial no local.</p></div>
+  <details class="mx" open><summary>Ver cancelamento e reembolso</summary><div class="mxc"><p style="color:var(--soft)">Em caso de desistência após a confirmação do pagamento, o expositor deve comunicar a organização por escrito. Nessa hipótese, será realizado o reembolso de 50% (cinquenta por cento) do valor pago, considerando a disponibilidade limitada de espaços e os custos envolvidos no planejamento e na realização do campeonato.</p><p style="color:var(--soft)">A participação está condicionada à disponibilidade de espaço e às autorizações necessárias para a realização da atividade comercial no local.</p></div></details>
 </div></section>
 
 <section class="sec sec--paper" id="inscricao"><div class="in">
   <h2 class="t rv">Quero expor</h2>
-  <p class="lead rv">Preencha o formulário para solicitar sua participação. O aceite eletrônico do termo substitui a assinatura, e a organização retorna com a aprovação. Prefere conversar antes? <a href="https://wa.me/5581996484250?text=Ol%C3%A1%2C%20quero%20ser%20expositor%20no%207%C2%BA%20Campeonato%20Brasileiro%20de%20Kettlebell%20Sport." target="_blank" rel="noopener" style="font-weight:800;border-bottom:2px solid var(--yellow);text-decoration:none">Fale pelo WhatsApp</a>.</p>
+  <p class="lead rv">Preencha o formulário para solicitar sua participação. O aceite eletrônico do termo substitui a assinatura, e a organização retorna com a aprovação. <span class="mhide">Prefere conversar antes? <a href="https://wa.me/5581996484250?text=Ol%C3%A1%2C%20quero%20ser%20expositor%20no%207%C2%BA%20Campeonato%20Brasileiro%20de%20Kettlebell%20Sport." target="_blank" rel="noopener" style="font-weight:800;border-bottom:2px solid var(--yellow);text-decoration:none">Fale pelo WhatsApp</a>.</span></p>
   <div class="rv"><div class="frm-wrap" id="frmwrap">
   <form class="frm" id="frm" novalidate>
-    <div class="f"><label for="f-empresa">Empresa ou nome fantasia *</label><input id="f-empresa" name="empresa" type="text" required autocomplete="organization"></div><div class="f"><label for="f-razao_social">Razão social *</label><input id="f-razao_social" name="razao_social" type="text" required></div><fieldset class="f"><legend>Tipo de cadastro *</legend><div class="opts opts--row"><label class="opt"><input type="radio" name="tipo_pessoa" value="Pessoa jurídica (CNPJ)" required> <span>Pessoa jurídica (CNPJ)</span></label><label class="opt"><input type="radio" name="tipo_pessoa" value="Pessoa física (CPF)"> <span>Pessoa física (CPF)</span></label></div></fieldset><div class="f"><label for="f-documento">CNPJ ou CPF *</label><input id="f-documento" name="documento" type="text" required inputmode="numeric" aria-describedby="h-documento"><p class="hint" id="h-documento">Somente números.</p></div><div class="f"><label for="f-responsavel">Responsável *</label><input id="f-responsavel" name="responsavel" type="text" required autocomplete="name"></div><div class="f"><label for="f-whatsapp">WhatsApp *</label><input id="f-whatsapp" name="whatsapp" type="tel" required autocomplete="tel" inputmode="tel"></div><div class="f"><label for="f-email">E-mail *</label><input id="f-email" name="email" type="email" required autocomplete="email"></div><div class="f"><label for="f-instagram">Instagram</label><input id="f-instagram" name="instagram" type="text"></div><div class="f f--full"><label for="f-produto">Produto ou serviço comercializado *</label><textarea id="f-produto" name="produto" rows="3" required></textarea></div><fieldset class="f f--full"><legend>Estrutura (opcional)</legend><div class="opts opts--row"><label class="opt"><input type="checkbox" name="necessidades" value="Preciso de mesa"> <span>Preciso de mesa</span></label><label class="opt"><input type="checkbox" name="necessidades" value="Preciso de cadeiras"> <span>Preciso de cadeiras</span></label><label class="opt"><input type="checkbox" name="necessidades" value="Preciso de energia elétrica"> <span>Preciso de energia elétrica</span></label><label class="opt"><input type="checkbox" name="necessidades" value="Levarei estrutura própria"> <span>Levarei estrutura própria</span></label></div><p class="hint" id="h-necessidades">Mesas, cadeiras e energia dependem de confirmação expressa da organização.</p></fieldset><div class="f f--full"><label for="f-observacoes">Observações</label><textarea id="f-observacoes" name="observacoes" rows="3"></textarea></div><div class="f f--full"><label class="opt"><input type="checkbox" name="aceite_termo" value="Sim" required> <span>Li e aceito o Termo de Adesão e Compromisso para Expositores, apresentado nesta página. Declaro que as informações acima são verdadeiras. *</span></label></div><div class="f f--full"><label class="opt"><input type="checkbox" name="lgpd" value="Sim" required> <span>Autorizo o uso dos dados informados pela FPEKSPORT e pela organização do campeonato apenas para a análise, a formalização e a execução da minha participação como expositor. *</span></label></div>
+    <div class="f"><label for="f-empresa">Empresa ou nome fantasia *</label><input id="f-empresa" name="empresa" type="text" required autocomplete="organization"></div><div class="f"><label for="f-razao_social">Razão social *</label><input id="f-razao_social" name="razao_social" type="text" required></div><fieldset class="f"><legend>Tipo de cadastro *</legend><div class="opts opts--row"><label class="opt"><input type="radio" name="tipo_pessoa" value="Pessoa jurídica (CNPJ)" required> <span>Pessoa jurídica (CNPJ)</span></label><label class="opt"><input type="radio" name="tipo_pessoa" value="Pessoa física (CPF)"> <span>Pessoa física (CPF)</span></label></div></fieldset><div class="f"><label for="f-documento">CNPJ ou CPF *</label><input id="f-documento" name="documento" type="text" required inputmode="numeric" aria-describedby="h-documento"><p class="hint" id="h-documento">Somente números.</p></div><div class="f"><label for="f-responsavel">Responsável *</label><input id="f-responsavel" name="responsavel" type="text" required autocomplete="name"></div><div class="f"><label for="f-whatsapp">WhatsApp *</label><input id="f-whatsapp" name="whatsapp" type="tel" required autocomplete="tel" inputmode="tel"></div><div class="f"><label for="f-email">E-mail *</label><input id="f-email" name="email" type="email" required autocomplete="email"></div><div class="f"><label for="f-instagram">Instagram</label><input id="f-instagram" name="instagram" type="text"></div><div class="f f--full"><label for="f-produto">Produto ou serviço comercializado *</label><textarea id="f-produto" name="produto" rows="3" required></textarea></div><div class="mxf" data-label="Mais opções (estrutura e observações)"><fieldset class="f f--full"><legend>Estrutura (opcional)</legend><div class="opts opts--row"><label class="opt"><input type="checkbox" name="necessidades" value="Preciso de mesa"> <span>Preciso de mesa</span></label><label class="opt"><input type="checkbox" name="necessidades" value="Preciso de cadeiras"> <span>Preciso de cadeiras</span></label><label class="opt"><input type="checkbox" name="necessidades" value="Preciso de energia elétrica"> <span>Preciso de energia elétrica</span></label><label class="opt"><input type="checkbox" name="necessidades" value="Levarei estrutura própria"> <span>Levarei estrutura própria</span></label></div><p class="hint" id="h-necessidades">Mesas, cadeiras e energia dependem de confirmação expressa da organização.</p></fieldset><div class="f f--full"><label for="f-observacoes">Observações</label><textarea id="f-observacoes" name="observacoes" rows="3"></textarea></div></div><div class="f f--full"><label class="opt"><input type="checkbox" name="aceite_termo" value="Sim" required> <span>Li e aceito o Termo de Adesão e Compromisso para Expositores, apresentado nesta página. Declaro que as informações acima são verdadeiras. *</span></label></div><div class="f f--full"><label class="opt"><input type="checkbox" name="lgpd" value="Sim" required> <span>Autorizo o uso dos dados informados pela FPEKSPORT e pela organização do campeonato apenas para a análise, a formalização e a execução da minha participação como expositor. *</span></label></div>
     <div class="hp" aria-hidden="true"><label>Não preencha este campo <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
-    <div class="frm-act"><button class="btn" type="submit" id="frmsend">Enviar pedido de participação</button><p>Campos com * são obrigatórios.</p></div>
+    <div class="frm-act"><p class="req">Campos com * são obrigatórios.</p><button class="btn" type="submit" id="frmsend">Enviar pedido de participação</button></div>
   </form>
 </div>
 <div class="frm-msg" id="frmok" role="status" aria-live="polite" hidden tabindex="-1">
@@ -508,7 +557,7 @@ html.lb-open{overflow:hidden}
     <h2 class="t">Vamos montar esse campeonato com a sua marca.</h2>
     <p>Dúvidas sobre espaço, estrutura ou condições? A organização responde pelo WhatsApp.</p>
     <div class="row"><a class="btn " href="#inscricao">Quero expor</a> <a class="btn btn--ghost" href="https://wa.me/5581996484250?text=Ol%C3%A1%2C%20quero%20ser%20expositor%20no%207%C2%BA%20Campeonato%20Brasileiro%20de%20Kettlebell%20Sport%20e%20conhecer%20as%20condi%C3%A7%C3%B5es." target="_blank" rel="noopener">Falar no WhatsApp</a></div>
-    <div class="sign"><b>Jefferson Phelype Pereira da Silva Lôbo</b><span>Presidente da Federação Pernambucana de Kettlebell Sport – FPEKSPORT</span><span>Responsável nomeado pela CONBRAKS para a realização do evento</span><span class="ct">Instagram: @fpeksport · E-mail: federacao.pe.k.l@gmail.com · Telefone: (81) 99648-4250</span></div>
+    <div class="sign"><b>Jefferson Phelype Pereira da Silva Lôbo</b><span>Presidente da Federação Pernambucana de Kettlebell Sport – FPEKSPORT</span><span>Responsável nomeado pela CONBRAKS para a realização do evento</span><span class="ct">Instagram: <a href="https://instagram.com/fpeksport" target="_blank" rel="noopener">@fpeksport</a><br>E-mail: federacao.pe.k.l@gmail.com<br>Telefone: <a href="https://wa.me/5581996484250" target="_blank" rel="noopener">(81) 99648-4250</a></span><div class="ctico"><a href="https://instagram.com/fpeksport" target="_blank" rel="noopener" aria-label="Instagram @fpeksport"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".8" fill="currentColor"/></svg></a><a href="https://wa.me/5581996484250" target="_blank" rel="noopener" aria-label="WhatsApp (81) 99648-4250"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5A8 8 0 0 1 8.2 18.6L4 20l1.4-4.1A8 8 0 1 1 20 11.5Z"/><path d="M9 8.8c.3 2.6 2.7 5 5.4 5.4l1.2-1.3-2-1-.9.8c-.8-.3-1.7-1.2-2-2l.8-.9-1-2L9 8.8Z"/></svg></a><a href="mailto:federacao.pe.k.l@gmail.com" aria-label="E-mail federacao.pe.k.l@gmail.com"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></a></div></div>
   </div>
 </section>
 
@@ -712,6 +761,27 @@ window.FORM_CFG={"kind": "expositor", "prefix": "EXP", "label": "expositor", "wa
   var el=player.getIframe(),rq=el.requestFullscreen||el.webkitRequestFullscreen;
   if(rq){var r=rq.call(el);if(r&&r.catch)r.catch(function(){})}});
  document.addEventListener('fullscreenchange',syncSound);
+})();
+</script>
+<a class="mside mside--r" href="#inscricao">Quero expor</a><a class="mside mside--l" href="https://wa.me/5581996484250?text=Ol%C3%A1%2C%20quero%20ser%20expositor%20no%207%C2%BA%20Campeonato%20Brasileiro%20de%20Kettlebell%20Sport%20e%20conhecer%20as%20condi%C3%A7%C3%B5es." target="_blank" rel="noopener" aria-label="Falar no WhatsApp">WhatsApp</a>
+<script>
+(function(){
+var mq=window.matchMedia('(max-width:620px)');
+function apply(){document.querySelectorAll('details.mx').forEach(function(d){if(mq.matches)d.removeAttribute('open');else d.setAttribute('open','')})}
+apply();if(mq.addEventListener)mq.addEventListener('change',apply);else mq.addListener(apply);
+document.querySelectorAll('[data-more]').forEach(function(l){
+ var n=3;if(l.children.length<=n)return;l.classList.add('mxl');
+ var lb=l.getAttribute('data-label')||'Ver todas';
+ var b=document.createElement('button');b.type='button';b.className='mxb';b.textContent=lb;b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=l.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.textContent=o?'Ver menos':lb});
+ l.parentNode.insertBefore(b,l.nextSibling)});
+document.querySelectorAll('.mxf').forEach(function(f){
+ var lb=f.getAttribute('data-label')||'Mais opções';
+ var b=document.createElement('button');b.type='button';b.className='mxb';b.textContent=lb;b.setAttribute('aria-expanded','false');
+ b.addEventListener('click',function(){var o=f.classList.toggle('open');b.setAttribute('aria-expanded',o?'true':'false');b.textContent=o?'Ocultar opções':lb});
+ f.parentNode.insertBefore(b,f)});
+var side=document.querySelectorAll('.mside'),tg=document.getElementById('inscricao');
+if(tg&&'IntersectionObserver' in window){new IntersectionObserver(function(e){side.forEach(function(s){s.classList.toggle('off',e[0].isIntersecting)})}).observe(tg)}
 })();
 </script>
 </body>
