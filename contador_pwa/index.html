@@ -478,10 +478,10 @@
     /* contador: ao lado do Finalizar */
     .c-grid .c-haptic {
       width: 48px; min-height: 48px; padding: 0;
-      background: transparent; color: var(--yellow-primary);
-      border: 2px solid rgba(255, 204, 0, 0.55);
+      background: transparent; color: #fff;
+      border: 2px solid rgba(255, 255, 255, 0.3);
     }
-    .c-grid .c-haptic:hover { background: rgba(255, 204, 0, 0.12); border-color: var(--yellow-primary); }
+    .c-grid .c-haptic:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.5); }
     .c-grid .c-haptic[hidden] { display: none; }
     /* tela inicial: canto superior esquerdo, discreto */
     .btn-haptic-start {
@@ -505,6 +505,31 @@
     @media (display-mode: standalone), (display-mode: fullscreen) {
       .btn-install-main { display: none !important; }
     }
+
+    /* ================= BOTÃO MENU PRINCIPAL (casa) ================= */
+    .btn-home {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      width: 48px; min-height: 48px; padding: 0; margin-right: auto;
+      background: transparent; color: #fff; border: 2px solid rgba(255, 255, 255, 0.3);
+      font-family: var(--font-ui); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .btn-home:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.5); }
+    .btn-home svg { width: 24px; height: 24px; flex: none; }
+    .btn-home-label { display: none; }
+    @media (max-width: 700px) {
+      .btn-home { order: 99; width: auto; margin-right: 0; padding: 0 20px; }
+      .btn-home-label { display: inline; }
+    }
+
+    /* Menu com contagem salva (pausada): só os botões agem, tocar na tela não inicia nada */
+    .resume-panel { display: none; flex-direction: column; align-items: center; gap: 12px; width: min(420px, 80vw); cursor: default; }
+    #sponsors-screen.is-paused { cursor: default; }
+    #sponsors-screen.is-paused .resume-panel { display: flex; }
+    #sponsors-screen.is-paused .athlete-field, #sponsors-screen.is-paused .start-hint { display: none; }
+    .resume-info { font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.8); text-align: center; overflow-wrap: anywhere; }
+    .btn-resume { width: 100%; min-height: 56px; background: var(--yellow-primary); color: #001538; font-family: var(--font-ui); font-size: 1.2rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .btn-resume:hover { background: #ffd633; }
+    .resume-panel .btn-close { width: 100%; }
 
     /* ================= RESPONSIVO ================= */
     @media (max-aspect-ratio: 1/1) {
@@ -574,6 +599,12 @@
     </div>
 
     <div class="intro-footer">
+      <div class="resume-panel" id="resume-panel" onclick="event.stopPropagation()">
+        <div class="resume-info" id="resume-info"></div>
+        <button class="btn btn-resume" type="button" onclick="continueFromMenu()">Continuar contagem</button>
+        <button class="btn btn-close" id="btn-menu-next" type="button" onclick="closeSummaryAndReset(this)">Próximo atleta</button>
+      </div>
+
       <div class="athlete-field" onclick="event.stopPropagation()">
         <label for="athlete-start">Atleta (opcional)</label>
         <input type="text" id="athlete-start" maxlength="60" autocomplete="off" placeholder="Deixe em branco para contar sem nome">
@@ -658,6 +689,10 @@
       <div class="modal-header"><h2 class="modal-title">Finalizar a prova?</h2></div>
       <p class="confirm-text">O placar é mantido e você poderá voltar e continuar contando. O tempo parado no resumo não entra na duração.</p>
       <div class="modal-actions">
+        <button class="btn btn-home" type="button" onclick="goToMenu()" aria-label="Menu principal" title="Menu principal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5.5h4V20"/></svg>
+          <span class="btn-home-label">Menu principal</span>
+        </button>
         <button class="btn btn-close" onclick="cancelFinish()">Cancelar (Esc)</button>
         <button class="btn btn-export" onclick="confirmFinish()">Finalizar (R)</button>
       </div>
@@ -722,9 +757,13 @@
       </div>
 
       <div class="modal-actions">
+        <button class="btn btn-home" type="button" onclick="goToMenu()" aria-label="Menu principal" title="Menu principal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5.5h4V20"/></svg>
+          <span class="btn-home-label">Menu principal</span>
+        </button>
         <button class="btn btn-back" onclick="resumeCounting()">Voltar e continuar</button>
         <button class="btn btn-export" id="btn-export" onclick="exportTXT()">Exportar TXT</button>
-        <button class="btn btn-close" id="btn-new" onclick="closeSummaryAndReset()">Nova Contagem</button>
+        <button class="btn btn-close" id="btn-new" onclick="closeSummaryAndReset(this)">Próximo atleta</button>
       </div>
     </div>
   </div>
@@ -745,6 +784,7 @@
     let finished = false;     // resumo aberto
     let exported = false;     // TXT exportado desde o último evento
     let confirmOpen = false;
+    let inMenu = false;       // está no menu principal com a contagem salva (relógio pausado)
     let resetArmed = false;
     let resetTimer = null;
 
@@ -821,6 +861,7 @@
     const athleteStart = document.getElementById('athlete-start');
     const athleteSummary = document.getElementById('athlete-summary');
     const btnNew = document.getElementById('btn-new');
+    const btnMenuNext = document.getElementById('btn-menu-next');
     const btnExport = document.getElementById('btn-export');
     const counterAthlete = document.getElementById('counter-athlete');
 
@@ -841,7 +882,7 @@
       try {
         if (!active) { localStorage.removeItem(STORAGE_KEY); return; }
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
-          score, noCountCount, logs, isNoCountState, athlete, finished, exported, pausedMs,
+          score, noCountCount, logs, isNoCountState, athlete, finished, exported, pausedMs, inMenu,
           startTime: startTime ? startTime.getTime() : null,
           lastEventTime: lastEventTime ? lastEventTime.getTime() : null,
           endTime: endTime ? endTime.getTime() : null
@@ -863,6 +904,7 @@
         finished = !!s.finished;
         exported = !!s.exported;
         pausedMs = s.pausedMs || 0;
+        inMenu = !!s.inMenu;
         startTime = new Date(s.startTime);
         lastEventTime = s.lastEventTime ? new Date(s.lastEventTime) : startTime;
         endTime = s.endTime ? new Date(s.endTime) : null;
@@ -894,6 +936,7 @@
     }
 
     function startCounter() {
+      if (inMenu) return;   // há contagem salva: só os botões do menu agem (nunca zera por engano)
       athlete = athleteStart.value.trim();   // opcional: pode ficar em branco
       score = 0;
       noCountCount = 0;
@@ -995,6 +1038,40 @@
       saveState();
     }
 
+    // ---------- MENU PRINCIPAL COM CONTAGEM SALVA ----------
+    function updateMenuUI() {
+      sponsorsScreen.classList.toggle('is-paused', inMenu);
+      if (inMenu) {
+        document.getElementById('resume-info').textContent =
+          `Contagem pausada · ${score} ${score === 1 ? 'rep' : 'reps'}` + (athlete ? ` · ${athlete}` : '');
+      }
+    }
+
+    // Casa (nas janelas de finalizar): vai ao menu SEM descartar; o tempo no menu não entra na duração
+    function goToMenu() {
+      if (!active) return;
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+      if (confirmOpen) cancelFinish();
+      if (!endTime) endTime = new Date();   // pausa o relógio (resumeCounting desconta a pausa)
+      summaryModal.style.display = 'none';
+      disarmReset();
+      inMenu = true;
+      updateMenuUI();
+      counterScreen.style.display = 'none';
+      sponsorsScreen.style.display = 'grid';
+      saveState();
+    }
+
+    function continueFromMenu() {
+      if (!inMenu) return;
+      inMenu = false;
+      updateMenuUI();
+      sponsorsScreen.style.display = 'none';
+      counterScreen.style.display = 'flex';
+      resumeCounting();      // desconta a pausa, reabre a contagem e salva
+      updateDisplay();
+    }
+
     function updateExportButton() {
       btnExport.textContent = exported ? 'TXT salvo ✓ (salvar de novo)' : 'Exportar TXT';
       btnExport.classList.toggle('done', exported);
@@ -1051,15 +1128,15 @@
     function disarmReset() {
       clearTimeout(resetTimer);
       resetArmed = false;
-      btnNew.textContent = 'Nova Contagem';
-      btnNew.classList.remove('armed');
+      [btnNew, btnMenuNext].forEach((b) => { b.textContent = 'Próximo atleta'; b.classList.remove('armed'); });
     }
 
-    function closeSummaryAndReset() {
+    function closeSummaryAndReset(btn) {
+      btn = btn || btnNew;
       if (logs.length > 0 && !exported && !resetArmed) {
         resetArmed = true;
-        btnNew.textContent = 'Sem exportar! Clique de novo para descartar';
-        btnNew.classList.add('armed');
+        btn.textContent = 'Sem exportar! Toque de novo para zerar';
+        btn.classList.add('armed');
         clearTimeout(resetTimer);
         resetTimer = setTimeout(disarmReset, 5000);
         return;
@@ -1068,12 +1145,14 @@
 
       active = false;
       finished = false;
+      inMenu = false;
       athlete = '';
       athleteStart.value = '';
       saveState();   // remove o estado salvo
 
       summaryModal.style.display = 'none';
       counterScreen.style.display = 'none';
+      updateMenuUI();
       sponsorsScreen.style.display = 'grid';
     }
 
@@ -1345,9 +1424,13 @@
     if (loadState()) {
       ensureFooter();
       updateDisplay();
-      sponsorsScreen.style.display = 'none';
-      counterScreen.style.display = 'flex';
-      if (finished) renderSummary();
+      if (inMenu) {
+        updateMenuUI();       // volta ao menu, com a contagem salva e pausada
+      } else {
+        sponsorsScreen.style.display = 'none';
+        counterScreen.style.display = 'flex';
+        if (finished) renderSummary();
+      }
     }
   </script>
 </body>
