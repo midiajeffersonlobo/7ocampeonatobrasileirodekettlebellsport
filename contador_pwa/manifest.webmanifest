@@ -1,0 +1,19 @@
+{
+  "name": "Contador – 7º Campeonato Brasileiro de Kettlebell Sport",
+  "short_name": "Contador KB",
+  "description": "Contador de repetições offline para árbitros do 7º Campeonato Brasileiro de Kettlebell Sport.",
+  "lang": "pt-BR",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "any",
+  "background_color": "#011d4d",
+  "theme_color": "#011d4d",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
