@@ -102,6 +102,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
+      gap: 1.5vh;
       padding-top: 5vh;
     }
 
@@ -212,7 +213,7 @@
       font-size: clamp(1.1rem, min(3.2vh, 2.2vw), 2.4rem); line-height: 1.05; overflow-wrap: normal;
       display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
     }
-    .c-finish { grid-area: finish; justify-self: end; align-self: center; }
+    .c-tools { grid-area: finish; justify-self: end; align-self: center; display: flex; align-items: center; gap: var(--s3); }
 
     /* ---- Número ---- */
     .c-center { grid-area: center; min-height: 0; container-type: size; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -449,24 +450,52 @@
     .btn-close.armed { background: var(--red-alert); border-color: var(--red-alert); }
 
 
-    /* ================= BOTÃO DOWNLOAD / INSTALAR APP ================= */
-    .btn-install {
-      position: absolute;
-      top: calc(2.5vh + env(safe-area-inset-top, 0px));
-      right: calc(3vw + env(safe-area-inset-right, 0px));
+    /* ================= BOTÃO INSTALAR APP ================= */
+    .btn-install-main {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 11px;              /* área de toque confortável, sem aparecer */
-      min-height: 0;
-      background: none;
-      border: none;
-      opacity: 0.75;
-      transition: opacity 0.2s;
+      gap: 10px;
+      padding: 8px 24px;
+      background: transparent;
+      color: var(--yellow-primary);
+      border: 2px solid rgba(255, 204, 0, 0.55);
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: 1.05rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
     }
-    .btn-install:hover { opacity: 1; }
-    .btn-install svg { width: 22px; height: 22px; flex: none; }
-    .btn-install[hidden] { display: none; }
+    .btn-install-main:hover { background: rgba(255, 204, 0, 0.12); border-color: var(--yellow-primary); }
+    .btn-install-main svg { width: 20px; height: 20px; flex: none; }
+    .btn-install-main[hidden] { display: none; }
+
+    /* ================= BOTÃO VIBRAÇÃO (liga/desliga) ================= */
+    .js-haptic svg { width: 24px; height: 24px; flex: none; }
+    .js-haptic[aria-pressed="true"] .hx-slash { display: none; }
+    .js-haptic[aria-pressed="false"] .hx-waves { display: none; }
+    .js-haptic[aria-pressed="false"] { opacity: 0.6; }
+    /* contador: ao lado do Finalizar */
+    .c-grid .c-haptic {
+      width: 48px; min-height: 48px; padding: 0;
+      background: transparent; color: var(--yellow-primary);
+      border: 2px solid rgba(255, 204, 0, 0.55);
+    }
+    .c-grid .c-haptic:hover { background: rgba(255, 204, 0, 0.12); border-color: var(--yellow-primary); }
+    .c-grid .c-haptic[hidden] { display: none; }
+    /* tela inicial: canto superior esquerdo, discreto */
+    .btn-haptic-start {
+      position: absolute;
+      top: calc(2.5vh + env(safe-area-inset-top, 0px));
+      left: calc(3vw + env(safe-area-inset-left, 0px));
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 11px; min-height: 0;
+      background: none; border: none; color: #fff;
+      opacity: 0.75; transition: opacity 0.2s;
+    }
+    .btn-haptic-start:hover { opacity: 1; }
+    .btn-haptic-start[aria-pressed="false"] { opacity: 0.5; }
+    .btn-haptic-start[hidden] { display: none; }
 
     .install-steps { margin: 0 0 20px 1.2em; line-height: 1.6; }
     .install-steps li { margin-bottom: 6px; }
@@ -474,7 +503,7 @@
 
     /* No app instalado não faz sentido mostrar o botão */
     @media (display-mode: standalone), (display-mode: fullscreen) {
-      .btn-install { display: none !important; }
+      .btn-install-main { display: none !important; }
     }
 
     /* ================= RESPONSIVO ================= */
@@ -526,11 +555,11 @@
 
   <!-- 1. TELA INICIAL -->
   <div id="sponsors-screen" onclick="startCounter()">
-    <button class="btn btn-install" id="btn-install" type="button" aria-label="Download: instalar o contador como aplicativo" title="Instalar o app" onclick="event.stopPropagation(); installApp()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M12 3v12"/>
-        <path d="M6.5 9.5 12 15l5.5-5.5"/>
-        <path d="M4 20.5h16"/>
+    <button class="btn js-haptic btn-haptic-start" id="btn-haptic-start" type="button" aria-pressed="true" aria-label="Vibração ligada" title="Vibração" onclick="event.stopPropagation(); toggleHaptic()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="8" y="3.5" width="8" height="17" rx="2"/>
+        <g class="hx-waves"><path d="M4.5 8.5v7"/><path d="M19.5 8.5v7"/><path d="M1.5 10.5v3"/><path d="M22.5 10.5v3"/></g>
+        <path class="hx-slash" d="M3 3l18 18"/>
       </svg>
     </button>
 
@@ -550,6 +579,13 @@
         <input type="text" id="athlete-start" maxlength="60" autocomplete="off" placeholder="Deixe em branco para contar sem nome">
       </div>
 
+      <button class="btn btn-install-main" id="btn-install" type="button" aria-label="Instalar o contador como aplicativo" onclick="event.stopPropagation(); installApp()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3v12"/><path d="M6.5 9.5 12 15l5.5-5.5"/><path d="M4 20.5h16"/>
+        </svg>
+        <span>Instalar</span>
+      </button>
+
       <div class="start-hint"><span>Clique na tela ou pressione Espaço/Enter</span> <span>para iniciar</span></div>
     </div>
   </div>
@@ -559,7 +595,16 @@
     <div class="c-grid">
       <div class="c-notch" id="counter-footer" aria-label="Organização"></div>
       <div class="c-athlete" id="counter-athlete"></div>
-      <button class="btn c-finish" onclick="event.stopPropagation(); requestFinish()">Finalizar</button>
+      <div class="c-tools" onclick="event.stopPropagation()">
+        <button class="btn js-haptic c-haptic" id="btn-haptic" type="button" aria-pressed="true" aria-label="Vibração ligada" title="Vibração" onclick="toggleHaptic(event)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="8" y="3.5" width="8" height="17" rx="2"/>
+        <g class="hx-waves"><path d="M4.5 8.5v7"/><path d="M19.5 8.5v7"/><path d="M1.5 10.5v3"/><path d="M22.5 10.5v3"/></g>
+        <path class="hx-slash" d="M3 3l18 18"/>
+      </svg>
+        </button>
+        <button class="btn c-finish" onclick="event.stopPropagation(); requestFinish()">Finalizar</button>
+      </div>
 
       <div class="c-center">
         <div class="number-display" id="score-display" aria-live="polite">0</div>
@@ -703,6 +748,70 @@
     let resetArmed = false;
     let resetTimer = null;
 
+    // ---------- VIBRAÇÃO (Android: navigator.vibrate · iPhone: truque do <input switch>) ----------
+    const HAPTIC_KEY = 'kb_contador_vibrar';   // preferência separada do estado da prova
+    const HAPTIC = { plus: 30, minus: 20, nocount: [80, 40, 80], finish: 150 };
+    const CAN_VIBRATE = typeof navigator.vibrate === 'function';
+    const IS_IOS_HAPTIC = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    let hapticOn = true;
+    try { hapticOn = (localStorage.getItem(HAPTIC_KEY) ?? '1') === '1'; } catch (err) { /* sem armazenamento: fica ligado */ }
+
+    let iosSwitch = null, iosLabel = null;
+    function iosTap() {
+      if (!iosLabel) {
+        const hide = 'position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;';
+        iosSwitch = document.createElement('input');
+        iosSwitch.type = 'checkbox';
+        iosSwitch.setAttribute('switch', '');
+        iosSwitch.id = 'haptic-switch';
+        iosSwitch.tabIndex = -1;
+        iosSwitch.setAttribute('aria-hidden', 'true');
+        iosSwitch.style.cssText = hide;
+        iosLabel = document.createElement('label');
+        iosLabel.htmlFor = 'haptic-switch';
+        iosLabel.setAttribute('aria-hidden', 'true');
+        iosLabel.style.cssText = hide;
+        document.body.appendChild(iosSwitch);
+        document.body.appendChild(iosLabel);
+      }
+      iosLabel.click();          // alternar o switch faz o iOS dar o "toque" de haptic
+      iosSwitch.blur();          // não deixa o foco no input (as teclas de atalho ignoram campos)
+    }
+    function iosPattern(p) {
+      if (typeof p === 'number') { iosTap(); return; }
+      let t = 0;
+      p.forEach((d, i) => { if (i % 2 === 0) setTimeout(iosTap, t); t += d; });   // cada pulso vira um toque
+    }
+
+    function buzz(pattern) {
+      if (!hapticOn) return;
+      try {
+        if (CAN_VIBRATE) navigator.vibrate(pattern);
+        else if (IS_IOS_HAPTIC) iosPattern(pattern);
+      } catch (err) { /* vibração indisponível: segue sem */ }
+    }
+
+    function updateHapticUI() {
+      const supported = CAN_VIBRATE || IS_IOS_HAPTIC;
+      document.querySelectorAll('.js-haptic').forEach((el) => {
+        el.hidden = !supported;
+        el.setAttribute('aria-pressed', hapticOn ? 'true' : 'false');
+        el.setAttribute('aria-label', hapticOn ? 'Vibração ligada' : 'Vibração desligada');
+        el.title = hapticOn ? 'Vibração ligada' : 'Vibração desligada';
+      });
+    }
+
+    function toggleHaptic(event) {
+      if (event) event.stopPropagation();
+      hapticOn = !hapticOn;
+      try { localStorage.setItem(HAPTIC_KEY, hapticOn ? '1' : '0'); } catch (err) {}
+      updateHapticUI();
+      buzz(HAPTIC.plus);   // confirmação ao ligar (não faz nada ao desligar)
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    }
+    updateHapticUI();
+
     const sponsorsScreen = document.getElementById('sponsors-screen');
     const counterScreen = document.getElementById('counter-screen');
     const scoreDisplay = document.getElementById('score-display');
@@ -826,6 +935,7 @@
 
     function incrementScore(event) {
       if (event) event.stopPropagation();
+      buzz(HAPTIC.plus);
       score++;
       isNoCountState = false;
       updateDisplay();
@@ -835,6 +945,7 @@
     function decrementScore(event) {
       if (event) event.stopPropagation();
       if (score > 0) {
+        buzz(HAPTIC.minus);
         score--;
         isNoCountState = false;
         updateDisplay();
@@ -844,6 +955,7 @@
 
     function logNoCount(event) {
       if (event) event.stopPropagation();
+      buzz(HAPTIC.nocount);
       noCountCount++;
       isNoCountState = true;
       updateDisplay();
@@ -863,6 +975,7 @@
 
     function confirmFinish() {
       cancelFinish();
+      buzz(HAPTIC.finish);
       endTime = new Date();
       finished = true;
       saveState();
@@ -1086,7 +1199,7 @@
       if (location.protocol === 'file:') {
         html = `<p class="confirm-text">O contador foi aberto como arquivo do computador. Assim ele funciona normalmente,
                 mas <strong>os navegadores só instalam o app quando ele é aberto pelo endereço publicado</strong> (https).</p>
-                <p class="confirm-text">Abra o link do contador no Chrome, Edge ou Safari e toque de novo no <strong>ícone de download</strong> (canto superior direito).</p>`;
+                <p class="confirm-text">Abra o link do contador no Chrome, Edge ou Safari e toque de novo em <strong>Instalar</strong>.</p>`;
       } else if (isIOS) {
         html = `<ol class="install-steps">
                   <li>No <strong>Safari</strong>, toque em <strong>Compartilhar</strong> (quadrado com seta para cima).</li>
@@ -1100,7 +1213,7 @@
                 </ol>`;
       } else if (isFirefox) {
         html = `<p class="confirm-text">O Firefox não instala apps. Abra este endereço no <strong>Chrome</strong> ou no <strong>Edge</strong>
-                e toque de novo no <strong>ícone de download</strong> (canto superior direito). No Firefox o contador continua funcionando offline normalmente.</p>`;
+                e toque de novo em <strong>Instalar</strong>. No Firefox o contador continua funcionando offline normalmente.</p>`;
       } else {
         html = `<ol class="install-steps">
                   <li>Abra o menu do navegador (<strong>⋮</strong> ou <strong>…</strong>).</li>
