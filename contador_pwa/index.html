@@ -611,11 +611,11 @@
     .menu-backdrop { position: fixed; inset: 0; z-index: 89; background: rgba(0, 0, 0, 0.35); opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
     .b-saiu { background: #e67e22; color: #1a0f00; }
     /* indicador único: anel = rede, centro = dados (sem borda entre os dois) */
-    .net-ind { position: fixed; top: calc(4px + env(safe-area-inset-top, 0px)); left: calc(4px + env(safe-area-inset-left, 0px)); z-index: 310; width: 32px; height: 32px;
+    .net-ind { position: fixed; top: calc(4px + env(safe-area-inset-top, 0px)); left: calc(4px + env(safe-area-inset-left, 0px)); z-index: 310; width: 22px; height: 22px;
       touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: default; -webkit-tap-highlight-color: transparent; }
     .net-ind::before, .net-ind::after { content: ''; position: absolute; border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -50%); }
-    .net-ind::before { width: 16px; height: 16px; background: var(--n, #2fbf6b); box-shadow: 0 0 4px rgba(0, 0, 0, 0.5); }
-    .net-ind::after { width: 7px; height: 7px; background: var(--d, #2fbf6b); }
+    .net-ind::before { width: 8px; height: 8px; background: var(--n, #2fbf6b); box-shadow: 0 0 3px rgba(0, 0, 0, 0.5); }
+    .net-ind::after { width: 3.5px; height: 3.5px; background: var(--d, #2fbf6b); }
     [data-net="ok"] { --n: #2fbf6b; } [data-net="work"] { --n: #ffcc00; } [data-net="bad"] { --n: #ff4a4a; }
     [data-dat="ok"] { --d: #2fbf6b; } [data-dat="work"] { --d: #ffcc00; } [data-dat="bad"] { --d: #ff4a4a; }
     .net-legend { position: fixed; inset: 0; z-index: 320; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0, 0, 0, 0.7); }
