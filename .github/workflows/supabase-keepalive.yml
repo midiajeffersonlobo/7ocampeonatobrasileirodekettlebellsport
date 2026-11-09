@@ -1,0 +1,21 @@
+# Mantém o projeto Supabase do contador ativo (o plano gratuito pausa após 1 semana sem uso).
+# Coloque este arquivo em:  .github/workflows/supabase-keepalive.yml  (na raiz do repositório)
+name: Supabase keep-alive
+
+on:
+  schedule:
+    # a cada 3 dias (dias 1, 4, 7 ... do mês), 09:17 UTC — nunca passa de ~3 dias sem uso
+    - cron: '17 9 */3 * *'
+  workflow_dispatch:   # permite rodar manualmente em Actions > Supabase keep-alive > Run workflow
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Consulta leve na API do Supabase
+        run: |
+          code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 30 --retry 2 --retry-delay 10 \
+            -H "apikey: sb_publishable_dwm3sVuoNIohAptwHD_bjg_vM21YtHC" \
+            "https://grwoatyylzbfsufzkeyx.supabase.co/rest/v1/provas?select=id&limit=1")
+          echo "Supabase respondeu HTTP $code"
+          test "$code" = "200"
