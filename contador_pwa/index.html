@@ -834,6 +834,13 @@
     table.show-info th, table.show-info td { padding: 8px 4px; font-size: 0.76rem; }
     .tbl-screen table.show-info th, .tbl-screen table.show-info td { white-space: nowrap; }
     @media (max-height: 560px) { .summary-card { overflow-y: auto; } .summary-card .log-table-container { min-height: 120px; } }
+    .btn-next { background: var(--yellow-primary); color: #001538; border: none; border-radius: 999px; min-height: 54px; font-family: var(--font-ui); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.08em; font-size: 1.1rem; box-shadow: 0 4px 14px rgba(255, 204, 0, 0.35); }
+    .btn-next:hover { background: #ffd633; }
+    .sc-next-row { flex: none; display: flex; padding-bottom: 10px; }
+    .sc-next-row[hidden] { display: none; }
+    .sc-next-row .btn-next { width: 100%; }
+    .btn-export.is-saved { background: transparent; border: 2px solid #2fbf6b; color: #2fbf6b; opacity: 1; cursor: default; }
   </style>
 </head>
 <body>
@@ -982,7 +989,7 @@
     <div class="modal-card summary-card" role="dialog" aria-modal="true" aria-labelledby="sum-title">
       <div class="modal-header">
         <h2 class="modal-title" id="sum-title">Resumo da Prova</h2>
-        <span class="sc-saved" id="sc-saved" hidden>✓ Prova salva</span>
+        
       </div>
 
       <div class="sc-meta">
@@ -1016,6 +1023,7 @@
         </table>
       </div>
 
+      <div class="sc-next-row" id="sc-next-row" hidden><button class="btn btn-next" id="btn-next" type="button" onclick="proximoAtleta()">Próximo atleta</button></div>
       <div class="modal-actions sc-actions">
         <div class="sc-menu-wrap">
           <button class="btn sc-burger" id="sc-burger" type="button" aria-label="Mais opções" aria-haspopup="true" aria-expanded="false" onclick="toggleSummaryMenu(event)">
@@ -1458,6 +1466,7 @@
       }
       summaryModal.style.display = 'none';
       finished = false;
+      saved = false;
       endTime = null;
       saveState();
     }
@@ -1497,13 +1506,14 @@
       wrap.scrollTop = wrap.scrollHeight;
     }
 
+    // "Salvo ✓": checkpoint no aparelho. Qualquer edição volta o botão para "Salvar". A prova só é travada e enviada ao sair (Próximo atleta).
     function applySavedMode() {
-      [athleteSummary, movSummary, pistaSummary, arbSummary].forEach((i) => { i.readOnly = saved; });
-      document.getElementById('btn-back').hidden = saved;
-      document.getElementById('sc-discard').hidden = saved;
-      document.getElementById('sc-saved').hidden = !saved;
-      disarmReset();
+      btnSave.disabled = saved;
+      btnSave.textContent = saved ? '✓ Salvo' : 'Salvar';
+      btnSave.classList.toggle('is-saved', saved);
+      document.getElementById('sc-next-row').hidden = !saved;
     }
+    function marcaAlterado() { if (saved) { saved = false; applySavedMode(); } }
 
     function atualizaExtraLabel() {
       const parts = [];
@@ -1567,17 +1577,13 @@
 
     // Nome do atleta editável no resumo
     athleteSummary.addEventListener('input', () => {
+      marcaAlterado();
       athlete = athleteSummary.value.trim();
       counterAthlete.textContent = athlete;
       saveState();
     });
 
-    function disarmReset() {
-      clearTimeout(resetTimer);
-      resetArmed = false;
-      btnSave.textContent = saved ? 'Próximo atleta' : 'Salvar';
-      btnSave.classList.remove('armed');
-    }
+    function disarmReset() { clearTimeout(resetTimer); resetArmed = false; }
 
     // Volta à tela inicial e zera tudo (a prova já foi salva ou descartada antes de chegar aqui)
     function concluirReset() {
@@ -1605,40 +1611,36 @@
       return true;
     }
 
-    // Sela a prova: grava no histórico local (definitivo) e entra na fila da nuvem
+    // Sela a prova ao sair: grava no histórico local (definitivo) e entra na fila da nuvem
     function selaProva() {
       const prova = buildProva();
       if (!salvaProvaLocal(prova)) { showToast('Não foi possível salvar: memória do aparelho cheia. Exporte o TXT e libere espaço.', 'err'); return false; }
-      saved = true;
-      saveState();
-      applySavedMode();
       refreshSugestoes();
       renderStatus();
-      showToast('Prova salva · enviando à nuvem…', 'ok');
+      showToast('Prova no histórico · enviando à nuvem…', 'ok');
       syncNow(false);
       return true;
     }
 
-    // Botão principal do resumo: Salvar (com 2º toque de segurança) → Próximo atleta
+    // Salvar: guarda no aparelho e mostra "✓ Salvo" (pode salvar de novo se editar)
     function acaoSalvar() {
-      if (saved) { concluirReset(); return; }
+      if (saved) return;
       if (!validaResumo()) return;
-      if (!resetArmed) {
-        resetArmed = true;
-        btnSave.textContent = 'Salvar sem correção? Toque de novo';
-        btnSave.classList.add('armed');
-        clearTimeout(resetTimer);
-        resetTimer = setTimeout(disarmReset, 5000);
-        return;
-      }
-      disarmReset();
-      selaProva();
+      saved = true;
+      saveState();
+      applySavedMode();
+    }
+    // Próximo atleta (só com "Salvo"): trava, envia à nuvem e volta à tela inicial
+    function proximoAtleta() {
+      if (!saved) return;
+      if (!selaProva()) return;
+      concluirReset();
     }
 
     // ☰ → Menu principal: nunca sai com a contagem solta (ou já salva, ou pergunta)
     function sairParaMenu() {
       fechaMenuResumo();
-      if (saved) { concluirReset(); return; }
+      if (saved) { proximoAtleta(); return; }
       askDialog({
         title: 'Sair da contagem?',
         text: 'Esta contagem ainda não foi salva. Salve ou descarte antes de ir ao menu principal.',
@@ -1652,7 +1654,6 @@
 
     function pedeDescartar() {
       fechaMenuResumo();
-      if (saved) return;
       const nome = limpaTexto(athleteSummary.value) || 'SEM NOME';
       const tem = logs.length > 0;
       askDialog({
@@ -1666,7 +1667,6 @@
       });
     }
     function descarta() {
-      if (saved) return;
       if (!logs.length) { concluirReset(); showToast('Contagem descartada', 'ok'); return; }
       athlete = limpaTexto(athleteSummary.value) || 'SEM NOME';
       const r = lePista(pistaSummary.value); pista = r.ok ? r.val : null;
@@ -1960,7 +1960,7 @@
 
       // Resumo aberto: Esc volta a contar; demais teclas não fazem nada
       if (summaryModal.style.display === 'flex') {
-        if (e.key === 'Escape' && !e.repeat) { e.preventDefault(); if (!saved) resumeCounting(); }
+        if (e.key === 'Escape' && !e.repeat) { e.preventDefault(); resumeCounting(); }
         return;
       }
 
@@ -2690,6 +2690,7 @@
     pistaStart.addEventListener('input', () => { pistaStart.value = pistaStart.value.replace(/\D/g, '').slice(0, 3); pistaStart.classList.remove('invalid'); atualizaResumoForm(); });
     [movStart, arbStart].forEach((i) => i.addEventListener('input', atualizaResumoForm));
     function lerResumoExtras() {
+      marcaAlterado();
       movimento = limpaTexto(movSummary.value);
       arbitro = limpaTexto(arbSummary.value);
       pistaSummary.value = pistaSummary.value.replace(/\D/g, '').slice(0, 3);
