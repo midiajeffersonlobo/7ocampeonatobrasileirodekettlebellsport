@@ -1145,3 +1145,88 @@ document.addEventListener('keydown', (event) => {
   });
 
 })();
+
+// ---- Acesso oculto ao contador: 10 toques na logo do 7º Campeonato → campo de PIN ----
+// (PIN guardado aqui no site de propósito: é só uma trava de tela e precisa funcionar offline)
+// KB-PIN-INICIO
+(() => {
+  const logo = document.querySelector('.opening__layer--title');
+  if (!logo) return;
+  const PIN = '4250', TOQUES = 10, JANELA_MS = 3500, ERROS_MAX = 3, BLOQUEIO_MS = 10 * 60 * 1000;
+  const K_ERR = 'kb_site_pin_erros', K_BLQ = 'kb_site_pin_bloqueio';
+  const DESTINO = 'contador_pwa/';
+  const WA = 'https://wa.me/5581996484250?text=' + encodeURIComponent('Olá Jefferson! Preciso do link direto do contador de repetições do 7º Campeonato Brasileiro de Kettlebell Sport.');
+  const get = (k) => { try { return parseInt(localStorage.getItem(k) || '0', 10) || 0; } catch (e) { return 0; } };
+  const set = (k, v) => { try { localStorage.setItem(k, String(v)); } catch (e) {} };
+  const del = (k) => { try { localStorage.removeItem(k); } catch (e) {} };
+  const bloqueadoAte = () => { const t = get(K_BLQ); if (t && t > Date.now()) return t; if (t) del(K_BLQ); return 0; };
+
+  // elementos (criados aqui para não mexer no HTML)
+  const pinBox = document.createElement('div');
+  pinBox.className = 'kbp'; pinBox.hidden = true;
+  pinBox.innerHTML = '<input class="kbp__input" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="PIN de 4 dígitos" placeholder="••••">';
+  const input = pinBox.firstChild;
+  const lockBox = document.createElement('div');
+  lockBox.className = 'kbp kbp--lock'; lockBox.hidden = true;
+  lockBox.innerHTML = '<div class="kbp__card" role="alertdialog" aria-modal="true" aria-labelledby="kbp-lt"><h2 id="kbp-lt">Acesso bloqueado</h2><p>Tente de novo em <b class="kbp__time">10:00</b>.</p><p>Para receber o link direto do contador, fale com o Jefferson.</p><a class="kbp__wa" target="_blank" rel="noopener">Falar com o Jefferson no WhatsApp</a><button class="kbp__close" type="button">Fechar</button></div>';
+  lockBox.querySelector('.kbp__wa').href = WA;
+  document.body.append(pinBox, lockBox);
+  const timeEl = lockBox.querySelector('.kbp__time');
+
+  let n = 0, ultimo = 0, tick = null;
+
+  function fechaPin() { pinBox.hidden = true; input.value = ''; input.blur(); n = 0; }
+  function fechaLock() { lockBox.hidden = true; clearInterval(tick); n = 0; }
+  function mostraLock() {
+    fechaPin();
+    const ate = bloqueadoAte();
+    if (!ate) return false;
+    const atualiza = () => {
+      const falta = Math.max(0, bloqueadoAte() - Date.now());
+      if (!falta) { fechaLock(); return; }
+      const s = Math.ceil(falta / 1000);
+      timeEl.textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+    };
+    atualiza(); lockBox.hidden = false;
+    clearInterval(tick); tick = setInterval(atualiza, 1000);
+    return true;
+  }
+  function abrePin() {
+    pinBox.hidden = false; input.value = '';
+    pinBox.classList.remove('is-ok');
+    setTimeout(() => input.focus(), 60);
+  }
+  function erro() {
+    fechaPin();
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    const e = get(K_ERR) + 1;
+    if (e >= ERROS_MAX) { del(K_ERR); set(K_BLQ, Date.now() + BLOQUEIO_MS); mostraLock(); }
+    else set(K_ERR, e);
+  }
+  function confere() {
+    if (input.value.length < 4) return;
+    if (input.value === PIN) {
+      del(K_ERR); del(K_BLQ);
+      pinBox.classList.add('is-ok');
+      setTimeout(() => { (window.__kbIr || ((u) => { window.location.href = u; }))(DESTINO); }, 260);
+    } else erro();
+  }
+  input.addEventListener('input', () => { input.value = input.value.replace(/\D/g, '').slice(0, 4); if (input.value.length === 4) setTimeout(confere, 140); });
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); confere(); } });
+  pinBox.addEventListener('click', (e) => { if (e.target === pinBox) fechaPin(); });
+  lockBox.addEventListener('click', (e) => { if (e.target === lockBox || e.target.classList.contains('kbp__close')) fechaLock(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (!pinBox.hidden) fechaPin(); if (!lockBox.hidden) fechaLock(); } });
+
+  // toque na logo: pulso simples (brilho cresce até o 10º)
+  logo.addEventListener('click', () => {
+    const agora = Date.now();
+    if (agora - ultimo > JANELA_MS) n = 0;
+    ultimo = agora; n++;
+    try {
+      const f = 1 + n * 0.07;
+      logo.animate([{ filter: 'brightness(1)' }, { filter: 'brightness(' + f + ') drop-shadow(0 0 ' + (4 + n * 2) + 'px rgba(255,213,0,.9))' }, { filter: 'brightness(1)' }], { duration: 260, easing: 'ease-out' });
+    } catch (e) {}
+    if (n >= TOQUES) { n = 0; if (!mostraLock()) abrePin(); }
+  });
+})();
+// KB-PIN-FIM

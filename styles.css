@@ -793,3 +793,19 @@ dialog.athlete-modal.is-closing::backdrop,dialog.lightbox.is-closing::backdrop,d
   .section--organizers .logo-row a:nth-child(3) img{transform:scale(1.4)}
   .section--organizers .logo-row a:nth-child(1) img{transform:scale(1.1)}
 }
+
+/* ---- Acesso oculto ao contador (PIN) ---- */
+.opening__layer--title{pointer-events:auto;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;touch-action:manipulation;cursor:default}
+.kbp{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(2,10,30,.55);animation:kbp-fade .25s ease both}
+.kbp[hidden]{display:none}
+.kbp__input{width:min(260px,80vw);height:64px;padding:0 16px;border:0;border-radius:12px;background:#fff;color:#021b63;text-align:center;font:700 2rem/1 "Inter",Arial,sans-serif;letter-spacing:.5em;text-indent:.5em;box-shadow:0 10px 40px rgba(0,0,0,.5);outline:0;animation:kbp-pop .28s cubic-bezier(.22,1,.36,1) both;transition:background-color .2s ease}
+.kbp__input::placeholder{color:#b9c2d6;letter-spacing:.4em}
+.kbp.is-ok .kbp__input{background:#bff0cf}
+.kbp__card{width:100%;max-width:380px;padding:22px 20px;border-radius:14px;background:#fff;color:#021b63;text-align:center;box-shadow:0 14px 50px rgba(0,0,0,.55);animation:kbp-pop .28s cubic-bezier(.22,1,.36,1) both}
+.kbp__card h2{margin:0 0 10px;font:800 1.35rem/1.1 "Inter",Arial,sans-serif;text-transform:uppercase;letter-spacing:.04em}
+.kbp__card p{margin:0 0 10px;font:500 1rem/1.4 "Inter",Arial,sans-serif}
+.kbp__time{font-variant-numeric:tabular-nums}
+.kbp__wa{display:block;margin:14px 0 8px;padding:14px 12px;border-radius:10px;background:#25a244;color:#fff;font:800 1rem/1.2 "Inter",Arial,sans-serif;text-decoration:none}
+.kbp__close{width:100%;padding:12px;border:2px solid #cfd6e6;border-radius:10px;background:transparent;color:#021b63;font:700 .95rem "Inter",Arial,sans-serif;cursor:pointer}
+@keyframes kbp-fade{from{opacity:0}to{opacity:1}}
+@keyframes kbp-pop{from{opacity:0;transform:scale(.9) translateY(8px)}to{opacity:1;transform:none}}
