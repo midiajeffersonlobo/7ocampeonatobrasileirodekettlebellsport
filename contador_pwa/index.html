@@ -596,10 +596,6 @@
       .modal-meta .mm-athlete, .modal-meta .mm-mov { grid-column: 1 / -1; }
     }
     /* janelas altas demais para a tela: o cartão rola por dentro (a tela principal continua fixa) */
-    @media (max-width: 700px), (max-height: 640px) {
-      #prova-modal .modal-card { overflow-y: auto; }
-      #prova-modal .log-table-container { flex: 0 0 auto; min-height: 120px; max-height: 32vh; }
-    }
 
     /* ---- Menu sanduíche ---- */
     .btn-burger { position: absolute; top: calc(2.5vh + env(safe-area-inset-top, 0px)); right: calc(3vw + env(safe-area-inset-right, 0px));
@@ -678,9 +674,23 @@
     .b-pend { background: #ffcc00; color: #2a1d00; }
     .b-err { background: #c62828; color: #fff; }
     .b-dev { background: rgba(255, 255, 255, 0.12); color: #fff; }
-    .pv-meta { margin-bottom: 14px; line-height: 1.55; font-size: 0.95rem; color: rgba(255, 255, 255, 0.85); overflow-wrap: anywhere; }
+    .pv-meta { margin: 0 0 8px; padding: 0 2px; line-height: 1.55; font-size: 0.95rem; color: rgba(255, 255, 255, 0.85); overflow-wrap: anywhere; }
     #prova-modal { z-index: 112; }
-    #prova-modal .modal-actions .btn-close { margin-right: auto; }
+
+
+    /* ===== telas "macro": nunca rolam; só a tabela de registros rola ===== */
+    .modal-backdrop { overflow: hidden; }
+    .confirm-card { max-height: calc(100vh - var(--status-total) - 20px); max-height: calc(100dvh - var(--status-total) - 20px); overflow-y: auto; padding: 18px; }
+    .confirm-text { margin-bottom: 14px; }
+    .pv-top { flex: none; display: flex; flex-direction: column; gap: 6px; padding-bottom: 8px; margin-bottom: 6px; border-bottom: 1px solid rgba(255, 204, 0, 0.3); }
+    .pv-name { margin: 0; font-family: var(--font-ui); font-size: 1.25rem; color: var(--yellow-primary); overflow-wrap: anywhere; line-height: 1.15; }
+    .pv-card .sc-more { flex: none; }
+    .pv-card .pv-meta { font-size: 0.82rem; line-height: 1.4; max-height: 30vh; overflow-y: auto; }
+    .pv-card .summary-stats .stat-box:nth-child(n+3) { display: block; }
+    @media (max-width: 560px) { .pv-card .summary-stats { grid-template-columns: 1fr 1fr 1fr 1fr; } .pv-card .stat-box:first-child .stat-value { font-size: 1.5rem; } .pv-card .stat-value { font-size: 1rem; } .pv-card .stat-label { font-size: 0.6rem; } }
+    #pv-table.show-info th, #pv-table.show-info td { white-space: nowrap; padding-left: 6px; padding-right: 6px; }
+    .pv-card .log-table-container { overflow-x: auto; }
+    .sc-actions #pv-restore { flex: 1 1 auto; }
 
     /* ================= RESPONSIVO ================= */
     @media (max-aspect-ratio: 1/1) {
@@ -827,7 +837,6 @@
     .b-rest { background: #6a3fb5; color: #fff; }
     .b-lix { background: #8a1c1c; color: #fff; }
     .hc-badges { display: flex; flex-wrap: wrap; gap: 6px; }
-    #prova-modal .modal-actions .btn-danger { margin-right: auto; }
     .sc-tbtn { white-space: nowrap; }
     .tbl-head h2 { font-size: 1.05rem; letter-spacing: 0.06em; }
     .tbl-wrap { overflow-x: auto; }
@@ -1099,26 +1108,46 @@
 
   <!-- DETALHE DA PROVA (histórico) -->
   <div class="modal-backdrop" id="prova-modal" onclick="if (event.target === this) fechaProva()">
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="pv-title">
-      <div class="modal-header"><h2 class="modal-title" id="pv-title"></h2></div>
-      <div class="pv-meta" id="pv-meta"></div>
+    <div class="modal-card summary-card pv-card" role="dialog" aria-modal="true" aria-labelledby="pv-title">
+      <div class="pv-top">
+        <h2 class="pv-name" id="pv-title"></h2>
+        <div class="hc-badges" id="pv-badges"></div>
+      </div>
+      <button class="sc-more" id="pv-more" type="button" aria-expanded="false" aria-controls="pv-extra" onclick="togglePvExtra()"><span>Detalhes da prova</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg></button>
+      <div class="sc-extra" id="pv-extra" aria-hidden="true"><div><div class="pv-meta" id="pv-meta"></div></div></div>
       <div class="summary-stats">
         <div class="stat-box"><div class="stat-label">Reps Válidas</div><div class="stat-value" id="pv-reps">0</div></div>
         <div class="stat-box"><div class="stat-label">No Counts</div><div class="stat-value" id="pv-nc" style="color: var(--red-alert)">0</div></div>
         <div class="stat-box"><div class="stat-label">Duração</div><div class="stat-value" id="pv-dur">00:00</div></div>
-        <div class="stat-box"><div class="stat-label">Ritmo Médio</div><div class="stat-value" id="pv-pace">0.0 RPM</div></div>
+        <div class="stat-box"><div class="stat-label">Ritmo (RPM)</div><div class="stat-value" id="pv-pace">0.0</div></div>
+      </div>
+      <div class="sc-tools">
+        <span class="sc-tools-title">Registros</span>
+        <button class="sc-tbtn" id="pv-btn-info" type="button" onclick="toggleInfo()">+ informações</button>
+        <button class="sc-tbtn" type="button" onclick="openTabela('pv')" aria-label="Ver a tabela em tela cheia" title="Tela cheia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
       </div>
       <div class="log-table-container">
-        <table>
-          <thead><tr><th>#</th><th>Status</th><th>Hora Exata</th><th>Tempo Decorrido</th><th>Intervalo</th></tr></thead>
+        <table id="pv-table">
+          <thead><tr><th>#</th><th>Status</th><th>Intervalo</th><th class="col-info">Hora Exata</th><th class="col-info">Decorrido</th></tr></thead>
           <tbody id="pv-body"></tbody>
         </table>
       </div>
-      <div class="modal-actions">
-        <button class="btn btn-close" id="pv-del" type="button" onclick="apagaProva()">Apagar</button>
+      <div class="modal-actions sc-actions">
+        <div class="sc-menu-wrap">
+          <button class="btn sc-burger" id="pv-burger" type="button" aria-label="Mais opções" aria-haspopup="true" aria-expanded="false" onclick="togglePvMenu(event)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+          <div class="sc-menu" id="pv-menu" role="menu" hidden onclick="event.stopPropagation()">
+            <button class="sc-item" type="button" role="menuitem" onclick="fechaMenuPv(); exportaProvaTXT()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M6.5 9.5 12 15l5.5-5.5"/><path d="M4 20.5h16"/></svg><span>Exportar TXT</span>
+            </button>
+            <button class="sc-item danger" id="pv-del" type="button" role="menuitem" onclick="apagaProva()">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span id="pv-del-txt">Apagar</span>
+            </button>
+          </div>
+        </div>
+        <button class="btn btn-back" type="button" onclick="fechaProva()">Voltar</button>
         <button class="btn btn-export" id="pv-restore" type="button" onclick="pedeRestaurar()" hidden>Restaurar</button>
-        <button class="btn btn-back" type="button" onclick="fechaProva()">Fechar</button>
-        <button class="btn btn-export" type="button" onclick="exportaProvaTXT()">Exportar TXT</button>
       </div>
     </div>
   </div>
@@ -1483,25 +1512,27 @@
       if (sp) sp.textContent = exported ? 'Exportar TXT ✓' : 'Exportar TXT';
     }
 
-    function renderLogTables() {
-      const bodies = [document.getElementById('log-table-body'), document.getElementById('tbl-body')];
-      bodies.forEach((b) => { b.textContent = ''; });
-      logs.forEach((log) => {
-        let statusText = 'VÁLIDA', cls = '';
-        if (log.type === 'NO_COUNT') { statusText = 'NO COUNT'; cls = 'no-count-row'; }
-        if (log.type === 'CORRECTION_MINUS') { statusText = 'CORREÇÃO (-1)'; cls = 'corrected-row'; }
-        bodies.forEach((tb) => {
+    function preencheTabela(bodies, linhas) {
+      bodies.forEach((tb) => {
+        tb.textContent = '';
+        linhas.forEach((l) => {
           const tr = document.createElement('tr');
-          if (cls) tr.className = cls;
-          [String(log.index), statusText, log.interval, log.timestamp, log.elapsed].forEach((v, i) => {
+          if (l.cls) tr.className = l.cls;
+          [l.n, l.st, l.iv, l.hora, l.dec].forEach((v, i) => {
             const td = document.createElement('td');
-            if (i === 1) { const s = document.createElement('strong'); s.textContent = v; td.appendChild(s); } else td.textContent = v;
+            if (i === 1) { const st = document.createElement('strong'); st.textContent = v; td.appendChild(st); } else td.textContent = v;
             if (i >= 3) td.className = 'col-info';
             tr.appendChild(td);
           });
           tb.appendChild(tr);
         });
       });
+    }
+    function renderLogTables() {
+      preencheTabela([document.getElementById('log-table-body'), document.getElementById('tbl-body')], logs.map((log) => ({
+        n: String(log.index), st: log.type === 'NO_COUNT' ? 'NO COUNT' : (log.type === 'CORRECTION_MINUS' ? 'CORREÇÃO (-1)' : 'VÁLIDA'),
+        cls: log.type === 'NO_COUNT' ? 'no-count-row' : (log.type === 'CORRECTION_MINUS' ? 'corrected-row' : ''),
+        iv: log.interval, hora: log.timestamp, dec: log.elapsed })));
       const wrap = document.getElementById('log-wrap');
       wrap.scrollTop = wrap.scrollHeight;
     }
@@ -1532,10 +1563,27 @@
 
     function toggleInfo() {
       infoOn = !infoOn;
-      ['log-table', 'tbl-full'].forEach((id) => document.getElementById(id).classList.toggle('show-info', infoOn));
-      ['btn-info', 'btn-info2'].forEach((id) => { document.getElementById(id).textContent = infoOn ? '− informações' : '+ informações'; });
+      ['log-table', 'tbl-full', 'pv-table'].forEach((id) => document.getElementById(id).classList.toggle('show-info', infoOn));
+      ['btn-info', 'btn-info2', 'pv-btn-info'].forEach((id) => { document.getElementById(id).textContent = infoOn ? '− informações' : '+ informações'; });
     }
-    function openTabela() { fechaMenuResumo(); tblScreen.style.display = 'flex'; }
+    let pvMenuOpen = false;
+    function togglePvExtra() {
+      const ex = $('pv-extra'), on = !ex.classList.contains('open');
+      ex.classList.toggle('open', on); ex.setAttribute('aria-hidden', on ? 'false' : 'true');
+      $('pv-more').setAttribute('aria-expanded', on ? 'true' : 'false');
+    }
+    function togglePvMenu(ev) {
+      if (ev) ev.stopPropagation();
+      pvMenuOpen = !pvMenuOpen;
+      $('pv-menu').hidden = !pvMenuOpen; $('pv-burger').setAttribute('aria-expanded', pvMenuOpen ? 'true' : 'false');
+    }
+    function fechaMenuPv() { pvMenuOpen = false; $('pv-menu').hidden = true; $('pv-burger').setAttribute('aria-expanded', 'false'); }
+    function openTabela(src) {
+      fechaMenuResumo(); fechaMenuPv();
+      if (src === 'pv' && provaAberta) { $('tbl-title').textContent = provaAberta.atleta; preencheTabela([$('tbl-body')], linhasEventos(provaAberta.eventos)); }
+      else { $('tbl-title').textContent = 'Registros'; renderLogTables(); }
+      tblScreen.style.display = 'flex';
+    }
     function closeTabela() { tblScreen.style.display = 'none'; }
 
     function toggleSummaryMenu(ev) {
@@ -1947,6 +1995,7 @@
       if (tblScreen.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); closeTabela(); } return; }
       if (scMenuOpen) { if (e.key === 'Escape') { e.preventDefault(); fechaMenuResumo(); } return; }
       // Detalhe de prova / histórico / menu: Esc fecha, nenhuma outra tecla conta repetição
+      if (pvMenuOpen) { if (e.key === 'Escape') { e.preventDefault(); fechaMenuPv(); } return; }
       if (provaModal.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); fechaProva(); } return; }
       if (histScreen.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); closeHistory(); } return; }
       if (menuOpen) { if (e.key === 'Escape') { e.preventDefault(); closeMenu(); } return; }
@@ -2546,21 +2595,14 @@
       const d = new Date(ts);
       return d.toLocaleTimeString('pt-BR') + '.' + String(d.getMilliseconds()).padStart(3, '0');
     }
-    function renderEventos(eventos) {
-      const tb = $('pv-body'); tb.textContent = '';
-      (eventos || []).forEach((e) => {
-        const tipo = e[1], tr = document.createElement('tr');
-        if (tipo === 'N') tr.classList.add('no-count-row');
-        if (tipo === 'C') tr.classList.add('corrected-row');
-        const st = tipo === 'N' ? 'NO COUNT' : (tipo === 'C' ? 'CORREÇÃO (-1)' : 'VÁLIDA');
-        [String(e[0]), st, horaEvento(e[3]), formatTime(e[4] || 0), e[5] === null || e[5] === undefined ? '—' : (e[5] / 1000).toFixed(1) + 's'].forEach((v, i) => {
-          const td = document.createElement('td');
-          if (i === 1) { const s = document.createElement('strong'); s.textContent = v; td.appendChild(s); } else td.textContent = v;
-          tr.appendChild(td);
-        });
-        tb.appendChild(tr);
+    function linhasEventos(eventos) {
+      return (eventos || []).map((e) => {
+        const tipo = e[1];
+        return { n: String(e[0]), st: tipo === 'N' ? 'NO COUNT' : (tipo === 'C' ? 'CORREÇÃO (-1)' : 'VÁLIDA'), cls: tipo === 'N' ? 'no-count-row' : (tipo === 'C' ? 'corrected-row' : ''),
+          iv: e[5] === null || e[5] === undefined ? '—' : (e[5] / 1000).toFixed(1) + 's', hora: horaEvento(e[3]), dec: formatTime(e[4] || 0) };
       });
     }
+    function renderEventos(eventos) { preencheTabela([$('pv-body')], linhasEventos(eventos)); }
     function estadoApagar(p) {
       if (p.sync !== 'synced') return { ok: false, txt: 'Apagar (aguardando envio)' };
       const falta = (p.selada_em || 0) + DIA_MS - Date.now();
@@ -2568,24 +2610,26 @@
       return { ok: true, txt: 'Apagar deste aparelho' };
     }
     function atualizaBotaoApagar() {
-      const b = $('pv-del'), rb = $('pv-restore');
+      const b = $('pv-del'), t = $('pv-del-txt'), rb = $('pv-restore');
       if (modoLix()) {
-        rb.hidden = false;
-        b.hidden = false; b.disabled = false; b.textContent = 'Excluir de vez';
-        b.classList.add('btn-danger'); b.classList.remove('btn-close', 'armed');
+        rb.hidden = false; b.hidden = false; b.disabled = false; t.textContent = 'Excluir de vez'; b.classList.remove('armed');
         return;
       }
       rb.hidden = true;
-      b.classList.remove('btn-danger'); b.classList.add('btn-close');
       b.hidden = provaModo !== 'local';
       if (b.hidden) return;
       const s = estadoApagar(provaAberta);
-      b.disabled = !s.ok; b.textContent = apagarArmado && s.ok ? 'Toque de novo para apagar' : s.txt;
+      b.disabled = !s.ok; t.textContent = apagarArmado && s.ok ? 'Toque de novo para apagar' : s.txt;
       b.classList.toggle('armed', apagarArmado && s.ok);
     }
     async function abreProva(p, modo) {
       provaAberta = p; provaModo = modo; apagarArmado = false; clearTimeout(apagarT);
       $('pv-title').textContent = p.atleta;
+      fechaMenuPv(); if ($('pv-extra').classList.contains('open')) togglePvExtra();
+      const bd = $('pv-badges'); bd.textContent = '';
+      if (p.restaurada_em) bd.appendChild(mk('span', 'badge b-rest', 'RESTAURADA'));
+      else if (p.descartada_em) bd.appendChild(mk('span', 'badge b-lix', 'DESCARTADA'));
+      bd.appendChild(mk('span', 'badge b-dev', modo === 'nuvem' || modo === 'lix-nuvem' ? 'NUVEM' : 'LOCAL'));
       const meta = $('pv-meta'); meta.textContent = '';
       const linha = (t) => { meta.appendChild(mk('div', '', t)); };
       const dh = (iso) => new Date(iso).toLocaleString('pt-BR');
@@ -2597,7 +2641,7 @@
       if (modo === 'local' || modo === 'lix-local') linha('Situação: ' + (p.sync === 'synced' ? 'enviada à nuvem' : (p.sync === 'error' ? 'erro no envio: ' + (p.erro || '') : 'pendente de envio')));
       $('pv-reps').textContent = p.reps_validas; $('pv-nc').textContent = p.no_counts;
       $('pv-dur').textContent = formatTime((p.duracao_s || 0) * 1000);
-      $('pv-pace').textContent = (p.duracao_s > 0 ? (p.reps_validas / (p.duracao_s / 60)).toFixed(1) : '0.0') + ' RPM';
+      $('pv-pace').textContent = p.duracao_s > 0 ? (p.reps_validas / (p.duracao_s / 60)).toFixed(1) : '0.0';
       atualizaBotaoApagar();
       provaModal.style.display = 'flex';
       if (modo === 'local' || modo === 'lix-local') { renderEventos(p.eventos); return; }
@@ -2614,10 +2658,10 @@
         renderEventos(p.eventos);
       } catch (err) { if (provaAberta === p) td.textContent = 'Não foi possível carregar os eventos (sem conexão).'; }
     }
-    function fechaProva() { provaModal.style.display = 'none'; provaAberta = null; clearTimeout(apagarT); apagarArmado = false; }
+    function fechaProva() { fechaMenuPv(); provaModal.style.display = 'none'; provaAberta = null; clearTimeout(apagarT); apagarArmado = false; }
     function apagaProva() {
       if (!provaAberta) return;
-      if (modoLix()) { pedeExcluirDeVez(provaAberta); return; }
+      if (modoLix()) { fechaMenuPv(); pedeExcluirDeVez(provaAberta); return; }
       if (provaModo !== 'local') return;
       const s = estadoApagar(provaAberta);
       if (!s.ok) return;
@@ -2707,7 +2751,7 @@
     window.addEventListener('offline', renderStatus);
     document.addEventListener('visibilitychange', () => { if (!document.hidden) { renderStatus(); syncNow(false); } });
     setInterval(() => { if (!syncing && (histLoad().some((p) => p.sync === 'pending') || lixLoad().some((p) => p.sync === 'pending') || delLoad().length)) syncNow(false); }, 20000);
-    document.addEventListener('click', (e) => { if (scMenuOpen && !e.target.closest('.sc-menu-wrap')) fechaMenuResumo(); });
+    document.addEventListener('click', (e) => { if (pvMenuOpen && !e.target.closest('.sc-menu-wrap')) fechaMenuPv(); if (scMenuOpen && !e.target.closest('.sc-menu-wrap')) fechaMenuResumo(); });
     document.getElementById('pin-input').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4); document.getElementById('pin-err').textContent = ''; });
     setInterval(() => { if (provaAberta && provaModo === 'local') atualizaBotaoApagar(); }, 30000);
     $('device-short').textContent = deviceShort();
