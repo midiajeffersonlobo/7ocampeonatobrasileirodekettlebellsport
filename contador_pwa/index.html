@@ -388,7 +388,7 @@
       overflow-y: auto;
       background: rgba(0, 0, 0, 0.3);
       border-radius: 4px;
-      padding: 10px;
+      padding: 0;
       margin-bottom: 20px;
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
@@ -412,7 +412,9 @@
       font-weight: bold;
       position: sticky;
       top: 0;
+      z-index: 1;
       background: #001538;
+      box-shadow: 0 1px 0 rgba(255, 204, 0, 0.35);
     }
 
     tr.no-count-row { color: var(--red-alert); }
@@ -506,31 +508,6 @@
       .btn-install-main { display: none !important; }
     }
 
-    /* ================= BOTÃO MENU PRINCIPAL (casa) ================= */
-    .btn-home {
-      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
-      width: 48px; min-height: 48px; padding: 0; margin-right: auto;
-      background: transparent; color: #fff; border: 2px solid rgba(255, 255, 255, 0.3);
-      font-family: var(--font-ui); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
-    }
-    .btn-home:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.5); }
-    .btn-home svg { width: 24px; height: 24px; flex: none; }
-    .btn-home-label { display: none; }
-    @media (max-width: 700px) {
-      .btn-home { order: 99; width: auto; margin-right: 0; padding: 0 20px; }
-      .btn-home-label { display: inline; }
-    }
-
-    /* Menu com contagem salva (pausada): só os botões agem, tocar na tela não inicia nada */
-    .resume-panel { display: none; flex-direction: column; align-items: center; gap: 12px; width: min(420px, 80vw); cursor: default; }
-    #sponsors-screen.is-paused { cursor: default; }
-    #sponsors-screen.is-paused .resume-panel { display: flex; }
-    #sponsors-screen.is-paused .start-hint { display: none; }
-    .resume-info { font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.8); text-align: center; overflow-wrap: anywhere; }
-    .btn-resume { width: 100%; min-height: 56px; background: var(--yellow-primary); color: #001538; font-family: var(--font-ui); font-size: 1.2rem; text-transform: uppercase; letter-spacing: 0.08em; }
-    .btn-resume:hover { background: #ffd633; }
-    .resume-panel .btn-close { width: 100%; }
-
     /* ================= NOVO: STATUS, CAMPOS, MENU, HISTÓRICO ================= */
     :root { --status-h: 34px; --status-total: calc(var(--status-h) + env(safe-area-inset-bottom, 0px)); }
 
@@ -607,7 +584,6 @@
     .form-extra input { width: 100%; min-width: 0; padding: 10px 14px; font-size: 1.05rem; border-radius: 4px;
       border: 2px solid rgba(255, 204, 0, 0.5); background: rgba(0, 0, 0, 0.45); color: #fff; text-align: center; font-family: inherit; }
     .form-extra input:focus-visible { outline-offset: 0; }
-    #sponsors-screen.is-paused .intro-form { display: none; }
 
     /* ---- Janela de resumo: campos extras ---- */
     .modal-meta { display: grid; grid-template-columns: 1.6fr 1.2fr 0.6fr 1.2fr; gap: 10px; margin-bottom: 16px; }
@@ -618,13 +594,11 @@
     @media (max-width: 700px) {
       .modal-meta { grid-template-columns: 1fr 1fr; }
       .modal-meta .mm-athlete, .modal-meta .mm-mov { grid-column: 1 / -1; }
-      #summary-modal .modal-actions .btn { flex: 1 1 calc(50% - 6px); padding: 8px 10px; font-size: 0.95rem; }
-      #summary-modal .modal-actions .btn-home { flex: 1 1 100%; }
     }
     /* janelas altas demais para a tela: o cartão rola por dentro (a tela principal continua fixa) */
     @media (max-width: 700px), (max-height: 640px) {
-      #summary-modal .modal-card, #prova-modal .modal-card { overflow-y: auto; }
-      #summary-modal .log-table-container, #prova-modal .log-table-container { flex: 0 0 auto; min-height: 120px; max-height: 32vh; }
+      #prova-modal .modal-card { overflow-y: auto; }
+      #prova-modal .log-table-container { flex: 0 0 auto; min-height: 120px; max-height: 32vh; }
     }
 
     /* ---- Menu sanduíche ---- */
@@ -751,6 +725,115 @@
       .start-hint, .number-display.bump { animation: none; }
       #counter-screen, #counter-screen::after, .c-notch { transition: none; }
     }
+
+    /* ================= v8: dicas de teclado, Iniciar, resumo, lixeira ================= */
+    .touch-only { display: none; }
+    @media (hover: none) and (pointer: coarse) {
+      .kb, .kb-only, .c-keys { display: none !important; }
+      .touch-only { display: inline; }
+    }
+    .btn-danger { background: var(--red-alert); color: #fff; border: none; }
+    .btn-danger:hover { filter: brightness(1.1); }
+    .btn-export.armed { background: var(--red-alert); }
+
+    /* botão Iniciar ao lado do nome */
+    .athlete-row { display: flex; gap: 8px; align-items: stretch; justify-content: center; }
+    .athlete-field .athlete-row input { width: min(340px, 62vw); }
+    .btn-go { flex: none; min-width: 56px; padding: 0 12px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      background: var(--yellow-primary); color: #001538; border: none; border-radius: 4px; cursor: pointer;
+      font-family: var(--font-ui); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.95rem; touch-action: manipulation; }
+    .btn-go:hover { background: #ffd633; }
+    .btn-go svg { width: 22px; height: 22px; flex: none; }
+    @media (max-width: 380px) { .btn-go span { display: none; } }
+
+    /* janela de resumo: cabe na tela, só a tabela rola */
+    #summary-modal { padding: 10px; }
+    .summary-card { width: 96%; max-width: 760px; padding: 14px; overflow: visible;
+      max-height: calc(100vh - var(--status-total) - 20px); max-height: calc(100dvh - var(--status-total) - 20px); }
+    .summary-card .modal-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 8px; margin-bottom: 10px; flex: none; }
+    .summary-card .modal-title { font-size: 1.25rem; }
+    .sc-saved { color: #2fbf6b; font-family: var(--font-ui); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.85rem; }
+    .sc-saved[hidden] { display: none; }
+    .sc-meta { flex: none; display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+    .sc-meta label { display: flex; flex-direction: column; gap: 4px; color: #8a9bbd; font-size: 0.75rem; text-transform: uppercase; min-width: 0; }
+    .sc-meta input { padding: 8px 12px; font-size: 1rem; border-radius: 4px; border: 1px solid rgba(255, 204, 0, 0.5);
+      background: rgba(0, 0, 0, 0.3); color: #fff; font-family: inherit; min-width: 0; width: 100%; }
+    .sc-meta input:focus-visible { outline-offset: 0; }
+    .sc-meta input[readonly] { opacity: 0.75; border-color: rgba(255, 255, 255, 0.2); }
+    .sc-more { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 34px; padding: 0 4px; background: none; border: none;
+      color: rgba(255, 255, 255, 0.8); font-family: var(--font-ui); font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; text-align: left; }
+    .sc-more span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sc-more svg { width: 22px; height: 22px; flex: none; transition: transform 0.3s ease; }
+    .sc-more[aria-expanded="true"] svg { transform: rotate(180deg); }
+    .sc-extra { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease; }
+    .sc-extra.open { grid-template-rows: 1fr; }
+    .sc-extra > div { overflow: hidden; }
+    .sc-extra:not(.open) .sc-extra-in { visibility: hidden; }
+    .sc-extra-in { display: grid; grid-template-columns: 1.4fr 0.6fr 1.2fr; gap: 8px; padding: 2px 2px 4px; }
+    @media (max-width: 560px) { .sc-extra-in { grid-template-columns: 1fr 1fr; } .sc-extra-in .mm-mov { grid-column: 1 / -1; } }
+    .summary-card .summary-stats { flex: none; grid-template-columns: 1.15fr 1fr 1fr 1.1fr; gap: 8px; margin-bottom: 10px; }
+    .summary-card .stat-box { padding: 6px 4px; min-width: 0; }
+    .summary-card .stat-label { font-size: 0.68rem; }
+    .summary-card .stat-value { font-size: 1.15rem; margin-top: 2px; }
+    .summary-card .stat-box:first-child .stat-value { font-size: 1.9rem; }
+    .sc-tools { flex: none; display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .sc-tools-title { flex: 1; font-family: var(--font-ui); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.85rem; color: #8a9bbd; }
+    .sc-tbtn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 38px; padding: 0 12px; background: transparent; color: var(--yellow-primary);
+      border: 2px solid rgba(255, 204, 0, 0.55); border-radius: 6px; font-family: var(--font-ui); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.8rem; cursor: pointer; touch-action: manipulation; }
+    .sc-tbtn svg { width: 18px; height: 18px; }
+    .summary-card .log-table-container { flex: 0 1 auto; min-height: 90px; margin-bottom: 10px; }
+    .col-info { display: none; }
+    table.show-info .col-info { display: table-cell; }
+    .sc-actions { flex: none; display: flex; flex-wrap: nowrap; align-items: center; gap: 8px; padding-top: 10px; justify-content: flex-end; }
+    .sc-actions .btn { flex: 1 1 auto; min-height: 48px; padding: 8px 10px; font-size: 0.95rem; line-height: 1.1; }
+    .sc-actions .sc-burger { flex: none; width: 52px; padding: 0; display: inline-flex; align-items: center; justify-content: center;
+      background: transparent; color: #fff; border: 2px solid rgba(255, 255, 255, 0.3); }
+    .sc-actions .sc-burger:hover { background: rgba(255, 255, 255, 0.12); }
+    .sc-actions .sc-burger svg { width: 26px; height: 26px; }
+    .sc-menu-wrap { position: relative; flex: none; margin-right: auto; }
+    .sc-menu { position: absolute; left: 0; bottom: calc(100% + 8px); min-width: 240px; z-index: 6; background: #001538; border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px; padding: 6px; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6); }
+    .sc-menu[hidden] { display: none; }
+    .sc-item { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 48px; padding: 0 12px; background: transparent; border: none; color: #fff; border-radius: 6px;
+      font-family: var(--font-ui); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 1rem; text-align: left; cursor: pointer; }
+    .sc-item svg { width: 22px; height: 22px; flex: none; }
+    .sc-item:hover { background: rgba(255, 255, 255, 0.1); }
+    .sc-item[hidden] { display: none; }
+    .sc-item.danger { color: #ff5a5a; margin-top: 4px; border-top: 1px solid rgba(255, 255, 255, 0.15); border-radius: 0 0 6px 6px; }
+    .sc-item.danger svg { stroke: #ff5a5a; }
+    .sc-item.danger:hover { background: rgba(255, 90, 90, 0.14); }
+    @media (max-height: 560px) {
+      .summary-card .modal-header { display: none; }
+      .summary-card .summary-stats .stat-box:nth-child(n+3) { display: none; }
+      .summary-card .summary-stats { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* tabela em tela cheia */
+    .tbl-screen { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: var(--status-total); z-index: 115; flex-direction: column;
+      padding: calc(10px + env(safe-area-inset-top, 0px)) var(--g) 10px; background: #001538; color: #fff; }
+    .tbl-head { flex: none; display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .tbl-head h2 { flex: 1; text-align: center; font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.1em; font-size: 1.2rem; color: var(--yellow-primary); }
+    .tbl-back { display: inline-flex; align-items: center; gap: 2px; min-height: 44px; padding: 0 14px 0 6px; background: transparent; color: var(--yellow-primary);
+      border: 2px solid rgba(255, 204, 0, 0.55); border-radius: 6px; font-family: var(--font-ui); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; cursor: pointer; }
+    .tbl-back svg { width: 24px; height: 24px; }
+    .tbl-wrap { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px; }
+
+    /* diálogos, PIN, exportar */
+    #dlg-modal { z-index: 130; } #export-modal { z-index: 131; } #pin-modal { z-index: 135; }
+    .pin-input { width: 100%; text-align: center; font-size: 2rem; letter-spacing: 0.6em; padding: 10px 10px 10px calc(10px + 0.6em); margin-bottom: 8px; border-radius: 4px;
+      border: 2px solid rgba(255, 204, 0, 0.5); background: rgba(0, 0, 0, 0.45); color: #fff; font-family: inherit; }
+    .pin-err { min-height: 1.4em; margin-bottom: 12px; color: #ff6b6b; font-family: var(--font-ui); letter-spacing: 0.04em; text-align: center; }
+    .pin-input.shake { animation: kb-shake 0.4s ease; }
+    .b-rest { background: #6a3fb5; color: #fff; }
+    .b-lix { background: #8a1c1c; color: #fff; }
+    .hc-badges { display: flex; flex-wrap: wrap; gap: 6px; }
+    #prova-modal .modal-actions .btn-danger { margin-right: auto; }
+    .sc-tbtn { white-space: nowrap; }
+    .tbl-head h2 { font-size: 1.05rem; letter-spacing: 0.06em; }
+    .tbl-wrap { overflow-x: auto; }
+    table.show-info th, table.show-info td { padding: 8px 4px; font-size: 0.76rem; }
+    .tbl-screen table.show-info th, .tbl-screen table.show-info td { white-space: nowrap; }
+    @media (max-height: 560px) { .summary-card { overflow-y: auto; } .summary-card .log-table-container { min-height: 120px; } }
   </style>
 </head>
 <body>
@@ -778,17 +861,14 @@
     </div>
 
     <div class="intro-footer">
-      <div class="resume-panel" id="resume-panel" onclick="event.stopPropagation()">
-        <div class="resume-info" id="resume-info"></div>
-        <button class="btn btn-resume" type="button" onclick="continueFromMenu()">Continuar contagem</button>
-        <button class="btn btn-close" id="btn-menu-next" type="button" onclick="closeSummaryAndReset(this)">Próximo atleta</button>
-      </div>
-
       <div class="intro-form" id="intro-form" onclick="event.stopPropagation()">
         <div class="intro-form-inner" id="intro-form-inner">
           <div class="athlete-field">
             <label for="athlete-start">Atleta (obrigatório)</label>
-            <input type="text" id="athlete-start" maxlength="60" autocomplete="off" placeholder="Nome do atleta" required aria-describedby="athlete-err">
+            <div class="athlete-row">
+              <input type="text" id="athlete-start" maxlength="60" autocomplete="off" placeholder="Nome do atleta" required aria-describedby="athlete-err">
+              <button class="btn-go" id="btn-go" type="button" aria-label="Iniciar a contagem" onclick="startCounter()"><span>Iniciar</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>
+            </div>
             <div class="field-err" id="athlete-err" role="alert" hidden>Informe o nome do atleta para iniciar</div>
           </div>
           <button class="form-toggle" id="form-toggle" type="button" aria-expanded="false" aria-controls="form-extra" aria-label="Mostrar movimento, pista e árbitro" onclick="toggleExtra()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg></button>
@@ -808,7 +888,7 @@
         <span>Instalar</span>
       </button>
 
-      <div class="start-hint"><span>Clique na tela ou pressione Espaço/Enter</span> <span>para iniciar</span></div>
+      <div class="start-hint"><span class="kb-only">Clique na tela ou pressione Espaço/Enter</span><span class="touch-only">Toque na tela</span> <span>para iniciar</span></div>
     </div>
   </div>
 
@@ -880,12 +960,8 @@
       <div class="modal-header"><h2 class="modal-title">Finalizar a prova?</h2></div>
       <p class="confirm-text">O placar é mantido e você poderá voltar e continuar contando. O tempo parado no resumo não entra na duração.</p>
       <div class="modal-actions">
-        <button class="btn btn-home" type="button" onclick="goToMenu()" aria-label="Menu principal" title="Menu principal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5.5h4V20"/></svg>
-          <span class="btn-home-label">Menu principal</span>
-        </button>
-        <button class="btn btn-close" onclick="cancelFinish()">Cancelar (Esc)</button>
-        <button class="btn btn-export" onclick="confirmFinish()">Finalizar (R)</button>
+        <button class="btn btn-close" type="button" onclick="cancelFinish()">Voltar <span class="kb">(Esc)</span></button>
+        <button class="btn btn-export" type="button" onclick="confirmFinish()">Finalizar <span class="kb">(R)</span></button>
       </div>
     </div>
   </div>
@@ -896,67 +972,69 @@
       <div class="modal-header"><h2 class="modal-title">Instalar o contador</h2></div>
       <div id="install-body"></div>
       <div class="modal-actions">
-        <button class="btn btn-back" onclick="closeInstallHelp()">Entendi (Esc)</button>
+        <button class="btn btn-back" onclick="closeInstallHelp()">Entendi <span class="kb">(Esc)</span></button>
       </div>
     </div>
   </div>
 
-  <!-- 3. RESUMO E EXPORTAÇÃO -->
+  <!-- 3. RESUMO (salvar · Próximo atleta) -->
   <div class="modal-backdrop" id="summary-modal">
-    <div class="modal-card">
+    <div class="modal-card summary-card" role="dialog" aria-modal="true" aria-labelledby="sum-title">
       <div class="modal-header">
-        <h2 class="modal-title">Resumo da Prova</h2>
+        <h2 class="modal-title" id="sum-title">Resumo da Prova</h2>
+        <span class="sc-saved" id="sc-saved" hidden>✓ Prova salva</span>
       </div>
 
-      <div class="modal-meta">
+      <div class="sc-meta">
         <label class="mm-athlete">Atleta (obrigatório) <input type="text" id="athlete-summary" maxlength="60" autocomplete="off" placeholder="Nome do atleta" required></label>
-        <label class="mm-mov">Movimento <input type="text" id="mov-summary" maxlength="60" list="dl-mov" autocomplete="off"></label>
-        <label>Pista <input type="text" id="pista-summary" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off"></label>
-        <label>Árbitro <input type="text" id="arb-summary" maxlength="60" list="dl-arb" autocomplete="off"></label>
+        <button class="sc-more" id="sc-more" type="button" aria-expanded="false" aria-controls="sc-extra" onclick="toggleSummaryExtra()"><span id="sc-more-txt">Movimento, pista e árbitro</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <div class="sc-extra" id="sc-extra" aria-hidden="true"><div><div class="sc-extra-in">
+          <label class="mm-mov">Movimento <input type="text" id="mov-summary" maxlength="60" list="dl-mov" autocomplete="off"></label>
+          <label>Pista <input type="text" id="pista-summary" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off"></label>
+          <label>Árbitro <input type="text" id="arb-summary" maxlength="60" list="dl-arb" autocomplete="off"></label>
+        </div></div></div>
       </div>
 
       <div class="summary-stats">
-        <div class="stat-box">
-          <div class="stat-label">Reps Válidas</div>
-          <div class="stat-value" id="stat-valid">0</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">No Counts</div>
-          <div class="stat-value" id="stat-nocount">0</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Duração</div>
-          <div class="stat-value" id="stat-duration">00:00</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Ritmo Médio</div>
-          <div class="stat-value" id="stat-pace">0.0 RPM</div>
-        </div>
+        <div class="stat-box"><div class="stat-label">Reps Válidas</div><div class="stat-value" id="stat-valid">0</div></div>
+        <div class="stat-box"><div class="stat-label">No Counts</div><div class="stat-value" id="stat-nocount">0</div></div>
+        <div class="stat-box"><div class="stat-label">Duração</div><div class="stat-value" id="stat-duration">00:00</div></div>
+        <div class="stat-box"><div class="stat-label">Ritmo (RPM)</div><div class="stat-value" id="stat-pace">0.0</div></div>
       </div>
 
-      <div class="log-table-container">
-        <table>
+      <div class="sc-tools">
+        <span class="sc-tools-title">Registros</span>
+        <button class="sc-tbtn" id="btn-info" type="button" onclick="toggleInfo()">+ informações</button>
+        <button class="sc-tbtn" type="button" onclick="openTabela()" aria-label="Ver a tabela em tela cheia" title="Tela cheia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+      </div>
+      <div class="log-table-container" id="log-wrap">
+        <table id="log-table">
           <thead>
-            <tr>
-              <th>#</th>
-              <th>Status</th>
-              <th>Hora Exata</th>
-              <th>Tempo Decorrido</th>
-              <th>Intervalo</th>
-            </tr>
+            <tr><th>#</th><th>Status</th><th>Intervalo</th><th class="col-info">Hora Exata</th><th class="col-info">Decorrido</th></tr>
           </thead>
           <tbody id="log-table-body"></tbody>
         </table>
       </div>
 
-      <div class="modal-actions">
-        <button class="btn btn-home" type="button" onclick="goToMenu()" aria-label="Menu principal" title="Menu principal">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-5.5h4V20"/></svg>
-          <span class="btn-home-label">Menu principal</span>
-        </button>
-        <button class="btn btn-back" onclick="resumeCounting()">Voltar e continuar</button>
-        <button class="btn btn-export" id="btn-export" onclick="exportTXT()">Exportar TXT</button>
-        <button class="btn btn-close" id="btn-new" onclick="closeSummaryAndReset(this)">Próximo atleta</button>
+      <div class="modal-actions sc-actions">
+        <div class="sc-menu-wrap">
+          <button class="btn sc-burger" id="sc-burger" type="button" aria-label="Mais opções" aria-haspopup="true" aria-expanded="false" onclick="toggleSummaryMenu(event)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+          <div class="sc-menu" id="sc-menu" role="menu" hidden onclick="event.stopPropagation()">
+            <button class="sc-item" id="sc-export" type="button" role="menuitem" onclick="exportTXT()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M6.5 9.5 12 15l5.5-5.5"/><path d="M4 20.5h16"/></svg><span>Exportar TXT</span>
+            </button>
+            <button class="sc-item" id="sc-home" type="button" role="menuitem" onclick="sairParaMenu()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-6h4v6"/></svg><span>Menu principal</span>
+            </button>
+            <button class="sc-item danger" id="sc-discard" type="button" role="menuitem" onclick="pedeDescartar()">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg><span>Descartar</span>
+            </button>
+          </div>
+        </div>
+        <button class="btn btn-back" id="btn-back" type="button" onclick="resumeCounting()">Voltar e continuar</button>
+        <button class="btn btn-export" id="btn-save" type="button" onclick="acaoSalvar()">Salvar</button>
       </div>
     </div>
   </div>
@@ -971,6 +1049,11 @@
     <div class="menu-sub" id="menu-sub"><div>
       <button class="menu-subitem" type="button" onclick="openHistory('local')">Histórico local</button>
       <button class="menu-subitem" type="button" onclick="openHistory('nuvem')">Histórico na nuvem</button>
+    </div></div>
+    <button class="menu-item" id="menu-lix" type="button" aria-expanded="false" onclick="toggleLixSub()"><span>Lixeira</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+    <div class="menu-sub" id="menu-sub-lix"><div>
+      <button class="menu-subitem" type="button" onclick="openLixeira('local')">Lixeira local</button>
+      <button class="menu-subitem" type="button" onclick="openLixeira('nuvem')">Lixeira na nuvem</button>
     </div></div>
     <div class="menu-foot">Aparelho <code id="device-short"></code></div>
   </nav>
@@ -1025,8 +1108,60 @@
       </div>
       <div class="modal-actions">
         <button class="btn btn-close" id="pv-del" type="button" onclick="apagaProva()">Apagar</button>
+        <button class="btn btn-export" id="pv-restore" type="button" onclick="pedeRestaurar()" hidden>Restaurar</button>
         <button class="btn btn-back" type="button" onclick="fechaProva()">Fechar</button>
         <button class="btn btn-export" type="button" onclick="exportaProvaTXT()">Exportar TXT</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABELA EM TELA CHEIA -->
+  <div class="tbl-screen" id="tbl-screen" role="dialog" aria-modal="true" aria-labelledby="tbl-title">
+    <div class="tbl-head">
+      <button class="tbl-back" type="button" onclick="closeTabela()" aria-label="Voltar ao resumo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg><span>Voltar</span></button>
+      <h2 id="tbl-title">Registros</h2>
+      <button class="sc-tbtn" id="btn-info2" type="button" onclick="toggleInfo()">+ informações</button>
+    </div>
+    <div class="tbl-wrap">
+      <table id="tbl-full">
+        <thead><tr><th>#</th><th>Status</th><th>Intervalo</th><th class="col-info">Hora Exata</th><th class="col-info">Decorrido</th></tr></thead>
+        <tbody id="tbl-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CONFIRMAÇÃO GENÉRICA -->
+  <div class="modal-backdrop" id="dlg-modal">
+    <div class="modal-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="dlg-title">
+      <div class="modal-header"><h2 class="modal-title" id="dlg-title"></h2></div>
+      <p class="confirm-text" id="dlg-text"></p>
+      <div class="modal-actions" id="dlg-actions"></div>
+    </div>
+  </div>
+
+  <!-- PIN (trava de tela) -->
+  <div class="modal-backdrop" id="pin-modal">
+    <form class="modal-card confirm-card" role="dialog" aria-modal="true" aria-labelledby="pin-title" onsubmit="event.preventDefault(); confirmaPin()">
+      <div class="modal-header"><h2 class="modal-title" id="pin-title">PIN</h2></div>
+      <p class="confirm-text" id="pin-text"></p>
+      <input class="pin-input" id="pin-input" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" aria-label="PIN">
+      <div class="pin-err" id="pin-err" role="alert"></div>
+      <div class="modal-actions">
+        <button class="btn btn-close" type="button" onclick="closePin()">Cancelar</button>
+        <button class="btn btn-export" type="submit">Confirmar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- EXPORTAR TXT -->
+  <div class="modal-backdrop" id="export-modal" onclick="if (event.target === this) closeExportar()">
+    <div class="modal-card confirm-card" role="dialog" aria-modal="true" aria-labelledby="exp-title">
+      <div class="modal-header"><h2 class="modal-title" id="exp-title">Exportar TXT</h2></div>
+      <p class="confirm-text" id="exp-text"></p>
+      <div class="modal-actions">
+        <button class="btn btn-export" id="exp-dl" type="button" onclick="exportBaixar()">Baixar no aparelho</button>
+        <button class="btn btn-back" id="exp-share" type="button" onclick="exportCompartilhar()">Compartilhar (WhatsApp, e-mail…)</button>
+        <button class="btn btn-close" type="button" onclick="closeExportar()">Cancelar</button>
       </div>
     </div>
   </div>
@@ -1055,7 +1190,8 @@
     let finished = false;     // resumo aberto
     let exported = false;     // TXT exportado desde o último evento
     let confirmOpen = false;
-    let inMenu = false;       // está no menu principal com a contagem salva (relógio pausado)
+    let saved = false;        // prova já salva (selada): só falta "Próximo atleta"
+    let legacyMenu = false;   // estado antigo (v7) que estava pausado no menu
     let resetArmed = false;
     let resetTimer = null;
 
@@ -1131,9 +1267,7 @@
     const confirmModal = document.getElementById('confirm-modal');
     const athleteStart = document.getElementById('athlete-start');
     const athleteSummary = document.getElementById('athlete-summary');
-    const btnNew = document.getElementById('btn-new');
-    const btnMenuNext = document.getElementById('btn-menu-next');
-    const btnExport = document.getElementById('btn-export');
+    const btnSave = document.getElementById('btn-save');
     const counterAthlete = document.getElementById('counter-athlete');
 
     // ---------- TEMPO ATIVO (desconta as pausas) ----------
@@ -1153,7 +1287,7 @@
       try {
         if (!active) { localStorage.removeItem(STORAGE_KEY); return; }
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
-          score, noCountCount, logs, isNoCountState, athlete, movimento, pista, arbitro, provaId, finished, exported, pausedMs, inMenu,
+          score, noCountCount, logs, isNoCountState, athlete, movimento, pista, arbitro, provaId, finished, exported, pausedMs, saved,
           startTime: startTime ? startTime.getTime() : null,
           lastEventTime: lastEventTime ? lastEventTime.getTime() : null,
           endTime: endTime ? endTime.getTime() : null
@@ -1179,7 +1313,8 @@
         finished = !!s.finished;
         exported = !!s.exported;
         pausedMs = s.pausedMs || 0;
-        inMenu = !!s.inMenu;
+        saved = !!s.saved;
+        legacyMenu = !!s.inMenu;
         startTime = new Date(s.startTime);
         lastEventTime = s.lastEventTime ? new Date(s.lastEventTime) : startTime;
         endTime = s.endTime ? new Date(s.endTime) : null;
@@ -1211,7 +1346,6 @@
     }
 
     function startCounter(ev) {
-      if (inMenu) return;   // há contagem salva: só os botões do menu agem (nunca zera por engano)
       if (ev && extraOpen) { setExtra(false); return; }   // primeiro toque só recolhe os campos
       const nome = limpaTexto(athleteStart.value);
       if (!nome) { mostraErroAtleta(); return; }          // só o nome do atleta é obrigatório
@@ -1233,6 +1367,7 @@
       pausedMs = 0;
       isNoCountState = false;
       finished = false;
+      saved = false;
       exported = false;
       active = true;
 
@@ -1327,43 +1462,82 @@
       saveState();
     }
 
-    // ---------- MENU PRINCIPAL COM CONTAGEM SALVA ----------
-    function updateMenuUI() {
-      sponsorsScreen.classList.toggle('is-paused', inMenu);
-      if (inMenu) {
-        document.getElementById('resume-info').textContent =
-          `Contagem pausada · ${score} ${score === 1 ? 'rep' : 'reps'}` + (athlete ? ` · ${athlete}` : '');
-      }
-    }
-
-    // Casa (nas janelas de finalizar): vai ao menu SEM descartar; o tempo no menu não entra na duração
-    function goToMenu() {
-      if (!active) return;
-      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
-      if (confirmOpen) cancelFinish();
-      if (!endTime) endTime = new Date();   // pausa o relógio (resumeCounting desconta a pausa)
-      summaryModal.style.display = 'none';
-      disarmReset();
-      inMenu = true;
-      updateMenuUI();
-      counterScreen.style.display = 'none';
-      sponsorsScreen.style.display = 'grid';
-      saveState();
-    }
-
-    function continueFromMenu() {
-      if (!inMenu) return;
-      inMenu = false;
-      updateMenuUI();
-      sponsorsScreen.style.display = 'none';
-      counterScreen.style.display = 'flex';
-      resumeCounting();      // desconta a pausa, reabre a contagem e salva
-      updateDisplay();
-    }
+    // ---------- RESUMO: salvar, sair e descartar ----------
+    const dlgModal = document.getElementById('dlg-modal');
+    const pinModal = document.getElementById('pin-modal');
+    const exportModal = document.getElementById('export-modal');
+    const tblScreen = document.getElementById('tbl-screen');
+    let scMenuOpen = false, infoOn = false, dlgOpen = false;
 
     function updateExportButton() {
-      btnExport.textContent = exported ? 'TXT salvo ✓ (salvar de novo)' : 'Exportar TXT';
-      btnExport.classList.toggle('done', exported);
+      const sp = document.querySelector('#sc-export span');
+      if (sp) sp.textContent = exported ? 'Exportar TXT ✓' : 'Exportar TXT';
+    }
+
+    function renderLogTables() {
+      const bodies = [document.getElementById('log-table-body'), document.getElementById('tbl-body')];
+      bodies.forEach((b) => { b.textContent = ''; });
+      logs.forEach((log) => {
+        let statusText = 'VÁLIDA', cls = '';
+        if (log.type === 'NO_COUNT') { statusText = 'NO COUNT'; cls = 'no-count-row'; }
+        if (log.type === 'CORRECTION_MINUS') { statusText = 'CORREÇÃO (-1)'; cls = 'corrected-row'; }
+        bodies.forEach((tb) => {
+          const tr = document.createElement('tr');
+          if (cls) tr.className = cls;
+          [String(log.index), statusText, log.interval, log.timestamp, log.elapsed].forEach((v, i) => {
+            const td = document.createElement('td');
+            if (i === 1) { const s = document.createElement('strong'); s.textContent = v; td.appendChild(s); } else td.textContent = v;
+            if (i >= 3) td.className = 'col-info';
+            tr.appendChild(td);
+          });
+          tb.appendChild(tr);
+        });
+      });
+      const wrap = document.getElementById('log-wrap');
+      wrap.scrollTop = wrap.scrollHeight;
+    }
+
+    function applySavedMode() {
+      [athleteSummary, movSummary, pistaSummary, arbSummary].forEach((i) => { i.readOnly = saved; });
+      document.getElementById('btn-back').hidden = saved;
+      document.getElementById('sc-discard').hidden = saved;
+      document.getElementById('sc-saved').hidden = !saved;
+      disarmReset();
+    }
+
+    function atualizaExtraLabel() {
+      const parts = [];
+      const m = limpaTexto(movSummary.value), p = pistaSummary.value.trim(), a = limpaTexto(arbSummary.value);
+      if (m) parts.push(m);
+      if (p) parts.push('Pista ' + p);
+      if (a) parts.push(a);
+      document.getElementById('sc-more-txt').textContent = parts.length ? parts.join(' · ') : 'Movimento, pista e árbitro';
+    }
+    function setSummaryExtra(open) {
+      document.getElementById('sc-extra').classList.toggle('open', open);
+      document.getElementById('sc-more').setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.getElementById('sc-extra').setAttribute('aria-hidden', open ? 'false' : 'true');
+    }
+    function toggleSummaryExtra() { setSummaryExtra(!document.getElementById('sc-extra').classList.contains('open')); }
+
+    function toggleInfo() {
+      infoOn = !infoOn;
+      ['log-table', 'tbl-full'].forEach((id) => document.getElementById(id).classList.toggle('show-info', infoOn));
+      ['btn-info', 'btn-info2'].forEach((id) => { document.getElementById(id).textContent = infoOn ? '− informações' : '+ informações'; });
+    }
+    function openTabela() { fechaMenuResumo(); tblScreen.style.display = 'flex'; }
+    function closeTabela() { tblScreen.style.display = 'none'; }
+
+    function toggleSummaryMenu(ev) {
+      if (ev) ev.stopPropagation();
+      scMenuOpen = !scMenuOpen;
+      document.getElementById('sc-menu').hidden = !scMenuOpen;
+      document.getElementById('sc-burger').setAttribute('aria-expanded', scMenuOpen ? 'true' : 'false');
+    }
+    function fechaMenuResumo() {
+      scMenuOpen = false;
+      document.getElementById('sc-menu').hidden = true;
+      document.getElementById('sc-burger').setAttribute('aria-expanded', 'false');
     }
 
     function renderSummary() {
@@ -1375,101 +1549,197 @@
 
       const minutesDecimal = totalSeconds / 60;
       const rpm = minutesDecimal > 0 ? (score / minutesDecimal).toFixed(1) : '0.0';
-      document.getElementById('stat-pace').textContent = `${rpm} RPM`;
+      document.getElementById('stat-pace').textContent = rpm;
 
       athleteSummary.value = athlete;
       movSummary.value = movimento;
       pistaSummary.value = pista === null ? '' : String(pista);
       arbSummary.value = arbitro;
       [athleteSummary, pistaSummary].forEach((i) => i.classList.remove('invalid'));
-
-      const tbody = document.getElementById('log-table-body');
-      tbody.innerHTML = '';
-
-      logs.forEach(log => {
-        const tr = document.createElement('tr');
-        if (log.type === 'NO_COUNT') tr.classList.add('no-count-row');
-        if (log.type === 'CORRECTION_MINUS') tr.classList.add('corrected-row');
-
-        let statusText = 'VÁLIDA';
-        if (log.type === 'NO_COUNT') statusText = 'NO COUNT';
-        if (log.type === 'CORRECTION_MINUS') statusText = 'CORREÇÃO (-1)';
-
-        tr.innerHTML = `
-          <td>${log.index}</td>
-          <td><strong>${statusText}</strong></td>
-          <td>${log.timestamp}</td>
-          <td>${log.elapsed}</td>
-          <td>${log.interval}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      disarmReset();
+      setSummaryExtra(false);
+      atualizaExtraLabel();
+      renderLogTables();
+      applySavedMode();
       updateExportButton();
+      fechaMenuResumo();
       summaryModal.style.display = 'flex';
     }
 
-    // Nome do atleta editável no resumo (opcional)
+    // Nome do atleta editável no resumo
     athleteSummary.addEventListener('input', () => {
       athlete = athleteSummary.value.trim();
       counterAthlete.textContent = athlete;
       saveState();
     });
 
-    // ---------- NOVA CONTAGEM (avisa se não exportou) ----------
     function disarmReset() {
       clearTimeout(resetTimer);
       resetArmed = false;
-      [btnNew, btnMenuNext].forEach((b) => { b.textContent = 'Próximo atleta'; b.classList.remove('armed'); });
+      btnSave.textContent = saved ? 'Próximo atleta' : 'Salvar';
+      btnSave.classList.remove('armed');
     }
 
-    // "Próximo atleta": salva a prova de forma DEFINITIVA (sem correção) no histórico local e a envia à nuvem
+    // Volta à tela inicial e zera tudo (a prova já foi salva ou descartada antes de chegar aqui)
     function concluirReset() {
       disarmReset();
+      fechaMenuResumo(); closeDlg(); closeTabela();
       active = false;
       finished = false;
-      inMenu = false;
+      saved = false;
       athlete = ''; movimento = ''; pista = null; arbitro = ''; provaId = null;
       limpaFormInicio();
       saveState();   // remove o estado salvo
       summaryModal.style.display = 'none';
       counterScreen.style.display = 'none';
-      updateMenuUI();
       sponsorsScreen.style.display = 'grid';
       refreshSugestoes();
       renderStatus();
     }
 
-    function closeSummaryAndReset(btn) {
-      btn = btn || btnNew;
-      if (logs.length === 0) { concluirReset(); return; }          // nada a salvar
-      if (summaryModal.style.display === 'flex') {
-        const r = lePista(pistaSummary.value);
-        if (!limpaTexto(athleteSummary.value)) { athleteSummary.classList.add('invalid'); athleteSummary.focus(); showToast('Informe o nome do atleta', 'err'); return; }
-        if (!r.ok) { pistaSummary.classList.add('invalid'); pistaSummary.focus(); showToast('Pista: número inteiro de 1 a 999', 'err'); return; }
-        athlete = limpaTexto(athleteSummary.value); pista = r.val;
-        movimento = limpaTexto(movSummary.value); arbitro = limpaTexto(arbSummary.value);
-      } else if (!athlete) {
-        athlete = 'SEM NOME';                                        // só contagens iniciadas antes desta versão
-      }
+    function validaResumo() {
+      const r = lePista(pistaSummary.value);
+      if (!limpaTexto(athleteSummary.value)) { athleteSummary.classList.add('invalid'); athleteSummary.focus(); showToast('Informe o nome do atleta', 'err'); return false; }
+      if (!r.ok) { setSummaryExtra(true); pistaSummary.classList.add('invalid'); pistaSummary.focus(); showToast('Pista: número inteiro de 1 a 999', 'err'); return false; }
+      athlete = limpaTexto(athleteSummary.value); pista = r.val;
+      movimento = limpaTexto(movSummary.value); arbitro = limpaTexto(arbSummary.value);
+      return true;
+    }
+
+    // Sela a prova: grava no histórico local (definitivo) e entra na fila da nuvem
+    function selaProva() {
+      const prova = buildProva();
+      if (!salvaProvaLocal(prova)) { showToast('Não foi possível salvar: memória do aparelho cheia. Exporte o TXT e libere espaço.', 'err'); return false; }
+      saved = true;
+      saveState();
+      applySavedMode();
+      refreshSugestoes();
+      renderStatus();
+      showToast('Prova salva · enviando à nuvem…', 'ok');
+      syncNow(false);
+      return true;
+    }
+
+    // Botão principal do resumo: Salvar (com 2º toque de segurança) → Próximo atleta
+    function acaoSalvar() {
+      if (saved) { concluirReset(); return; }
+      if (!validaResumo()) return;
       if (!resetArmed) {
         resetArmed = true;
-        btn.textContent = 'Salvar sem correção? Toque de novo';
-        btn.classList.add('armed');
+        btnSave.textContent = 'Salvar sem correção? Toque de novo';
+        btnSave.classList.add('armed');
         clearTimeout(resetTimer);
         resetTimer = setTimeout(disarmReset, 5000);
         return;
       }
       disarmReset();
-      const prova = buildProva();
-      if (!salvaProvaLocal(prova)) {
-        showToast('Não foi possível salvar: memória do aparelho cheia. Exporte o TXT e libere espaço.', 'err');
-        return;
-      }
-      showToast('Prova salva · enviando à nuvem…', 'ok');
+      selaProva();
+    }
+
+    // ☰ → Menu principal: nunca sai com a contagem solta (ou já salva, ou pergunta)
+    function sairParaMenu() {
+      fechaMenuResumo();
+      if (saved) { concluirReset(); return; }
+      askDialog({
+        title: 'Sair da contagem?',
+        text: 'Esta contagem ainda não foi salva. Salve ou descarte antes de ir ao menu principal.',
+        buttons: [
+          { label: 'Salvar e sair', cls: 'btn-export', fn: () => { if (validaResumo() && selaProva()) concluirReset(); } },
+          { label: 'Descartar', cls: 'btn-danger', fn: pedeDescartar },
+          { label: 'Cancelar', cls: 'btn-close' }
+        ]
+      });
+    }
+
+    function pedeDescartar() {
+      fechaMenuResumo();
+      if (saved) return;
+      const nome = limpaTexto(athleteSummary.value) || 'SEM NOME';
+      const tem = logs.length > 0;
+      askDialog({
+        title: tem ? 'Enviar para a lixeira?' : 'Descartar contagem?',
+        text: tem ? `A contagem de ${nome} (${score} ${score === 1 ? 'rep' : 'reps'}) sai desta tela e vai para a lixeira. Só é possível ver e restaurar com PIN.`
+                  : 'Nenhum registro foi feito. A contagem será descartada.',
+        buttons: [
+          { label: 'Cancelar', cls: 'btn-close' },
+          { label: tem ? 'Enviar para a lixeira' : 'Descartar', cls: 'btn-danger', fn: descarta }
+        ]
+      });
+    }
+    function descarta() {
+      if (saved) return;
+      if (!logs.length) { concluirReset(); showToast('Contagem descartada', 'ok'); return; }
+      athlete = limpaTexto(athleteSummary.value) || 'SEM NOME';
+      const r = lePista(pistaSummary.value); pista = r.ok ? r.val : null;
+      movimento = limpaTexto(movSummary.value); arbitro = limpaTexto(arbSummary.value);
+      const item = Object.assign(buildProva(), { descartada_em: new Date().toISOString(), sync: 'pending', tentativas: 0, erro: null, sincronizada_em: null });
+      if (!lixAdd(item)) { showToast('Não foi possível guardar na lixeira: memória do aparelho cheia.', 'err'); return; }
       concluirReset();
+      showToast('Contagem enviada para a lixeira', 'ok');
       syncNow(false);
+    }
+
+    // ---------- diálogos (confirmação) e PIN de tela ----------
+    function askDialog(o) {
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+      document.getElementById('dlg-title').textContent = o.title;
+      document.getElementById('dlg-text').textContent = o.text || '';
+      const box = document.getElementById('dlg-actions');
+      box.textContent = '';
+      o.buttons.forEach((b) => {
+        const el = document.createElement('button');
+        el.type = 'button'; el.className = 'btn ' + (b.cls || 'btn-close'); el.textContent = b.label;
+        el.addEventListener('click', () => { closeDlg(); if (b.fn) b.fn(); });
+        box.appendChild(el);
+      });
+      dlgModal.style.display = 'flex'; dlgOpen = true;
+    }
+    function closeDlg() { dlgModal.style.display = 'none'; dlgOpen = false; }
+
+    let pinCerto = '', pinCb = null;
+    function askPin(titulo, texto, certo, cb) {
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+      pinCerto = certo; pinCb = cb;
+      document.getElementById('pin-title').textContent = titulo;
+      document.getElementById('pin-text').textContent = texto;
+      const inp = document.getElementById('pin-input');
+      inp.value = ''; document.getElementById('pin-err').textContent = '';
+      pinModal.style.display = 'flex';
+      setTimeout(() => inp.focus(), 50);
+    }
+    function closePin() { pinModal.style.display = 'none'; pinCb = null; document.getElementById('pin-input').value = ''; }
+    function confirmaPin() {
+      const inp = document.getElementById('pin-input');
+      if (inp.value === pinCerto) { const cb = pinCb; closePin(); if (cb) cb(); return; }
+      document.getElementById('pin-err').textContent = 'PIN incorreto';
+      inp.value = '';
+      inp.classList.remove('shake'); void inp.offsetWidth; inp.classList.add('shake');
+      buzz([40, 30, 40]);
+      inp.focus();
+    }
+
+    // ---------- exportar: baixar ou compartilhar ----------
+    let expTxt = '', expName = '', expDone = null;
+    function abreExportar(txt, name, onDone) {
+      expTxt = txt; expName = name; expDone = onDone || null;
+      document.getElementById('exp-text').textContent = name;
+      document.getElementById('exp-share').hidden = typeof navigator.share !== 'function';
+      exportModal.style.display = 'flex';
+    }
+    function closeExportar() { exportModal.style.display = 'none'; }
+    async function exportBaixar() {
+      closeExportar();
+      if (await saveTextFile(expTxt, expName)) { if (expDone) expDone(); showToast('Arquivo gerado', 'ok'); }
+    }
+    async function exportCompartilhar() {
+      closeExportar();
+      try {
+        const file = new File([expTxt], expName, { type: 'text/plain' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) await navigator.share({ files: [file], title: expName });
+        else await navigator.share({ title: expName, text: expTxt });
+        if (expDone) expDone();
+      } catch (err) {
+        if (!err || err.name !== 'AbortError') showToast('Não foi possível compartilhar. Use "Baixar no aparelho".', 'err');
+      }
     }
 
     // ---------- EXPORTAÇÃO ----------
@@ -1496,6 +1766,8 @@
       txt += `Árbitro:      ${p.arbitro || '(não informado)'}\n`;
       txt += `Aparelho:     ${p.dispositivo_id}\n`;
       txt += `ID da prova:  ${p.id}\n`;
+      if (p.descartada_em) txt += `Descartada em: ${new Date(p.descartada_em).toLocaleString('pt-BR')}\n`;
+      if (p.restaurada_em) txt += `RESTAURADA em: ${new Date(p.restaurada_em).toLocaleString('pt-BR')}\n`;
       txt += `Início:       ${new Date(p.iniciou_em).toLocaleString('pt-BR')}\n`;
       txt += `Reps Válidas: ${p.reps_validas}\n`;
       txt += `No Counts:    ${p.no_counts}\n`;
@@ -1547,11 +1819,12 @@
       return true;
     }
 
-    async function exportTXT() {
+    function exportTXT() {
+      fechaMenuResumo();
       if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
       const prova = buildProva();
       const fileName = `kettlebell_${slugify(athlete) || 'sem-nome'}_${fileStamp(startTime)}.txt`;
-      if (await saveTextFile(buildTXT(prova), fileName)) markExported();
+      abreExportar(buildTXT(prova), fileName, markExported);
     }
 
     // ---------- PWA: INSTALAR O APP ----------
@@ -1667,6 +1940,12 @@
         else if (e.code === 'Space') e.preventDefault();
         return;
       }
+      // Janelas novas: só Esc age; nenhuma outra tecla conta repetição
+      if (pinModal.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); closePin(); } return; }
+      if (dlgOpen) { if (e.key === 'Escape') { e.preventDefault(); closeDlg(); } return; }
+      if (exportModal.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); closeExportar(); } return; }
+      if (tblScreen.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); closeTabela(); } return; }
+      if (scMenuOpen) { if (e.key === 'Escape') { e.preventDefault(); fechaMenuResumo(); } return; }
       // Detalhe de prova / histórico / menu: Esc fecha, nenhuma outra tecla conta repetição
       if (provaModal.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); fechaProva(); } return; }
       if (histScreen.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); closeHistory(); } return; }
@@ -1681,7 +1960,7 @@
 
       // Resumo aberto: Esc volta a contar; demais teclas não fazem nada
       if (summaryModal.style.display === 'flex') {
-        if (e.key === 'Escape' && !e.repeat) { e.preventDefault(); resumeCounting(); }
+        if (e.key === 'Escape' && !e.repeat) { e.preventDefault(); if (!saved) resumeCounting(); }
         return;
       }
 
@@ -1751,7 +2030,8 @@
     const NUVEM = {
       url: 'https://grwoatyylzbfsufzkeyx.supabase.co',
       key: 'sb_publishable_dwm3sVuoNIohAptwHD_bjg_vM21YtHC',   // chave PÚBLICA (a proteção está nas regras RLS do banco)
-      tabela: 'provas'
+      tabela: 'provas',
+      lixeira: 'lixeira'
     };
     const HIST_KEY = 'kb_contador_historico_v1';
     const DEV_KEY = 'kb_dispositivo_id_v1';
@@ -1935,6 +2215,41 @@
       histSave(a);
     }
 
+    // ---------- lixeira local + fila de exclusões na nuvem ----------
+    const LIX_KEY = 'kb_contador_lixeira_v1', LIXDEL_KEY = 'kb_contador_lixeira_del_v1';
+    const PIN_LIXEIRA = '4250', PIN_EXCLUIR = '0808';      // travas de tela (não são segurança de servidor)
+    function lerLista(chave) {
+      let raw = null;
+      try {
+        raw = localStorage.getItem(chave);
+        const a = JSON.parse(raw || '[]');
+        return Array.isArray(a) ? a : [];
+      } catch (err) {
+        try { if (raw) localStorage.setItem(chave + '_corrompido', raw); } catch (e2) {}
+        return [];
+      }
+    }
+    function gravaLista(chave, a) { try { localStorage.setItem(chave, JSON.stringify(a)); return true; } catch (err) { return false; } }
+    function lixLoad() { return lerLista(LIX_KEY); }
+    function lixSave(a) { return gravaLista(LIX_KEY, a); }
+    function lixAdd(item) {
+      const a = lixLoad();
+      if (a.some((x) => x.id === item.id)) return true;
+      a.push(item);
+      return lixSave(a);
+    }
+    function lixAtualiza(id, patch) {
+      const a = lixLoad(), i = a.findIndex((x) => x.id === id);
+      if (i < 0) return;
+      Object.assign(a[i], patch);
+      lixSave(a);
+    }
+    function delLoad() { return lerLista(LIXDEL_KEY); }
+    function delEnfileira(id) {
+      const a = delLoad();
+      if (!a.includes(id)) { a.push(id); gravaLista(LIXDEL_KEY, a); }
+    }
+
     // ---------- fila de envio para a nuvem ----------
     let syncing = false, lastNetFail = false;
     const ICONS = {
@@ -1944,35 +2259,36 @@
       bad: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 2.6 19.8h18.8z"/><path d="M12 10v4.6"/><path d="M12 17.4v.2"/></svg>'
     };
     function renderStatus() {
-      const pend = histLoad().filter((p) => p.sync !== 'synced');
-      const n = pend.length, nErr = pend.filter((p) => p.sync === 'error').length;
+      const pend = histLoad().filter((p) => p.sync !== 'synced').concat(lixLoad().filter((p) => p.sync !== 'synced'));
+      const nDel = delLoad().length;
+      const n = pend.length + nDel, nErr = pend.filter((p) => p.sync === 'error').length;
       let st, txt, ico;
-      if (syncing) { st = 'syncing'; txt = 'Enviando ' + plural(n, 'prova', 'provas') + '…'; ico = 'syncing'; }
+      if (syncing) { st = 'syncing'; txt = 'Enviando ' + plural(n, 'item', 'itens') + '…'; ico = 'syncing'; }
       else if (n === 0) { st = 'ok'; txt = 'Tudo sincronizado'; ico = 'ok'; }
-      else if (nErr > 0 && !lastNetFail) { st = 'error'; txt = 'Erro ao enviar ' + plural(nErr, 'prova', 'provas') + ' · toque para tentar de novo'; ico = 'bad'; }
-      else if (lastNetFail || navigator.onLine === false) { st = 'offline'; txt = 'Sem conexão · ' + plural(n, 'prova não enviada', 'provas não enviadas'); ico = 'bad'; }
-      else { st = 'pending'; txt = plural(n, 'prova pendente', 'provas pendentes') + ' de envio · toque para enviar'; ico = 'pending'; }
+      else if (nErr > 0 && !lastNetFail) { st = 'error'; txt = 'Erro ao enviar ' + plural(nErr, 'item', 'itens') + ' · toque para tentar de novo'; ico = 'bad'; }
+      else if (lastNetFail || navigator.onLine === false) { st = 'offline'; txt = 'Sem conexão · ' + plural(n, 'item não enviado', 'itens não enviados'); ico = 'bad'; }
+      else { st = 'pending'; txt = plural(n, 'item pendente', 'itens pendentes') + ' de envio · toque para enviar'; ico = 'pending'; }
       syncBar.dataset.state = st;
       syncText.textContent = txt;
       syncIco.innerHTML = ICONS[ico];
       syncBar.setAttribute('aria-label', txt);
     }
-    async function enviarProva(p) {
-      const body = {
+    function corpoProva(p) {
+      const b = {
         id: p.id, atleta: p.atleta, pista: p.pista, movimento: p.movimento || null, arbitro: p.arbitro || null,
         dispositivo_id: p.dispositivo_id, iniciou_em: p.iniciou_em, finalizou_em: p.finalizou_em,
         reps_validas: p.reps_validas, no_counts: p.no_counts, duracao_s: p.duracao_s, eventos: p.eventos
       };
+      if (p.descartada_em) b.descartada_em = p.descartada_em;     // só vão quando existem (provas normais não mudam)
+      if (p.restaurada_em) b.restaurada_em = p.restaurada_em;
+      return b;
+    }
+    async function chamaNuvem(url, opts) {
       const ctl = new AbortController();
       const to = setTimeout(() => ctl.abort(), 15000);
       try {
-        const r = await fetch(NUVEM.url + '/rest/v1/' + NUVEM.tabela + '?on_conflict=id', {
-          method: 'POST',
-          headers: { 'apikey': NUVEM.key, 'Content-Type': 'application/json', 'Prefer': 'resolution=ignore-duplicates,return=minimal' },
-          body: JSON.stringify(body),
-          signal: ctl.signal
-        });
-        if (r.ok || r.status === 409) return { ok: true };            // mesmo id = já estava lá (reenvio seguro)
+        const r = await fetch(url, Object.assign({ signal: ctl.signal }, opts));
+        if (r.ok || (r.status === 409 && opts.method === 'POST')) return { ok: true };   // mesmo id = já estava lá (reenvio seguro)
         if (r.status === 408 || r.status === 429 || r.status >= 500) return { retry: true, msg: 'HTTP ' + r.status };
         let msg = 'HTTP ' + r.status;
         try { const j = await r.json(); if (j && j.message) msg = j.message; } catch (e2) {}
@@ -1981,20 +2297,47 @@
         return { retry: true, net: true, msg: 'sem conexão' };
       } finally { clearTimeout(to); }
     }
+    function postNuvem(tabela, body) {
+      return chamaNuvem(NUVEM.url + '/rest/v1/' + tabela + '?on_conflict=id', {
+        method: 'POST',
+        headers: { 'apikey': NUVEM.key, 'Content-Type': 'application/json', 'Prefer': 'resolution=ignore-duplicates,return=minimal' },
+        body: JSON.stringify(body)
+      });
+    }
+    const enviarProva = (p) => postNuvem(NUVEM.tabela, corpoProva(p));
+    const enviarLixeira = (p) => postNuvem(NUVEM.lixeira, corpoProva(p));
+    const apagaNuvemLixeira = (id) => chamaNuvem(NUVEM.url + '/rest/v1/' + NUVEM.lixeira + '?id=eq.' + encodeURIComponent(id), {
+      method: 'DELETE', headers: { 'apikey': NUVEM.key, 'Prefer': 'return=minimal' }
+    });
     async function syncNow(manual) {
       if (syncing) return;
-      const lista = histLoad().filter((p) => p.sync === 'pending' || (manual && p.sync === 'error'));
-      if (!lista.length) { lastNetFail = false; renderStatus(); return; }
+      const ps = histLoad().filter((p) => p.sync === 'pending' || (manual && p.sync === 'error'));
+      const ls = lixLoad().filter((p) => p.sync === 'pending' || (manual && p.sync === 'error'));
+      const ds = delLoad();
+      if (!ps.length && !ls.length && !ds.length) { lastNetFail = false; renderStatus(); return; }
       syncing = true; lastNetFail = false; renderStatus();
-      for (const p of lista) {
+      let parar = false;
+      for (const p of ps) {
         const r = await enviarProva(p);
         if (r.ok) histAtualiza(p.id, { sync: 'synced', sincronizada_em: Date.now(), erro: null });
         else if (r.fatal) histAtualiza(p.id, { sync: 'error', erro: r.msg, tentativas: (p.tentativas || 0) + 1 });
-        else { lastNetFail = true; histAtualiza(p.id, { erro: r.msg, tentativas: (p.tentativas || 0) + 1 }); break; }
+        else { lastNetFail = true; histAtualiza(p.id, { erro: r.msg, tentativas: (p.tentativas || 0) + 1 }); parar = true; break; }
+      }
+      if (!parar) for (const p of ls) {
+        const r = await enviarLixeira(p);
+        if (r.ok) lixAtualiza(p.id, { sync: 'synced', sincronizada_em: Date.now(), erro: null });
+        else if (r.fatal) lixAtualiza(p.id, { sync: 'error', erro: r.msg, tentativas: (p.tentativas || 0) + 1 });
+        else { lastNetFail = true; lixAtualiza(p.id, { erro: r.msg, tentativas: (p.tentativas || 0) + 1 }); parar = true; break; }
+      }
+      if (!parar) for (const id of ds) {
+        const r = await apagaNuvemLixeira(id);
+        if (r.ok) gravaLista(LIXDEL_KEY, delLoad().filter((x) => x !== id));
+        else if (r.fatal) { gravaLista(LIXDEL_KEY, delLoad().filter((x) => x !== id)); showToast('Não foi possível excluir da nuvem: ' + r.msg, 'err'); }
+        else { lastNetFail = true; break; }
       }
       syncing = false;
       renderStatus();
-      if (histScreen.style.display === 'flex' && histModo === 'local') renderHistorico(true);
+      if (histScreen.style.display === 'flex' && (histModo === 'local' || histModo === 'lix-local')) renderHistorico(true);
     }
 
     // ---------- menu sanduíche ----------
@@ -2013,8 +2356,15 @@
       $('btn-burger').setAttribute('aria-expanded', 'false');
       $('menu-sub').classList.remove('open');
       $('menu-hist').setAttribute('aria-expanded', 'false');
+      $('menu-sub-lix').classList.remove('open');
+      $('menu-lix').setAttribute('aria-expanded', 'false');
     }
     function toggleMenu() { menuOpen ? closeMenu() : openMenu(); }
+    function toggleLixSub() {
+      const open = !$('menu-sub-lix').classList.contains('open');
+      $('menu-sub-lix').classList.toggle('open', open);
+      $('menu-lix').setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
     function toggleHistSub() {
       const open = !$('menu-sub').classList.contains('open');
       $('menu-sub').classList.toggle('open', open);
@@ -2023,14 +2373,22 @@
 
     // ---------- histórico: lista + filtros ----------
     let histModo = 'local', histOffset = 0, histReq = 0, histDeb = null;
+    const ehNuvem = () => histModo === 'nuvem' || histModo === 'lix-nuvem';
+    const ehLix = () => histModo === 'lix-local' || histModo === 'lix-nuvem';
     function openHistory(modo) {
       closeMenu();
       histModo = modo;
-      $('hist-title').textContent = modo === 'local' ? 'Histórico local' : 'Histórico na nuvem';
+      const titulos = { 'local': 'Histórico local', 'nuvem': 'Histórico na nuvem', 'lix-local': 'Lixeira local', 'lix-nuvem': 'Lixeira na nuvem' };
+      $('hist-title').textContent = titulos[modo];
       $('hf-status-wrap').hidden = modo !== 'local';
-      $('hf-este-wrap').hidden = modo !== 'nuvem';
+      $('hf-este-wrap').hidden = !ehNuvem();
       histScreen.style.display = 'flex';
       renderHistorico(true);
+    }
+    // Lixeira: só abre depois do PIN (trava de tela)
+    function openLixeira(modo) {
+      closeMenu();
+      askPin('Lixeira', 'Digite o PIN para abrir a lixeira.', PIN_LIXEIRA, () => openHistory(modo === 'nuvem' ? 'lix-nuvem' : 'lix-local'));
     }
     function closeHistory() { histScreen.style.display = 'none'; fechaProva(); }
     function toggleFiltros() {
@@ -2050,12 +2408,12 @@
       if (f.pista.ok && f.pista.val !== null) n++;
       if (f.data) n++;
       if (histModo === 'local' && f.status !== 'todos') n++;
-      if (histModo === 'nuvem' && f.este) n++;
+      if (ehNuvem() && f.este) n++;
       return n;
     }
     function onFiltro() {
       $('hf-pista').value = $('hf-pista').value.replace(/\D/g, '').slice(0, 3);
-      if (histModo === 'local') renderHistorico(true);
+      if (!ehNuvem()) renderHistorico(true);
       else { clearTimeout(histDeb); histDeb = setTimeout(() => renderHistorico(true), 350); renderBadge(); }
     }
     function limparFiltros() {
@@ -2066,6 +2424,8 @@
     function renderBadge() { const n = contaFiltros(lerFiltros()); $('hf-badge').textContent = n ? String(n) : ''; }
 
     function cardProva(p, modo) {
+      const lix = modo === 'lix-local' || modo === 'lix-nuvem';
+      const nuvem = modo === 'nuvem' || modo === 'lix-nuvem';
       const b = mk('button', 'hcard'); b.type = 'button';
       b.addEventListener('click', () => abreProva(p, modo));
       const top = mk('div', 'hc-top');
@@ -2075,45 +2435,62 @@
       const sub = [p.movimento, p.pista != null ? 'Pista ' + p.pista : null, p.arbitro ? 'Árbitro: ' + p.arbitro : null].filter(Boolean).join(' · ');
       if (sub) b.appendChild(mk('div', 'hc-sub', sub));
       b.appendChild(mk('div', 'hc-meta', fmtDataHora(p.finalizou_em) + ' · ' + plural(p.no_counts, 'No Count', 'No Counts') + ' · ' + formatTime((p.duracao_s || 0) * 1000)));
+      if (lix && p.descartada_em) b.appendChild(mk('div', 'hc-meta', 'Descartada em ' + fmtDataHora(p.descartada_em)));
       const foot = mk('div', 'hc-foot');
-      if (modo === 'local') {
+      const badges = mk('div', 'hc-badges');
+      if (lix) badges.appendChild(mk('span', 'badge b-lix', 'Na lixeira'));
+      if (p.restaurada_em) badges.appendChild(mk('span', 'badge b-rest', 'Restaurada ' + fmtDataHora(p.restaurada_em)));
+      if (nuvem) badges.appendChild(mk('span', 'badge b-dev', 'Aparelho ' + String(p.dispositivo_id || '').slice(0, 8).toUpperCase()));
+      else {
         const st = p.sync === 'synced' ? ['b-ok', 'Enviada'] : (p.sync === 'error' ? ['b-err', 'Erro no envio'] : ['b-pend', 'Pendente de envio']);
-        foot.appendChild(mk('span', 'badge ' + st[0], st[1]));
-        foot.appendChild(mk('span', '', ''));
-      } else {
-        foot.appendChild(mk('span', 'badge b-dev', 'Aparelho ' + String(p.dispositivo_id || '').slice(0, 8).toUpperCase()));
-        foot.appendChild(mk('span', '', ''));
+        badges.appendChild(mk('span', 'badge ' + st[0], st[1]));
       }
+      foot.appendChild(badges);
+      foot.appendChild(mk('span', '', ''));
       b.appendChild(foot);
       return b;
     }
     function renderHistorico(reset) {
       renderBadge();
-      if (histModo === 'nuvem') { carregaNuvem(reset); return; }
+      if (ehNuvem()) { carregaNuvem(reset); return; }
+      const lix = ehLix();
       const f = lerFiltros();
       const list = $('hist-list'); list.textContent = '';
       $('hist-more').hidden = true;
-      const todas = histLoad();
+      const todas = lix ? lixLoad() : histLoad();
       const a = todas.filter((p) => {
         if (f.atleta && !norm(p.atleta).includes(norm(f.atleta))) return false;
         if (f.mov && !norm(p.movimento).includes(norm(f.mov))) return false;
         if (f.arb && !norm(p.arbitro).includes(norm(f.arb))) return false;
         if (f.pista.ok && f.pista.val !== null && p.pista !== f.pista.val) return false;
         if (f.data && diaLocal(p.finalizou_em) !== f.data) return false;
-        if (f.status === 'pendentes' && p.sync !== 'pending') return false;
-        if (f.status === 'enviadas' && p.sync !== 'synced') return false;
-        if (f.status === 'erro' && p.sync !== 'error') return false;
+        if (!lix) {
+          if (f.status === 'pendentes' && p.sync !== 'pending') return false;
+          if (f.status === 'enviadas' && p.sync !== 'synced') return false;
+          if (f.status === 'erro' && p.sync !== 'error') return false;
+        }
         return true;
-      }).sort((x, y) => (y.finalizou_em > x.finalizou_em ? 1 : -1));
-      $('hist-count').textContent = plural(a.length, 'prova', 'provas') + (contaFiltros(f) ? ' (com filtro)' : '') + ' neste aparelho';
-      if (!a.length) { list.appendChild(mk('div', 'hist-empty', todas.length ? 'Nenhuma prova com esses filtros.' : 'Nenhuma prova salva neste aparelho ainda.')); return; }
-      a.forEach((p) => list.appendChild(cardProva(p, 'local')));
+      }).sort((x, y) => {
+        const kx = lix ? x.descartada_em : x.finalizou_em, ky = lix ? y.descartada_em : y.finalizou_em;
+        return ky > kx ? 1 : -1;
+      });
+      $('hist-count').textContent = lix
+        ? plural(a.length, 'contagem', 'contagens') + (contaFiltros(f) ? ' (com filtro)' : '') + ' na lixeira deste aparelho'
+        : plural(a.length, 'prova', 'provas') + (contaFiltros(f) ? ' (com filtro)' : '') + ' neste aparelho';
+      if (!a.length) {
+        list.appendChild(mk('div', 'hist-empty', todas.length ? 'Nada com esses filtros.' : (lix ? 'A lixeira deste aparelho está vazia.' : 'Nenhuma prova salva neste aparelho ainda.')));
+        return;
+      }
+      a.forEach((p) => list.appendChild(cardProva(p, lix ? 'lix-local' : 'local')));
     }
+    let nuvemNovas = true;   // a tabela de provas já tem as colunas descartada_em/restaurada_em? (se não, tenta sem elas)
     function urlNuvem(f, offset) {
+      const lix = ehLix();
       const ps = [];
       const add = (k, v) => ps.push(k + '=' + encodeURIComponent(v));
-      add('select', 'id,atleta,pista,movimento,arbitro,dispositivo_id,iniciou_em,finalizou_em,reps_validas,no_counts,duracao_s,enviado_em');
-      add('order', 'finalizou_em.desc');
+      add('select', 'id,atleta,pista,movimento,arbitro,dispositivo_id,iniciou_em,finalizou_em,reps_validas,no_counts,duracao_s,enviado_em' +
+        (lix ? ',descartada_em' : (nuvemNovas ? ',descartada_em,restaurada_em' : '')));
+      add('order', lix ? 'descartada_em.desc' : 'finalizou_em.desc');
       add('limit', String(PAGINA)); add('offset', String(offset));
       const like = (s) => 'ilike.*' + s.replace(/[*%,()]/g, ' ') + '*';
       if (f.atleta) add('atleta', like(f.atleta));
@@ -2126,10 +2503,11 @@
         add('finalizou_em', 'gte.' + new Date(y, m - 1, d).toISOString());
         add('finalizou_em', 'lt.' + new Date(y, m - 1, d + 1).toISOString());
       }
-      return NUVEM.url + '/rest/v1/' + NUVEM.tabela + '?' + ps.join('&');
+      return NUVEM.url + '/rest/v1/' + (lix ? NUVEM.lixeira : NUVEM.tabela) + '?' + ps.join('&');
     }
     async function carregaNuvem(reset) {
       const meu = ++histReq, list = $('hist-list'), more = $('hist-more');
+      const lix = ehLix(), modo = lix ? 'lix-nuvem' : 'nuvem';
       if (reset) { histOffset = 0; list.textContent = ''; }
       more.hidden = true;
       $('hist-count').textContent = 'Carregando…';
@@ -2137,19 +2515,22 @@
       const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 15000);
       try {
         const r = await fetch(urlNuvem(f, histOffset), { headers: { 'apikey': NUVEM.key, 'Prefer': 'count=exact' }, signal: ctl.signal });
+        if (r.status === 400 && !lix && nuvemNovas) { nuvemNovas = false; clearTimeout(to); return carregaNuvem(reset); }   // banco ainda sem as colunas novas
         if (!r.ok) throw new Error('HTTP ' + r.status);
         const rows = await r.json();
         if (meu !== histReq) return;                                   // chegou depois de outro filtro
         const cr = r.headers.get('Content-Range'), total = cr && /\/(\d+)$/.exec(cr) ? parseInt(/\/(\d+)$/.exec(cr)[1], 10) : null;
-        rows.forEach((p) => list.appendChild(cardProva(p, 'nuvem')));
+        rows.forEach((p) => list.appendChild(cardProva(p, modo)));
         histOffset += rows.length;
-        if (!histOffset) list.appendChild(mk('div', 'hist-empty', contaFiltros(f) ? 'Nenhuma prova com esses filtros.' : 'Ainda não há provas na nuvem.'));
-        $('hist-count').textContent = (total !== null ? plural(total, 'prova', 'provas') : plural(histOffset, 'prova', 'provas')) + ' na nuvem' + (contaFiltros(f) ? ' (com filtro)' : '');
+        if (!histOffset) list.appendChild(mk('div', 'hist-empty', contaFiltros(f) ? 'Nada com esses filtros.' : (lix ? 'A lixeira da nuvem está vazia.' : 'Ainda não há provas na nuvem.')));
+        const un = lix ? ['contagem', 'contagens'] : ['prova', 'provas'];
+        $('hist-count').textContent = (total !== null ? plural(total, un[0], un[1]) : plural(histOffset, un[0], un[1])) + (lix ? ' na lixeira da nuvem' : ' na nuvem') + (contaFiltros(f) ? ' (com filtro)' : '');
         more.hidden = !(rows.length === PAGINA && (total === null || histOffset < total));
       } catch (err) {
         if (meu !== histReq) return;
         $('hist-count').textContent = 'Não foi possível carregar a nuvem';
-        const box = mk('div', 'hist-empty', 'Sem conexão com a nuvem. Verifique a internet e tente de novo.');
+        const falta = lix && err && /HTTP 404/.test(err.message || '');
+        const box = mk('div', 'hist-empty', falta ? 'A lixeira da nuvem ainda não foi criada no Supabase (falta rodar o SQL da lixeira).' : 'Sem conexão com a nuvem. Verifique a internet e tente de novo.');
         const bt = mk('button', 'btn btn-back', 'Tentar de novo'); bt.type = 'button';
         bt.addEventListener('click', () => carregaNuvem(true));
         box.appendChild(document.createElement('br')); box.appendChild(bt);
@@ -2159,6 +2540,7 @@
 
     // ---------- detalhe da prova ----------
     let provaAberta = null, provaModo = 'local', apagarArmado = false, apagarT = null;
+    const modoLix = () => provaModo === 'lix-local' || provaModo === 'lix-nuvem';
     function horaEvento(ts) {
       if (ts === null || ts === undefined) return '—';
       const d = new Date(ts);
@@ -2186,7 +2568,15 @@
       return { ok: true, txt: 'Apagar deste aparelho' };
     }
     function atualizaBotaoApagar() {
-      const b = $('pv-del');
+      const b = $('pv-del'), rb = $('pv-restore');
+      if (modoLix()) {
+        rb.hidden = false;
+        b.hidden = false; b.disabled = false; b.textContent = 'Excluir de vez';
+        b.classList.add('btn-danger'); b.classList.remove('btn-close', 'armed');
+        return;
+      }
+      rb.hidden = true;
+      b.classList.remove('btn-danger'); b.classList.add('btn-close');
       b.hidden = provaModo !== 'local';
       if (b.hidden) return;
       const s = estadoApagar(provaAberta);
@@ -2198,21 +2588,25 @@
       $('pv-title').textContent = p.atleta;
       const meta = $('pv-meta'); meta.textContent = '';
       const linha = (t) => { meta.appendChild(mk('div', '', t)); };
+      const dh = (iso) => new Date(iso).toLocaleString('pt-BR');
       linha('Movimento: ' + (p.movimento || '—') + ' · Pista: ' + (p.pista != null ? p.pista : '—') + ' · Árbitro: ' + (p.arbitro || '—'));
-      linha('Início: ' + new Date(p.iniciou_em).toLocaleString('pt-BR') + ' · Fim: ' + new Date(p.finalizou_em).toLocaleString('pt-BR'));
+      linha('Início: ' + dh(p.iniciou_em) + ' · Fim: ' + dh(p.finalizou_em));
       linha('Aparelho: ' + String(p.dispositivo_id || '').slice(0, 8).toUpperCase() + (p.dispositivo_id === deviceId() ? ' (este)' : ''));
-      if (modo === 'local') linha('Situação: ' + (p.sync === 'synced' ? 'enviada à nuvem' : (p.sync === 'error' ? 'erro no envio: ' + (p.erro || '') : 'pendente de envio')));
+      if (p.restaurada_em) linha('RESTAURADA em ' + dh(p.restaurada_em) + (p.descartada_em ? ' (descartada em ' + dh(p.descartada_em) + ')' : ''));
+      else if (p.descartada_em) linha('Descartada em ' + dh(p.descartada_em));
+      if (modo === 'local' || modo === 'lix-local') linha('Situação: ' + (p.sync === 'synced' ? 'enviada à nuvem' : (p.sync === 'error' ? 'erro no envio: ' + (p.erro || '') : 'pendente de envio')));
       $('pv-reps').textContent = p.reps_validas; $('pv-nc').textContent = p.no_counts;
       $('pv-dur').textContent = formatTime((p.duracao_s || 0) * 1000);
       $('pv-pace').textContent = (p.duracao_s > 0 ? (p.reps_validas / (p.duracao_s / 60)).toFixed(1) : '0.0') + ' RPM';
       atualizaBotaoApagar();
       provaModal.style.display = 'flex';
-      if (modo === 'local') { renderEventos(p.eventos); return; }
+      if (modo === 'local' || modo === 'lix-local') { renderEventos(p.eventos); return; }
       $('pv-body').textContent = '';
       const tr = document.createElement('tr'), td = document.createElement('td');
       td.colSpan = 5; td.textContent = 'Carregando eventos…'; tr.appendChild(td); $('pv-body').appendChild(tr);
       try {
-        const r = await fetch(NUVEM.url + '/rest/v1/' + NUVEM.tabela + '?id=eq.' + encodeURIComponent(p.id) + '&select=eventos', { headers: { 'apikey': NUVEM.key } });
+        const tabela = modo === 'lix-nuvem' ? NUVEM.lixeira : NUVEM.tabela;
+        const r = await fetch(NUVEM.url + '/rest/v1/' + tabela + '?id=eq.' + encodeURIComponent(p.id) + '&select=eventos', { headers: { 'apikey': NUVEM.key } });
         if (!r.ok) throw new Error('HTTP ' + r.status);
         const j = await r.json();
         if (provaAberta !== p) return;
@@ -2222,7 +2616,9 @@
     }
     function fechaProva() { provaModal.style.display = 'none'; provaAberta = null; clearTimeout(apagarT); apagarArmado = false; }
     function apagaProva() {
-      if (!provaAberta || provaModo !== 'local') return;
+      if (!provaAberta) return;
+      if (modoLix()) { pedeExcluirDeVez(provaAberta); return; }
+      if (provaModo !== 'local') return;
       const s = estadoApagar(provaAberta);
       if (!s.ok) return;
       if (!apagarArmado) { apagarArmado = true; atualizaBotaoApagar(); clearTimeout(apagarT); apagarT = setTimeout(() => { apagarArmado = false; atualizaBotaoApagar(); }, 5000); return; }
@@ -2231,10 +2627,62 @@
       fechaProva(); renderHistorico(true); refreshSugestoes(); renderStatus();
       showToast('Apagada deste aparelho (a cópia na nuvem permanece)', 'ok');
     }
-    async function exportaProvaTXT() {
+    function atualizaAposLixeira() {
+      fechaProva(); renderStatus();
+      const pr = syncNow(false);
+      if (ehNuvem()) pr.then(() => { if (histScreen.style.display === 'flex') renderHistorico(true); });
+      else renderHistorico(true);
+    }
+    // Excluir de vez (PIN de exclusão)
+    function pedeExcluirDeVez(p) {
+      askPin('Excluir de vez', 'Digite o PIN de exclusão. A contagem de ' + p.atleta + ' será apagada para sempre, daqui e da nuvem.', PIN_EXCLUIR, () => {
+        lixSave(lixLoad().filter((x) => x.id !== p.id));
+        delEnfileira(p.id);
+        showToast('Excluída da lixeira', 'ok');
+        atualizaAposLixeira();
+      });
+    }
+    // Restaurar: volta ao histórico como prova selada, marcada como restaurada
+    function pedeRestaurar() {
+      const p = provaAberta;
+      if (!p || !modoLix()) return;
+      askDialog({
+        title: 'Restaurar contagem?',
+        text: p.atleta + ' · ' + p.reps_validas + ' reps. Ela volta ao histórico como prova selada (sem correção), marcada como RESTAURADA, com a data e a hora de agora.',
+        buttons: [
+          { label: 'Cancelar', cls: 'btn-close' },
+          { label: 'Restaurar', cls: 'btn-export', fn: () => fazRestaurar(p) }
+        ]
+      });
+    }
+    async function fazRestaurar(p) {
+      let eventos = p.eventos;
+      if (!Array.isArray(eventos)) {                      // item da nuvem cujos eventos ainda não foram baixados
+        try {
+          const r = await fetch(NUVEM.url + '/rest/v1/' + NUVEM.lixeira + '?id=eq.' + encodeURIComponent(p.id) + '&select=eventos', { headers: { 'apikey': NUVEM.key } });
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          const j = await r.json();
+          eventos = j[0] ? j[0].eventos : null;
+        } catch (err) { eventos = null; }
+        if (!Array.isArray(eventos)) { showToast('Não foi possível carregar a contagem (sem conexão). Tente de novo.', 'err'); return; }
+      }
+      const prova = {
+        id: p.id, atleta: p.atleta, pista: p.pista != null ? p.pista : null, movimento: p.movimento || null, arbitro: p.arbitro || null,
+        dispositivo_id: p.dispositivo_id, iniciou_em: p.iniciou_em, finalizou_em: p.finalizou_em,
+        reps_validas: p.reps_validas, no_counts: p.no_counts, duracao_s: p.duracao_s, eventos: eventos,
+        descartada_em: p.descartada_em || null, restaurada_em: new Date().toISOString()
+      };
+      if (!salvaProvaLocal(prova)) { showToast('Não foi possível restaurar: memória do aparelho cheia.', 'err'); return; }
+      lixSave(lixLoad().filter((x) => x.id !== p.id));
+      delEnfileira(p.id);                                  // some da lixeira da nuvem (a prova restaurada vai para a tabela de provas)
+      refreshSugestoes();
+      showToast('Restaurada: agora está no histórico, marcada como restaurada', 'ok');
+      atualizaAposLixeira();
+    }
+    function exportaProvaTXT() {
       if (!provaAberta) return;
       const p = provaAberta;
-      await saveTextFile(buildTXT(p), 'kettlebell_' + (slugify(p.atleta) || 'sem-nome') + '_' + fileStamp(new Date(p.finalizou_em)) + '.txt');
+      abreExportar(buildTXT(p), 'kettlebell_' + (slugify(p.atleta) || 'sem-nome') + '_' + fileStamp(new Date(p.finalizou_em)) + '.txt');
     }
 
     // ---------- iniciar eventos e escutas ----------
@@ -2249,6 +2697,7 @@
       pistaSummary.classList.toggle('invalid', !r.ok);
       if (r.ok) pista = r.val;
       athleteSummary.classList.toggle('invalid', !limpaTexto(athleteSummary.value));
+      atualizaExtraLabel();
       saveState();
     }
     [movSummary, pistaSummary, arbSummary, athleteSummary].forEach((i) => i.addEventListener('input', lerResumoExtras));
@@ -2256,7 +2705,9 @@
     window.addEventListener('online', () => { renderStatus(); syncNow(false); });
     window.addEventListener('offline', renderStatus);
     document.addEventListener('visibilitychange', () => { if (!document.hidden) { renderStatus(); syncNow(false); } });
-    setInterval(() => { if (!syncing && histLoad().some((p) => p.sync === 'pending')) syncNow(false); }, 20000);
+    setInterval(() => { if (!syncing && (histLoad().some((p) => p.sync === 'pending') || lixLoad().some((p) => p.sync === 'pending') || delLoad().length)) syncNow(false); }, 20000);
+    document.addEventListener('click', (e) => { if (scMenuOpen && !e.target.closest('.sc-menu-wrap')) fechaMenuResumo(); });
+    document.getElementById('pin-input').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4); document.getElementById('pin-err').textContent = ''; });
     setInterval(() => { if (provaAberta && provaModo === 'local') atualizaBotaoApagar(); }, 30000);
     $('device-short').textContent = deviceShort();
     $('device-short').title = deviceId();
@@ -2268,13 +2719,10 @@
     if (loadState()) {
       ensureFooter();
       updateDisplay();
-      if (inMenu) {
-        updateMenuUI();       // volta ao menu, com a contagem salva e pausada
-      } else {
-        sponsorsScreen.style.display = 'none';
-        counterScreen.style.display = 'flex';
-        if (finished) renderSummary();
-      }
+      sponsorsScreen.style.display = 'none';
+      counterScreen.style.display = 'flex';
+      if (legacyMenu) { legacyMenu = false; resumeCounting(); }   // versão antiga deixava pausada no menu: volta à contagem
+      if (finished) renderSummary();
     }
   </script>
 </body>
