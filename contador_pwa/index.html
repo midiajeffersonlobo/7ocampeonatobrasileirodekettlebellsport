@@ -620,11 +620,21 @@
     [data-dat="ok"] { --d: #2fbf6b; } [data-dat="work"] { --d: #ffcc00; } [data-dat="bad"] { --d: #ff4a4a; }
     .net-legend { position: fixed; inset: 0; z-index: 320; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0, 0, 0, 0.7); }
     .net-legend[hidden] { display: none; }
-    .nl-card { width: 100%; max-width: 360px; background: #001538; border: 2px solid var(--yellow-primary); border-radius: 10px; padding: 16px; color: #fff; }
+    .nl-card { position: relative; width: 100%; max-width: 360px; background: #001538; border: 2px solid var(--yellow-primary); border-radius: 10px; padding: 16px; color: #fff; }
     .nl-card h3 { margin: 0 0 10px; font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.08em; font-size: 1.05rem; color: var(--yellow-primary); }
-    .nl-sec { margin: 10px 0 4px; font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.85rem; color: #8a9bbd; }
-    .nl-row { display: flex; align-items: center; gap: 10px; padding: 3px 0; font-size: 0.92rem; line-height: 1.25; }
-    .nl-row i { flex: none; width: 14px; height: 14px; border-radius: 50%; }
+    .nl-x { position: absolute; top: 8px; right: 8px; width: 40px; height: 40px; display: grid; place-items: center; background: transparent; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 6px; color: #fff; cursor: pointer; }
+    .nl-x:hover { border-color: #fff; }
+    .nl-x svg { width: 20px; height: 20px; }
+    .nl-sec { display: flex; align-items: center; gap: 12px; margin: 18px 0 8px; font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.85rem; color: #8a9bbd; }
+    .nl-row { display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; font-size: 0.92rem; line-height: 1.25; }
+    .nl-row i { flex: none; width: 14px; height: 14px; border-radius: 50%; margin-top: 3px; }
+    .nl-row b { font-weight: 800; }
+    .nl-sub { display: block; font-size: 0.85rem; color: rgba(255, 255, 255, 0.7); margin-top: 1px; }
+    .nl-card h3 { padding-right: 48px; }
+    .nl-ico { position: relative; flex: none; width: 30px; height: 30px; }
+    .nl-ico::before, .nl-ico::after { content: ''; position: absolute; left: 50%; top: 50%; border-radius: 50%; transform: translate(-50%, -50%); transition: background-color 1.2s ease; }
+    .nl-ico::before { width: 26px; height: 26px; background: var(--n, #2fbf6b); }
+    .nl-ico::after { width: 11px; height: 11px; background: var(--d, #2fbf6b); }
     .nl-g { background: #2fbf6b; } .nl-y { background: #ffcc00; } .nl-r { background: #ff4a4a; }
     .nl-now { margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.2); font-size: 0.9rem; color: rgba(255, 255, 255, 0.85); }
     .nl-hint { margin-top: 8px; font-size: 0.75rem; color: #8a9bbd; }
@@ -1233,17 +1243,18 @@
   <div class="net-ind" id="net-ind" data-net="work" data-dat="work" role="img" aria-label="Estado da conexão e dos dados"></div>
   <div class="net-legend" id="net-legend" hidden onclick="fechaLegenda()">
     <div class="nl-card" onclick="event.stopPropagation()">
+      <button class="nl-x" type="button" onclick="legendGuard = 0; fechaLegenda()" aria-label="Fechar legenda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       <h3>Indicador de conexão</h3>
-      <div class="nl-sec">Borda · rede</div>
-      <div class="nl-row"><i class="nl-g"></i>Verde: conectado</div>
-      <div class="nl-row"><i class="nl-y"></i>Amarelo: conectando</div>
-      <div class="nl-row"><i class="nl-r"></i>Vermelho: sem conexão (dá para contar offline)</div>
-      <div class="nl-sec">Centro · dados</div>
-      <div class="nl-row"><i class="nl-g"></i>Verde: atualizados (tudo enviado à nuvem)</div>
-      <div class="nl-row"><i class="nl-y"></i>Amarelo: atualizando (enviando)</div>
-      <div class="nl-row"><i class="nl-r"></i>Vermelho: desatualizados (há itens não enviados)</div>
+      <div class="nl-sec"><span class="nl-ico" id="nl-ico-rede"></span><span>Borda · rede</span></div>
+      <div class="nl-row"><i class="nl-g"></i><div>Verde: <b>conectado</b></div></div>
+      <div class="nl-row"><i class="nl-y"></i><div>Amarelo: <b>conectando</b></div></div>
+      <div class="nl-row"><i class="nl-r"></i><div>Vermelho: <b>sem conexão</b><span class="nl-sub">(dá para contar offline)</span></div></div>
+      <div class="nl-sec"><span class="nl-ico" id="nl-ico-dados"></span><span>Centro · dados</span></div>
+      <div class="nl-row"><i class="nl-g"></i><div>Verde: <b>atualizados</b><span class="nl-sub">(tudo enviado à nuvem)</span></div></div>
+      <div class="nl-row"><i class="nl-y"></i><div>Amarelo: <b>atualizando</b><span class="nl-sub">(enviando)</span></div></div>
+      <div class="nl-row"><i class="nl-r"></i><div>Vermelho: <b>desatualizados</b><span class="nl-sub">(há itens não enviados)</span></div></div>
       <div class="nl-now" id="nl-now"></div>
-      <div class="nl-hint">Toque fora para fechar.</div>
+      <div class="nl-hint">Toque no X ou fora para fechar.</div>
     </div>
   </div>
   <button id="sync-bar" type="button" data-state="ok" onclick="syncNow(true)" aria-live="polite"><span class="sb-ico" id="sync-ico"></span><span id="sync-text">Tudo sincronizado</span></button>
@@ -2832,8 +2843,25 @@
     // segurar o indicador mostra a legenda; um toque simples não faz nada
     let legendGuard = 0, legendT = null;
     const netInd = document.getElementById('net-ind'), netLegend = document.getElementById('net-legend');
-    const abreLegenda = () => { renderStatus(); netLegend.hidden = false; legendGuard = Date.now() + 100000; };
-    function fechaLegenda() { if (Date.now() < legendGuard) return; netLegend.hidden = true; }
+    // ilustrações da legenda: cada ícone troca de cor (devagar, no mesmo intervalo) para cores aleatórias, nunca iguais entre si no mesmo momento
+    const CORES = ['#2fbf6b', '#ffcc00', '#ff4a4a'];
+    let legendAnim = null;
+    function sorteiaCores(ini) {
+      const ico = [document.getElementById('nl-ico-rede'), document.getElementById('nl-ico-dados')];
+      const atual = legendAnim ? legendAnim.cur : [null, null];
+      let a, b;
+      do { a = CORES[Math.floor(Math.random() * 3)]; } while (a === atual[0]);
+      do { b = CORES[Math.floor(Math.random() * 3)]; } while (b === atual[1] || b === a);
+      legendAnim = { cur: [a, b] };
+      ico[0].style.setProperty('--n', a); ico[0].style.setProperty('--d', CORES[0]);   // rede: anel muda, centro fixo verde
+      ico[1].style.setProperty('--n', CORES[0]); ico[1].style.setProperty('--d', b);   // dados: anel fixo verde, centro muda
+    }
+    let legendT2 = null;
+    const abreLegenda = () => {
+      renderStatus(); netLegend.hidden = false; legendGuard = Date.now() + 100000;
+      legendAnim = null; sorteiaCores(); clearInterval(legendT2); legendT2 = setInterval(sorteiaCores, 2200);
+    };
+    function fechaLegenda() { if (Date.now() < legendGuard) return; netLegend.hidden = true; clearInterval(legendT2); }
     netInd.addEventListener('pointerdown', (e) => { e.stopPropagation(); clearTimeout(legendT); legendT = setTimeout(abreLegenda, 450); });
     ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) => netInd.addEventListener(t, () => { clearTimeout(legendT); }));
     document.addEventListener('pointerup', () => { if (!netLegend.hidden) legendGuard = Date.now() + 400; });
