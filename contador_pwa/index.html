@@ -609,6 +609,19 @@
     body.menu-open .btn-burger span:nth-child(3) { transform: rotate(-45deg); }
 
     .menu-backdrop { position: fixed; inset: 0; z-index: 89; background: rgba(0, 0, 0, 0.35); opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
+    .b-saiu { background: #e67e22; color: #1a0f00; }
+    .net-ind { position: fixed; top: calc(6px + env(safe-area-inset-top, 0px)); left: calc(6px + env(safe-area-inset-left, 0px)); z-index: 310; width: 30px; height: 30px;
+      display: grid; place-items: center; border-radius: 50%; background: rgba(0, 10, 30, 0.7); border: 1.5px solid currentColor; color: #2fbf6b; pointer-events: none; }
+    .net-ind svg { width: 18px; height: 18px; }
+    .net-ind .off { display: none; }
+    .net-ind[data-on="0"] { color: #ff5a5a; }
+    .net-ind[data-on="0"] .on { display: none; }
+    .net-ind[data-on="0"] .off { display: block; }
+    .tbl-head, .hist-head { padding-left: 36px; }
+    #menu-home { display: none; }
+    body.hist-open #menu-home { display: flex; }
+    body.hist-open .menu-backdrop { z-index: 119; }
+    body.hist-open .menu-panel { z-index: 120; }
     .menu-backdrop.open { opacity: 1; pointer-events: auto; }
     .menu-panel { position: fixed; z-index: 90; top: calc(2.5vh + env(safe-area-inset-top, 0px) + 54px); right: calc(3vw + env(safe-area-inset-right, 0px));
       width: min(300px, 86vw); background: #001538; border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 8px; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.6);
@@ -1062,6 +1075,7 @@
   <!-- MENU SANDUÍCHE -->
   <div class="menu-backdrop" id="menu-backdrop" onclick="closeMenu()"></div>
   <nav class="menu-panel" id="menu-panel" aria-label="Menu" aria-hidden="true">
+    <button class="menu-item" id="menu-home" type="button" onclick="closeHistory()"><span>Menu principal</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-6h4v6"/></svg></button>
     <button class="menu-item" id="menu-hist" type="button" aria-expanded="false" onclick="toggleHistSub()"><span>Histórico</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg></button>
     <div class="menu-sub" id="menu-sub"><div>
       <button class="menu-subitem" type="button" onclick="openHistory('local')">Histórico local</button>
@@ -1080,8 +1094,8 @@
     <div class="hist-head">
       <h2 id="hist-title">Histórico</h2>
       <button class="hist-filter-btn" id="hf-toggle" type="button" aria-expanded="false" aria-controls="hist-filters" onclick="toggleFiltros()"><span>Filtros</span><span id="hf-badge"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg></button>
-      <button class="keys-close" type="button" onclick="closeHistory()" aria-label="Fechar histórico">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      <button class="keys-close" id="hist-burger" type="button" onclick="event.stopPropagation(); toggleMenu()" aria-label="Menu" aria-expanded="false" aria-controls="menu-panel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
     </div>
     <div class="hist-filters" id="hist-filters"><div>
@@ -1204,6 +1218,10 @@
   </div>
 
   <!-- FAIXA DE SINCRONIZAÇÃO (sempre visível) -->
+  <div class="net-ind" id="net-ind" data-on="1" role="img" aria-label="Conexão OK">
+    <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M2.5 9a14 14 0 0 1 19 0"/><path d="M5.5 12.6a9.5 9.5 0 0 1 13 0"/><path d="M8.7 16a5 5 0 0 1 6.6 0"/><path d="M12 19.6h.01"/></svg>
+    <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M2.5 9a14 14 0 0 1 19 0" opacity=".45"/><path d="M5.5 12.6a9.5 9.5 0 0 1 13 0" opacity=".45"/><path d="M8.7 16a5 5 0 0 1 6.6 0" opacity=".45"/><path d="M12 19.6h.01"/><path d="M3.5 3.5l17 17"/></svg>
+  </div>
   <button id="sync-bar" type="button" data-state="ok" onclick="syncNow(true)" aria-live="polite"><span class="sb-ico" id="sync-ico"></span><span id="sync-text">Tudo sincronizado</span></button>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -1228,6 +1246,7 @@
     let exported = false;     // TXT exportado desde o último evento
     let confirmOpen = false;
     let saved = false;        // prova já salva (selada): só falta "Próximo atleta"
+    let leftAt = null;        // instante em que o usuário saiu da tela durante a prova (gravado na hora)
     let legacyMenu = false;   // estado antigo (v7) que estava pausado no menu
     let resetArmed = false;
     let resetTimer = null;
@@ -1324,7 +1343,7 @@
       try {
         if (!active) { localStorage.removeItem(STORAGE_KEY); return; }
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
-          score, noCountCount, logs, isNoCountState, athlete, movimento, pista, arbitro, provaId, finished, exported, pausedMs, saved,
+          score, noCountCount, logs, isNoCountState, athlete, movimento, pista, arbitro, provaId, finished, exported, pausedMs, saved, leftAt,
           startTime: startTime ? startTime.getTime() : null,
           lastEventTime: lastEventTime ? lastEventTime.getTime() : null,
           endTime: endTime ? endTime.getTime() : null
@@ -1351,6 +1370,7 @@
         exported = !!s.exported;
         pausedMs = s.pausedMs || 0;
         saved = !!s.saved;
+        leftAt = s.leftAt || null;
         legacyMenu = !!s.inMenu;
         startTime = new Date(s.startTime);
         lastEventTime = s.lastEventTime ? new Date(s.lastEventTime) : startTime;
@@ -1406,6 +1426,7 @@
       finished = false;
       saved = false;
       exported = false;
+      leftAt = null;
       active = true;
 
       updateDisplay();
@@ -1640,6 +1661,7 @@
       active = false;
       finished = false;
       saved = false;
+      leftAt = null;
       athlete = ''; movimento = ''; pista = null; arbitro = ''; provaId = null;
       limpaFormInicio();
       saveState();   // remove o estado salvo
@@ -1660,8 +1682,8 @@
     }
 
     // Sela a prova ao sair: grava no histórico local (definitivo) e entra na fila da nuvem
-    function selaProva() {
-      const prova = buildProva();
+    function selaProva(extra) {
+      const prova = buildProva(extra);
       if (!salvaProvaLocal(prova)) { showToast('Não foi possível salvar: memória do aparelho cheia. Exporte o TXT e libere espaço.', 'err'); return false; }
       refreshSugestoes();
       renderStatus();
@@ -1815,6 +1837,7 @@
       txt += `Aparelho:     ${p.dispositivo_id}\n`;
       txt += `ID da prova:  ${p.id}\n`;
       if (p.descartada_em) txt += `Descartada em: ${new Date(p.descartada_em).toLocaleString('pt-BR')}\n`;
+      if (p.saiu_da_tela_em) txt += `SAIU DA TELA durante a contagem às ${new Date(p.saiu_da_tela_em).toLocaleTimeString('pt-BR')} (encerrada automaticamente)\n`;
       if (p.restaurada_em) txt += `RESTAURADA em: ${new Date(p.restaurada_em).toLocaleString('pt-BR')}\n`;
       txt += `Início:       ${new Date(p.iniciou_em).toLocaleString('pt-BR')}\n`;
       txt += `Reps Válidas: ${p.reps_validas}\n`;
@@ -1997,7 +2020,7 @@
       // Detalhe de prova / histórico / menu: Esc fecha, nenhuma outra tecla conta repetição
       if (pvMenuOpen) { if (e.key === 'Escape') { e.preventDefault(); fechaMenuPv(); } return; }
       if (provaModal.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); fechaProva(); } return; }
-      if (histScreen.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); closeHistory(); } return; }
+      if (histScreen.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); if (menuOpen) closeMenu(); else closeHistory(); } return; }
       if (menuOpen) { if (e.key === 'Escape') { e.preventDefault(); closeMenu(); } return; }
       const inField = e.target && e.target.tagName === 'INPUT';
 
@@ -2220,9 +2243,9 @@
         return [l.index, l.type === 'NO_COUNT' ? 'N' : (l.type === 'CORRECTION_MINUS' ? 'C' : 'V'), l.scoreAfter, ts, el, iv];
       });
     }
-    function buildProva() {
+    function buildProva(extra) {
       const fim = endTime || new Date();
-      return {
+      return Object.assign({
         id: provaId || novoUUID(),
         atleta: athlete,
         pista: pista,
@@ -2235,7 +2258,7 @@
         no_counts: noCountCount,
         duracao_s: Math.round(activeMs(fim) / 1000),
         eventos: eventosCompactos(logs)
-      };
+      }, extra || {});
     }
 
     // ---------- histórico local (permanente; some só pela regra das 24 h) ----------
@@ -2321,6 +2344,21 @@
       syncText.textContent = txt;
       syncIco.innerHTML = ICONS[ico];
       syncBar.setAttribute('aria-label', txt);
+      const on = navigator.onLine !== false && !pingFail;
+      const ni = document.getElementById('net-ind');
+      ni.dataset.on = on ? '1' : '0'; ni.setAttribute('aria-label', on ? 'Conexão OK' : 'Sem conexão');
+    }
+    let pingFail = false;
+    // verifica a conexão de verdade (o navegador às vezes diz "online" sem internet); só falha em erro de rede
+    async function pingNet() {
+      let falhou = navigator.onLine === false;
+      if (!falhou) {
+        const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 6000);
+        try { await fetch(NUVEM.url + '/rest/v1/', { method: 'GET', mode: 'no-cors', cache: 'no-store', signal: ctl.signal }); } catch (e) { falhou = true; } finally { clearTimeout(to); }
+      }
+      const voltou = pingFail && !falhou;
+      pingFail = falhou; renderStatus();
+      if (voltou) syncNow(false);
     }
     function corpoProva(p) {
       const b = {
@@ -2330,6 +2368,7 @@
       };
       if (p.descartada_em) b.descartada_em = p.descartada_em;     // só vão quando existem (provas normais não mudam)
       if (p.restaurada_em) b.restaurada_em = p.restaurada_em;
+      if (p.saiu_da_tela_em) b.saiu_da_tela_em = p.saiu_da_tela_em;
       return b;
     }
     async function chamaNuvem(url, opts) {
@@ -2353,8 +2392,14 @@
         body: JSON.stringify(body)
       });
     }
-    const enviarProva = (p) => postNuvem(NUVEM.tabela, corpoProva(p));
-    const enviarLixeira = (p) => postNuvem(NUVEM.lixeira, corpoProva(p));
+    // se o banco ainda não tem a coluna saiu_da_tela_em, reenvia sem ela (a prova nunca fica presa)
+    async function envia(tabela, p) {
+      let r = await postNuvem(tabela, corpoProva(p));
+      if (r.fatal && p.saiu_da_tela_em) { const b = corpoProva(p); delete b.saiu_da_tela_em; r = await postNuvem(tabela, b); }
+      return r;
+    }
+    const enviarProva = (p) => envia(NUVEM.tabela, p);
+    const enviarLixeira = (p) => envia(NUVEM.lixeira, p);
     const apagaNuvemLixeira = (id) => chamaNuvem(NUVEM.url + '/rest/v1/' + NUVEM.lixeira + '?id=eq.' + encodeURIComponent(id), {
       method: 'DELETE', headers: { 'apikey': NUVEM.key, 'Prefer': 'return=minimal' }
     });
@@ -2395,14 +2440,14 @@
       document.body.classList.add('menu-open');
       menuPanel.classList.add('open'); menuBackdrop.classList.add('open');
       menuPanel.setAttribute('aria-hidden', 'false');
-      $('btn-burger').setAttribute('aria-expanded', 'true');
+      $('btn-burger').setAttribute('aria-expanded', 'true'); $('hist-burger').setAttribute('aria-expanded', 'true');
     }
     function closeMenu() {
       menuOpen = false;
       document.body.classList.remove('menu-open');
       menuPanel.classList.remove('open'); menuBackdrop.classList.remove('open');
       menuPanel.setAttribute('aria-hidden', 'true');
-      $('btn-burger').setAttribute('aria-expanded', 'false');
+      $('btn-burger').setAttribute('aria-expanded', 'false'); $('hist-burger').setAttribute('aria-expanded', 'false');
       $('menu-sub').classList.remove('open');
       $('menu-hist').setAttribute('aria-expanded', 'false');
       $('menu-sub-lix').classList.remove('open');
@@ -2431,7 +2476,7 @@
       $('hist-title').textContent = titulos[modo];
       $('hf-status-wrap').hidden = modo !== 'local';
       $('hf-este-wrap').hidden = !ehNuvem();
-      histScreen.style.display = 'flex';
+      histScreen.style.display = 'flex'; document.body.classList.add('hist-open');
       renderHistorico(true);
     }
     // Lixeira: só abre depois do PIN (trava de tela)
@@ -2439,7 +2484,7 @@
       closeMenu();
       askPin('Lixeira', 'Digite o PIN para abrir a lixeira.', PIN_LIXEIRA, () => openHistory(modo === 'nuvem' ? 'lix-nuvem' : 'lix-local'));
     }
-    function closeHistory() { histScreen.style.display = 'none'; fechaProva(); }
+    function closeHistory() { closeMenu(); histScreen.style.display = 'none'; document.body.classList.remove('hist-open'); fechaProva(); }
     function toggleFiltros() {
       const open = !$('hist-filters').classList.contains('open');
       $('hist-filters').classList.toggle('open', open);
@@ -2489,6 +2534,7 @@
       const badges = mk('div', 'hc-badges');
       if (lix) badges.appendChild(mk('span', 'badge b-lix', 'Na lixeira'));
       if (p.restaurada_em) badges.appendChild(mk('span', 'badge b-rest', 'Restaurada ' + fmtDataHora(p.restaurada_em)));
+      if (p.saiu_da_tela_em) badges.appendChild(mk('span', 'badge b-saiu', 'Saiu da tela'));
       if (nuvem) badges.appendChild(mk('span', 'badge b-dev', 'Aparelho ' + String(p.dispositivo_id || '').slice(0, 8).toUpperCase()));
       else {
         const st = p.sync === 'synced' ? ['b-ok', 'Enviada'] : (p.sync === 'error' ? ['b-err', 'Erro no envio'] : ['b-pend', 'Pendente de envio']);
@@ -2532,13 +2578,14 @@
       }
       a.forEach((p) => list.appendChild(cardProva(p, lix ? 'lix-local' : 'local')));
     }
+    let nuvemSaiu = true;    // o banco já tem a coluna saiu_da_tela_em?
     let nuvemNovas = true;   // a tabela de provas já tem as colunas descartada_em/restaurada_em? (se não, tenta sem elas)
     function urlNuvem(f, offset) {
       const lix = ehLix();
       const ps = [];
       const add = (k, v) => ps.push(k + '=' + encodeURIComponent(v));
       add('select', 'id,atleta,pista,movimento,arbitro,dispositivo_id,iniciou_em,finalizou_em,reps_validas,no_counts,duracao_s,enviado_em' +
-        (lix ? ',descartada_em' : (nuvemNovas ? ',descartada_em,restaurada_em' : '')));
+        (lix ? ',descartada_em' : (nuvemNovas ? ',descartada_em,restaurada_em' : '')) + (nuvemSaiu ? ',saiu_da_tela_em' : ''));
       add('order', lix ? 'descartada_em.desc' : 'finalizou_em.desc');
       add('limit', String(PAGINA)); add('offset', String(offset));
       const like = (s) => 'ilike.*' + s.replace(/[*%,()]/g, ' ') + '*';
@@ -2564,6 +2611,7 @@
       const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 15000);
       try {
         const r = await fetch(urlNuvem(f, histOffset), { headers: { 'apikey': NUVEM.key, 'Prefer': 'count=exact' }, signal: ctl.signal });
+        if (r.status === 400 && nuvemSaiu) { nuvemSaiu = false; clearTimeout(to); return carregaNuvem(reset); }
         if (r.status === 400 && !lix && nuvemNovas) { nuvemNovas = false; clearTimeout(to); return carregaNuvem(reset); }   // banco ainda sem as colunas novas
         if (!r.ok) throw new Error('HTTP ' + r.status);
         const rows = await r.json();
@@ -2629,6 +2677,7 @@
       const bd = $('pv-badges'); bd.textContent = '';
       if (p.restaurada_em) bd.appendChild(mk('span', 'badge b-rest', 'RESTAURADA'));
       else if (p.descartada_em) bd.appendChild(mk('span', 'badge b-lix', 'DESCARTADA'));
+      if (p.saiu_da_tela_em) bd.appendChild(mk('span', 'badge b-saiu', 'SAIU DA TELA'));
       bd.appendChild(mk('span', 'badge b-dev', modo === 'nuvem' || modo === 'lix-nuvem' ? 'NUVEM' : 'LOCAL'));
       const meta = $('pv-meta'); meta.textContent = '';
       const linha = (t) => { meta.appendChild(mk('div', '', t)); };
@@ -2636,6 +2685,7 @@
       linha('Movimento: ' + (p.movimento || '—') + ' · Pista: ' + (p.pista != null ? p.pista : '—') + ' · Árbitro: ' + (p.arbitro || '—'));
       linha('Início: ' + dh(p.iniciou_em) + ' · Fim: ' + dh(p.finalizou_em));
       linha('Aparelho: ' + String(p.dispositivo_id || '').slice(0, 8).toUpperCase() + (p.dispositivo_id === deviceId() ? ' (este)' : ''));
+      if (p.saiu_da_tela_em) linha('Saiu da tela durante a contagem às ' + new Date(p.saiu_da_tela_em).toLocaleTimeString('pt-BR') + ' · a prova foi encerrada e salva automaticamente nesse momento');
       if (p.restaurada_em) linha('RESTAURADA em ' + dh(p.restaurada_em) + (p.descartada_em ? ' (descartada em ' + dh(p.descartada_em) + ')' : ''));
       else if (p.descartada_em) linha('Descartada em ' + dh(p.descartada_em));
       if (modo === 'local' || modo === 'lix-local') linha('Situação: ' + (p.sync === 'synced' ? 'enviada à nuvem' : (p.sync === 'error' ? 'erro no envio: ' + (p.erro || '') : 'pendente de envio')));
@@ -2714,7 +2764,7 @@
         id: p.id, atleta: p.atleta, pista: p.pista != null ? p.pista : null, movimento: p.movimento || null, arbitro: p.arbitro || null,
         dispositivo_id: p.dispositivo_id, iniciou_em: p.iniciou_em, finalizou_em: p.finalizou_em,
         reps_validas: p.reps_validas, no_counts: p.no_counts, duracao_s: p.duracao_s, eventos: eventos,
-        descartada_em: p.descartada_em || null, restaurada_em: new Date().toISOString()
+        descartada_em: p.descartada_em || null, restaurada_em: new Date().toISOString(), saiu_da_tela_em: p.saiu_da_tela_em || null
       };
       if (!salvaProvaLocal(prova)) { showToast('Não foi possível restaurar: memória do aparelho cheia.', 'err'); return; }
       lixSave(lixLoad().filter((x) => x.id !== p.id));
@@ -2747,9 +2797,53 @@
     }
     [movSummary, pistaSummary, arbSummary, athleteSummary].forEach((i) => i.addEventListener('input', lerResumoExtras));
     window.addEventListener('resize', () => { if (extraOpen) medeLift(); });
-    window.addEventListener('online', () => { renderStatus(); syncNow(false); });
-    window.addEventListener('offline', renderStatus);
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) { renderStatus(); syncNow(false); } });
+    window.addEventListener('online', () => { renderStatus(); pingNet(); syncNow(false); });
+    window.addEventListener('offline', () => { pingFail = true; renderStatus(); });
+    setInterval(() => { if (!document.hidden) pingNet(); }, 15000);
+
+    // ---------- SAIR DA TELA: ao voltar, sempre menu principal; a prova é salva sozinha ----------
+    function fechaTudoParaMenu() {
+      try { closeDlg(); closePin(); closeExportar(); closeTabela(); fechaMenuResumo(); fechaMenuPv(); closeMenu(); cancelFinish(); closeKeys(); } catch (e) {}
+      if (histScreen.style.display === 'flex') closeHistory(); else fechaProva();
+    }
+    function retornouDaTela() {
+      const agora = Date.now();
+      fechaTudoParaMenu();
+      if (!active) return;
+      const emContagem = !finished;
+      const nome = athlete, reps = score, ncs = noCountCount;
+      let extra = null, fora = 0;
+      if (emContagem) {
+        const ref = leftAt || (lastEventTime ? lastEventTime.getTime() : startTime.getTime());
+        fora = Math.max(0, Math.round((agora - ref) / 1000));
+        endTime = new Date(ref); finished = true;       // o tempo fora não conta: a prova termina na saída
+        extra = { saiu_da_tela_em: new Date(ref).toISOString() };
+      }
+      leftAt = null;
+      if (!selaProva(extra)) { saveState(); renderSummary(); return; }   // memória cheia: fica no resumo para exportar
+      concluirReset();
+      askDialog(emContagem ? {
+        title: 'Você saiu da tela',
+        text: nome + ': a contagem foi encerrada e salva automaticamente (' + reps + ' reps, ' + plural(ncs, 'no count', 'no counts') + '). Você ficou fora por ' + formatTime(fora * 1000) + '. A prova ficou marcada como "saiu da tela".',
+        buttons: [{ label: 'OK', cls: 'btn-export' }]
+      } : {
+        title: 'Prova salva',
+        text: nome + ': você saiu da tela e a prova foi salva automaticamente no histórico.',
+        buttons: [{ label: 'OK', cls: 'btn-export' }]
+      });
+    }
+    let foiOculto = false;
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (active) { foiOculto = true; if (!leftAt) { leftAt = Date.now(); saveState(); } }
+      } else {
+        renderStatus(); pingNet();
+        if (foiOculto) { foiOculto = false; retornouDaTela(); }
+        syncNow(false);
+      }
+    });
+    window.addEventListener('pagehide', () => { if (active && !leftAt) { leftAt = Date.now(); saveState(); } });
+    window.addEventListener('pageshow', (e) => { if (e.persisted && active) retornouDaTela(); });
     setInterval(() => { if (!syncing && (histLoad().some((p) => p.sync === 'pending') || lixLoad().some((p) => p.sync === 'pending') || delLoad().length)) syncNow(false); }, 20000);
     document.addEventListener('click', (e) => { if (pvMenuOpen && !e.target.closest('.sc-menu-wrap')) fechaMenuPv(); if (scMenuOpen && !e.target.closest('.sc-menu-wrap')) fechaMenuResumo(); });
     document.getElementById('pin-input').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4); document.getElementById('pin-err').textContent = ''; });
@@ -2766,9 +2860,10 @@
       updateDisplay();
       sponsorsScreen.style.display = 'none';
       counterScreen.style.display = 'flex';
-      if (legacyMenu) { legacyMenu = false; resumeCounting(); }   // versão antiga deixava pausada no menu: volta à contagem
-      if (finished) renderSummary();
+      legacyMenu = false;
+      retornouDaTela();   // a página foi recarregada/reaberta: conta como voltar à tela → salva e vai ao menu principal
     }
+    pingNet();
   </script>
 </body>
 </html>
