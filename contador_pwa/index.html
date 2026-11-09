@@ -528,6 +528,8 @@
     #sync-bar[data-state="syncing"] { background: #1b4fa0; }
     #sync-bar[data-state="pending"] { background: #ffcc00; color: #2a1d00; }
     #sync-bar[data-state="offline"], #sync-bar[data-state="error"] { background: #c62828; }
+    #sync-text { white-space: pre-line; }
+    #sync-bar[data-state="error"], #sync-bar[data-state="pending"] { font-size: 0.72rem; line-height: 1.15; letter-spacing: 0.05em; padding-left: 22px; padding-right: 22px; }
     #sync-bar .sb-ico { width: 18px; height: 18px; flex: none; display: inline-flex; }
     #sync-bar .sb-ico svg { width: 100%; height: 100%; }
     #sync-bar[data-state="syncing"] .sb-ico { animation: kb-spin 1s linear infinite; }
@@ -2373,9 +2375,9 @@
       let st, txt, ico;
       if (syncing) { st = 'syncing'; txt = 'Enviando ' + plural(n, 'item', 'itens') + '…'; ico = 'syncing'; }
       else if (n === 0) { st = 'ok'; txt = 'Tudo sincronizado'; ico = 'ok'; }
-      else if (nErr > 0 && !lastNetFail) { st = 'error'; txt = 'Erro ao enviar ' + plural(nErr, 'item', 'itens') + ' · toque para tentar de novo'; ico = 'bad'; }
+      else if (nErr > 0 && !lastNetFail) { st = 'error'; txt = 'Erro ao enviar ' + plural(nErr, 'item', 'itens') + '\ntoque para tentar de novo'; ico = 'bad'; }
       else if (lastNetFail || navigator.onLine === false) { st = 'offline'; txt = 'Sem conexão · ' + plural(n, 'item não enviado', 'itens não enviados'); ico = 'bad'; }
-      else { st = 'pending'; txt = plural(n, 'item pendente', 'itens pendentes') + ' de envio · toque para enviar'; ico = 'pending'; }
+      else { st = 'pending'; txt = plural(n, 'item pendente', 'itens pendentes') + ' de envio\ntoque para enviar'; ico = 'pending'; }
       syncBar.dataset.state = st;
       syncText.textContent = txt;
       syncIco.innerHTML = ICONS[ico];
