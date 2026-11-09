@@ -610,14 +610,26 @@
 
     .menu-backdrop { position: fixed; inset: 0; z-index: 89; background: rgba(0, 0, 0, 0.35); opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
     .b-saiu { background: #e67e22; color: #1a0f00; }
-    .net-ind { position: fixed; top: calc(6px + env(safe-area-inset-top, 0px)); left: calc(6px + env(safe-area-inset-left, 0px)); z-index: 310; width: 30px; height: 30px;
-      display: grid; place-items: center; border-radius: 50%; background: rgba(0, 10, 30, 0.7); border: 1.5px solid currentColor; color: #2fbf6b; pointer-events: none; }
-    .net-ind svg { width: 18px; height: 18px; }
-    .net-ind .off { display: none; }
-    .net-ind[data-on="0"] { color: #ff5a5a; }
-    .net-ind[data-on="0"] .on { display: none; }
-    .net-ind[data-on="0"] .off { display: block; }
-    .tbl-head, .hist-head { padding-left: 36px; }
+    /* indicador único: anel = rede, centro = dados (sem borda entre os dois) */
+    .net-ind { position: fixed; top: calc(4px + env(safe-area-inset-top, 0px)); left: calc(4px + env(safe-area-inset-left, 0px)); z-index: 310; width: 32px; height: 32px;
+      touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; cursor: default; -webkit-tap-highlight-color: transparent; }
+    .net-ind::before, .net-ind::after { content: ''; position: absolute; border-radius: 50%; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+    .net-ind::before { width: 16px; height: 16px; background: var(--n, #2fbf6b); box-shadow: 0 0 4px rgba(0, 0, 0, 0.5); }
+    .net-ind::after { width: 7px; height: 7px; background: var(--d, #2fbf6b); }
+    [data-net="ok"] { --n: #2fbf6b; } [data-net="work"] { --n: #ffcc00; } [data-net="bad"] { --n: #ff4a4a; }
+    [data-dat="ok"] { --d: #2fbf6b; } [data-dat="work"] { --d: #ffcc00; } [data-dat="bad"] { --d: #ff4a4a; }
+    .net-legend { position: fixed; inset: 0; z-index: 320; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0, 0, 0, 0.7); }
+    .net-legend[hidden] { display: none; }
+    .nl-card { width: 100%; max-width: 360px; background: #001538; border: 2px solid var(--yellow-primary); border-radius: 10px; padding: 16px; color: #fff; }
+    .nl-card h3 { margin: 0 0 10px; font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.08em; font-size: 1.05rem; color: var(--yellow-primary); }
+    .nl-sec { margin: 10px 0 4px; font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.85rem; color: #8a9bbd; }
+    .nl-row { display: flex; align-items: center; gap: 10px; padding: 3px 0; font-size: 0.92rem; line-height: 1.25; }
+    .nl-row i { flex: none; width: 14px; height: 14px; border-radius: 50%; }
+    .nl-g { background: #2fbf6b; } .nl-y { background: #ffcc00; } .nl-r { background: #ff4a4a; }
+    .nl-now { margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 255, 255, 0.2); font-size: 0.9rem; color: rgba(255, 255, 255, 0.85); }
+    .nl-hint { margin-top: 8px; font-size: 0.75rem; color: #8a9bbd; }
+    .tbl-head, .hist-head { padding-left: 28px; }
+    body.hist-open #menu-home { margin: 6px 10px 10px; width: calc(100% - 20px); border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 12px; }
     #menu-home { display: none; }
     body.hist-open #menu-home { display: flex; }
     body.hist-open .menu-backdrop { z-index: 119; }
@@ -1218,9 +1230,21 @@
   </div>
 
   <!-- FAIXA DE SINCRONIZAÇÃO (sempre visível) -->
-  <div class="net-ind" id="net-ind" data-on="1" role="img" aria-label="Conexão OK">
-    <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M2.5 9a14 14 0 0 1 19 0"/><path d="M5.5 12.6a9.5 9.5 0 0 1 13 0"/><path d="M8.7 16a5 5 0 0 1 6.6 0"/><path d="M12 19.6h.01"/></svg>
-    <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M2.5 9a14 14 0 0 1 19 0" opacity=".45"/><path d="M5.5 12.6a9.5 9.5 0 0 1 13 0" opacity=".45"/><path d="M8.7 16a5 5 0 0 1 6.6 0" opacity=".45"/><path d="M12 19.6h.01"/><path d="M3.5 3.5l17 17"/></svg>
+  <div class="net-ind" id="net-ind" data-net="work" data-dat="work" role="img" aria-label="Estado da conexão e dos dados"></div>
+  <div class="net-legend" id="net-legend" hidden onclick="fechaLegenda()">
+    <div class="nl-card" onclick="event.stopPropagation()">
+      <h3>Indicador de conexão</h3>
+      <div class="nl-sec">Borda · rede</div>
+      <div class="nl-row"><i class="nl-g"></i>Verde: conectado</div>
+      <div class="nl-row"><i class="nl-y"></i>Amarelo: conectando</div>
+      <div class="nl-row"><i class="nl-r"></i>Vermelho: sem conexão (dá para contar offline)</div>
+      <div class="nl-sec">Centro · dados</div>
+      <div class="nl-row"><i class="nl-g"></i>Verde: atualizados (tudo enviado à nuvem)</div>
+      <div class="nl-row"><i class="nl-y"></i>Amarelo: atualizando (enviando)</div>
+      <div class="nl-row"><i class="nl-r"></i>Vermelho: desatualizados (há itens não enviados)</div>
+      <div class="nl-now" id="nl-now"></div>
+      <div class="nl-hint">Toque fora para fechar.</div>
+    </div>
   </div>
   <button id="sync-bar" type="button" data-state="ok" onclick="syncNow(true)" aria-live="polite"><span class="sb-ico" id="sync-ico"></span><span id="sync-text">Tudo sincronizado</span></button>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -2013,6 +2037,7 @@
       }
       // Janelas novas: só Esc age; nenhuma outra tecla conta repetição
       if (pinModal.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); closePin(); } return; }
+      if (!netLegend.hidden) { if (e.key === 'Escape') { e.preventDefault(); legendGuard = 0; fechaLegenda(); } return; }
       if (dlgOpen) { if (e.key === 'Escape') { e.preventDefault(); closeDlg(); } return; }
       if (exportModal.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); closeExportar(); } return; }
       if (tblScreen.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); closeTabela(); } return; }
@@ -2344,20 +2369,25 @@
       syncText.textContent = txt;
       syncIco.innerHTML = ICONS[ico];
       syncBar.setAttribute('aria-label', txt);
-      const on = navigator.onLine !== false && !pingFail;
+      const rede = navigator.onLine === false ? 'bad' : (netState === 'ok' ? 'ok' : (netState === 'down' ? 'bad' : 'work'));
+      const dados = syncing ? 'work' : (n === 0 ? 'ok' : ((rede === 'bad' || lastNetFail || nErr > 0) ? 'bad' : 'work'));
       const ni = document.getElementById('net-ind');
-      ni.dataset.on = on ? '1' : '0'; ni.setAttribute('aria-label', on ? 'Conexão OK' : 'Sem conexão');
+      ni.dataset.net = rede; ni.dataset.dat = dados;
+      const tr = { ok: ['Conectado', 'Atualizados'], work: ['Conectando', 'Atualizando'], bad: ['Sem conexão', 'Desatualizados'] };
+      ni.setAttribute('aria-label', 'Rede: ' + tr[rede][0] + ' · Dados: ' + tr[dados][1]);
+      document.getElementById('nl-now').textContent = 'Agora: rede ' + tr[rede][0].toLowerCase() + ' · dados ' + tr[dados][1].toLowerCase() + (n ? ' (' + plural(n, 'item', 'itens') + ' a enviar)' : '') + '.';
     }
-    let pingFail = false;
+    let netState = 'work';   // 'ok' conectado · 'work' conectando · 'down' sem conexão
     // verifica a conexão de verdade (o navegador às vezes diz "online" sem internet); só falha em erro de rede
     async function pingNet() {
       let falhou = navigator.onLine === false;
+      if (netState !== 'ok' && !falhou) renderStatus();      // mostra "conectando" só quando não estava conectado
       if (!falhou) {
         const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 6000);
         try { await fetch(NUVEM.url + '/rest/v1/', { method: 'GET', mode: 'no-cors', cache: 'no-store', signal: ctl.signal }); } catch (e) { falhou = true; } finally { clearTimeout(to); }
       }
-      const voltou = pingFail && !falhou;
-      pingFail = falhou; renderStatus();
+      const voltou = netState !== 'ok' && !falhou;
+      netState = falhou ? 'down' : 'ok'; renderStatus();
       if (voltou) syncNow(false);
     }
     function corpoProva(p) {
@@ -2797,8 +2827,18 @@
     }
     [movSummary, pistaSummary, arbSummary, athleteSummary].forEach((i) => i.addEventListener('input', lerResumoExtras));
     window.addEventListener('resize', () => { if (extraOpen) medeLift(); });
-    window.addEventListener('online', () => { renderStatus(); pingNet(); syncNow(false); });
-    window.addEventListener('offline', () => { pingFail = true; renderStatus(); });
+    window.addEventListener('online', () => { netState = 'work'; renderStatus(); pingNet(); syncNow(false); });
+    window.addEventListener('offline', () => { netState = 'down'; renderStatus(); });
+    // segurar o indicador mostra a legenda; um toque simples não faz nada
+    let legendGuard = 0, legendT = null;
+    const netInd = document.getElementById('net-ind'), netLegend = document.getElementById('net-legend');
+    const abreLegenda = () => { renderStatus(); netLegend.hidden = false; legendGuard = Date.now() + 100000; };
+    function fechaLegenda() { if (Date.now() < legendGuard) return; netLegend.hidden = true; }
+    netInd.addEventListener('pointerdown', (e) => { e.stopPropagation(); clearTimeout(legendT); legendT = setTimeout(abreLegenda, 450); });
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) => netInd.addEventListener(t, () => { clearTimeout(legendT); }));
+    document.addEventListener('pointerup', () => { if (!netLegend.hidden) legendGuard = Date.now() + 400; });
+    netInd.addEventListener('click', (e) => e.stopPropagation());
+    netInd.addEventListener('contextmenu', (e) => e.preventDefault());
     setInterval(() => { if (!document.hidden) pingNet(); }, 15000);
 
     // ---------- SAIR DA TELA: ao voltar, sempre menu principal; a prova é salva sozinha ----------
