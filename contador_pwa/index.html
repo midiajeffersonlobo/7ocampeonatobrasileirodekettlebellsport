@@ -491,6 +491,7 @@ try {
     .btn-install-main[hidden] { display: none; }
 
     /* ================= BOTÃO VIBRAÇÃO (liga/desliga) ================= */
+    #counter-screen, #counter-screen * { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
     .js-fs svg { width: 24px; height: 24px; flex: none; }
     .js-fs[aria-pressed="false"] .fs-out, .js-fs[aria-pressed="true"] .fs-in { display: none; }
     .c-grid .c-fs { background: transparent; color: #fff; border: 2px solid rgba(255, 255, 255, 0.3); min-height: 44px; min-width: 48px; padding: 0 10px; }
@@ -3056,6 +3057,14 @@ try {
       fsRearma = false; fsEntra().then((okFs) => { if (!okFs && !fsAtivo()) fsRearma = true; });
     }, true));
     fsRender(); mostraGate();
+
+    // durante a contagem: sem menu do botão direito, sem botão do meio, sem arrastar/selecionar por engano
+    const emContagem = () => { const c = document.getElementById('counter-screen'); return !!c && c.offsetParent !== null; };
+    document.addEventListener('contextmenu', (e) => { if (emContagem()) e.preventDefault(); }, true);
+    document.addEventListener('auxclick', (e) => { if (emContagem() && e.button !== 0) e.preventDefault(); }, true);
+    document.addEventListener('mousedown', (e) => { if (emContagem() && e.button === 1) e.preventDefault(); }, true);
+    document.addEventListener('dragstart', (e) => { if (emContagem()) e.preventDefault(); }, true);
+    document.addEventListener('selectstart', (e) => { if (emContagem()) e.preventDefault(); }, true);
 
     // ---------- PLACAR (2ª tela): outra janela do mesmo navegador mostra o número ----------
     let placarCh = null, placarVivo = 0, placarUlt = '';
