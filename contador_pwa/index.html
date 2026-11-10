@@ -591,9 +591,10 @@ try {
     @media (min-width: 640px) { .form-extra { grid-template-columns: 1.5fr 0.7fr 1.5fr; } }
     .form-extra label { display: flex; flex-direction: column; align-items: stretch; gap: 4px;
       font-size: 0.8rem; color: rgba(255, 255, 255, 0.75); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
-    .form-extra input { width: 100%; min-width: 0; padding: 10px 14px; font-size: 1.05rem; border-radius: 4px;
+    .form-extra input, .form-extra select { width: 100%; min-width: 0; padding: 10px 14px; font-size: 1.05rem; border-radius: 4px;
       border: 2px solid rgba(255, 204, 0, 0.5); background: rgba(0, 0, 0, 0.45); color: #fff; text-align: center; font-family: inherit; }
-    .form-extra input:focus-visible { outline-offset: 0; }
+    .form-extra input:focus-visible, .form-extra select:focus-visible { outline-offset: 0; }
+    .form-extra select option, .sc-meta select option { color: #000; }
 
     /* ---- Janela de resumo: campos extras ---- */
     .modal-meta { display: grid; grid-template-columns: 1.6fr 1.2fr 0.6fr 1.2fr; gap: 10px; margin-bottom: 16px; }
@@ -822,9 +823,9 @@ try {
     .sc-saved[hidden] { display: none; }
     .sc-meta { flex: none; display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
     .sc-meta label { display: flex; flex-direction: column; gap: 4px; color: #8a9bbd; font-size: 0.75rem; text-transform: uppercase; min-width: 0; }
-    .sc-meta input { padding: 8px 12px; font-size: 1rem; border-radius: 4px; border: 1px solid rgba(255, 204, 0, 0.5);
+    .sc-meta input, .sc-meta select { padding: 8px 12px; font-size: 1rem; border-radius: 4px; border: 1px solid rgba(255, 204, 0, 0.5);
       background: rgba(0, 0, 0, 0.3); color: #fff; font-family: inherit; min-width: 0; width: 100%; }
-    .sc-meta input:focus-visible { outline-offset: 0; }
+    .sc-meta input:focus-visible, .sc-meta select:focus-visible { outline-offset: 0; }
     .sc-meta input[readonly] { opacity: 0.75; border-color: rgba(255, 255, 255, 0.2); }
     .sc-more { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 34px; padding: 0 4px; background: none; border: none;
       color: rgba(255, 255, 255, 0.8); font-family: var(--font-ui); font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; text-align: left; }
@@ -943,11 +944,11 @@ try {
             </div>
             <div class="field-err" id="athlete-err" role="alert" hidden>Informe o nome do atleta para iniciar</div>
           </div>
-          <button class="form-toggle" id="form-toggle" type="button" aria-expanded="false" aria-controls="form-extra" aria-label="Mostrar movimento, pista e árbitro" onclick="toggleExtra()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg></button>
+          <button class="form-toggle" id="form-toggle" type="button" aria-expanded="false" aria-controls="form-extra" aria-label="Mostrar movimento, plataforma e árbitro" onclick="toggleExtra()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg></button>
           <div class="form-summary" id="form-summary" aria-live="polite"></div>
           <div class="form-extra" id="form-extra" aria-hidden="true">
             <label>Movimento <input type="text" id="mov-start" maxlength="60" list="dl-mov" autocomplete="off" placeholder="Ex.: Arranco"></label>
-            <label>Pista <input type="text" id="pista-start" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" placeholder="Nº"></label>
+            <label>Plataforma <select id="pista-start"><option value="">—</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select></label>
             <label>Árbitro <input type="text" id="arb-start" maxlength="60" list="dl-arb" autocomplete="off" placeholder="Nome do árbitro"></label>
           </div>
         </div>
@@ -1059,10 +1060,10 @@ try {
 
       <div class="sc-meta">
         <label class="mm-athlete">Atleta (obrigatório) <input type="text" id="athlete-summary" maxlength="60" autocomplete="off" placeholder="Nome do atleta" required></label>
-        <button class="sc-more" id="sc-more" type="button" aria-expanded="false" aria-controls="sc-extra" onclick="toggleSummaryExtra()"><span id="sc-more-txt">Movimento, pista e árbitro</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+        <button class="sc-more" id="sc-more" type="button" aria-expanded="false" aria-controls="sc-extra" onclick="toggleSummaryExtra()"><span id="sc-more-txt">Movimento, plataforma e árbitro</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
         <div class="sc-extra" id="sc-extra" aria-hidden="true"><div><div class="sc-extra-in">
           <label class="mm-mov">Movimento <input type="text" id="mov-summary" maxlength="60" list="dl-mov" autocomplete="off"></label>
-          <label>Pista <input type="text" id="pista-summary" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off"></label>
+          <label>Plataforma <select id="pista-summary"><option value="">—</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select></label>
           <label>Árbitro <input type="text" id="arb-summary" maxlength="60" list="dl-arb" autocomplete="off"></label>
         </div></div></div>
       </div>
@@ -1146,7 +1147,8 @@ try {
       <div class="hf-grid">
         <label>Atleta <input type="text" id="hf-atleta" autocomplete="off" oninput="onFiltro()"></label>
         <label>Movimento <input type="text" id="hf-mov" list="dl-mov" autocomplete="off" oninput="onFiltro()"></label>
-        <label>Pista <input type="text" id="hf-pista" inputmode="numeric" autocomplete="off" oninput="onFiltro()"></label>
+        <label>Plataforma <select id="hf-pista" onchange="onFiltro()"><option value="">Todas</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select></label>
+        <label>Hora de início <select id="hf-hora" onchange="onFiltro()"><option value="">Todas</option><option value="0">00h</option><option value="1">01h</option><option value="2">02h</option><option value="3">03h</option><option value="4">04h</option><option value="5">05h</option><option value="6">06h</option><option value="7">07h</option><option value="8">08h</option><option value="9">09h</option><option value="10">10h</option><option value="11">11h</option><option value="12">12h</option><option value="13">13h</option><option value="14">14h</option><option value="15">15h</option><option value="16">16h</option><option value="17">17h</option><option value="18">18h</option><option value="19">19h</option><option value="20">20h</option><option value="21">21h</option><option value="22">22h</option><option value="23">23h</option></select></label>
         <label>Árbitro <input type="text" id="hf-arb" list="dl-arb" autocomplete="off" oninput="onFiltro()"></label>
         <label>Data <input type="date" id="hf-data" onchange="onFiltro()"></label>
         <label id="hf-status-wrap">Situação
@@ -1628,9 +1630,9 @@ try {
       const parts = [];
       const m = limpaTexto(movSummary.value), p = pistaSummary.value.trim(), a = limpaTexto(arbSummary.value);
       if (m) parts.push(m);
-      if (p) parts.push('Pista ' + p);
+      if (p) parts.push('Plataforma ' + p);
       if (a) parts.push(a);
-      document.getElementById('sc-more-txt').textContent = parts.length ? parts.join(' · ') : 'Movimento, pista e árbitro';
+      document.getElementById('sc-more-txt').textContent = parts.length ? parts.join(' · ') : 'Movimento, plataforma e árbitro';
     }
     function setSummaryExtra(open) {
       document.getElementById('sc-extra').classList.toggle('open', open);
@@ -1732,7 +1734,7 @@ try {
     function validaResumo() {
       const r = lePista(pistaSummary.value);
       if (!limpaTexto(athleteSummary.value)) { athleteSummary.classList.add('invalid'); athleteSummary.focus(); showToast('Informe o nome do atleta', 'err'); return false; }
-      if (!r.ok) { setSummaryExtra(true); pistaSummary.classList.add('invalid'); pistaSummary.focus(); showToast('Pista: número inteiro de 1 a 999', 'err'); return false; }
+      if (!r.ok) { setSummaryExtra(true); pistaSummary.classList.add('invalid'); pistaSummary.focus(); showToast('Plataforma: escolha de 1 a 6', 'err'); return false; }
       athlete = limpaTexto(athleteSummary.value); pista = r.val;
       movimento = limpaTexto(movSummary.value); arbitro = limpaTexto(arbSummary.value);
       return true;
@@ -1889,7 +1891,7 @@ try {
       txt += "========================================\n\n";
       txt += `Atleta:       ${p.atleta || '(não informado)'}\n`;
       txt += `Movimento:    ${p.movimento || '(não informado)'}\n`;
-      txt += `Pista:        ${p.pista != null ? p.pista : '(não informada)'}\n`;
+      txt += `Plataforma:   ${p.pista != null ? p.pista : '(não informada)'}\n`;
       txt += `Árbitro:      ${p.arbitro || '(não informado)'}\n`;
       txt += `Aparelho:     ${p.dispositivo_id}\n`;
       txt += `ID da prova:  ${p.id}\n`;
@@ -2185,9 +2187,9 @@ try {
     function lePista(v) {
       const t = (v || '').trim();
       if (t === '') return { ok: true, val: null };
-      if (!/^\d{1,3}$/.test(t)) return { ok: false, val: null };
+      if (!/^\d$/.test(t)) return { ok: false, val: null };
       const n = parseInt(t, 10);
-      return n >= 1 && n <= 999 ? { ok: true, val: n } : { ok: false, val: null };
+      return n >= 1 && n <= 6 ? { ok: true, val: n } : { ok: false, val: null };
     }
     function mk(tag, cls, text) {
       const e = document.createElement(tag);
@@ -2233,7 +2235,7 @@ try {
       const parts = [];
       const m = limpaTexto(movStart.value), p = pistaStart.value.trim(), a = limpaTexto(arbStart.value);
       if (m) parts.push(m);
-      if (p) parts.push('Pista ' + p);
+      if (p) parts.push('Plataforma ' + p);
       if (a) parts.push(a);
       formSummary.textContent = parts.join(' · ');
     }
@@ -2247,7 +2249,7 @@ try {
       extraOpen = open;
       sponsorsScreen.classList.toggle('form-open', open);
       formToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      formToggle.setAttribute('aria-label', open ? 'Recolher movimento, pista e árbitro' : 'Mostrar movimento, pista e árbitro');
+      formToggle.setAttribute('aria-label', open ? 'Recolher movimento, plataforma e árbitro' : 'Mostrar movimento, plataforma e árbitro');
       formExtra.setAttribute('aria-hidden', open ? 'false' : 'true');
       if (open) medeLift(); else { curLift = 0; atualizaResumoForm(); }
     }
@@ -2264,7 +2266,7 @@ try {
       setExtra(true);
       pistaStart.classList.add('invalid');
       pistaStart.focus();
-      showToast('Pista: número inteiro de 1 a 999', 'err');
+      showToast('Plataforma: escolha de 1 a 6', 'err');
     }
     function limpaFormInicio() {
       athleteStart.value = ''; movStart.value = ''; pistaStart.value = ''; arbStart.value = '';
@@ -2557,7 +2559,7 @@ try {
     function lerFiltros() {
       return {
         atleta: limpaTexto($('hf-atleta').value), mov: limpaTexto($('hf-mov').value), arb: limpaTexto($('hf-arb').value),
-        pista: lePista($('hf-pista').value), data: $('hf-data').value, status: $('hf-status').value, este: $('hf-este').checked
+        pista: lePista($('hf-pista').value), hora: $('hf-hora').value === '' ? null : parseInt($('hf-hora').value, 10), data: $('hf-data').value, status: $('hf-status').value, este: $('hf-este').checked
       };
     }
     function contaFiltros(f) {
@@ -2565,6 +2567,7 @@ try {
       if (f.atleta) n++; if (f.mov) n++; if (f.arb) n++;
       if (f.pista.ok && f.pista.val !== null) n++;
       if (f.data) n++;
+      if (f.hora !== null) n++;
       if (histModo === 'local' && f.status !== 'todos') n++;
       if (ehNuvem() && f.este) n++;
       return n;
@@ -2575,7 +2578,7 @@ try {
       else { clearTimeout(histDeb); histDeb = setTimeout(() => renderHistorico(true), 350); renderBadge(); }
     }
     function limparFiltros() {
-      ['hf-atleta', 'hf-mov', 'hf-pista', 'hf-arb', 'hf-data'].forEach((id) => { $(id).value = ''; });
+      ['hf-atleta', 'hf-mov', 'hf-pista', 'hf-arb', 'hf-data', 'hf-hora'].forEach((id) => { $(id).value = ''; });
       $('hf-status').value = 'todos'; $('hf-este').checked = false;
       renderHistorico(true);
     }
@@ -2590,9 +2593,9 @@ try {
       top.appendChild(mk('div', 'hc-nome', p.atleta));
       top.appendChild(mk('div', 'hc-reps', String(p.reps_validas)));
       b.appendChild(top);
-      const sub = [p.movimento, p.pista != null ? 'Pista ' + p.pista : null, p.arbitro ? 'Árbitro: ' + p.arbitro : null].filter(Boolean).join(' · ');
+      const sub = [p.movimento, p.pista != null ? 'Plataforma ' + p.pista : null, p.arbitro ? 'Árbitro: ' + p.arbitro : null].filter(Boolean).join(' · ');
       if (sub) b.appendChild(mk('div', 'hc-sub', sub));
-      b.appendChild(mk('div', 'hc-meta', fmtDataHora(p.finalizou_em) + ' · ' + plural(p.no_counts, 'No Count', 'No Counts') + ' · ' + formatTime((p.duracao_s || 0) * 1000)));
+      b.appendChild(mk('div', 'hc-meta', fmtDataHora(p.finalizou_em) + ' · início ' + new Date(p.iniciou_em).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + ' · ' + plural(p.no_counts, 'No Count', 'No Counts') + ' · ' + formatTime((p.duracao_s || 0) * 1000)));
       if (lix && p.descartada_em) b.appendChild(mk('div', 'hc-meta', 'Descartada em ' + fmtDataHora(p.descartada_em)));
       const foot = mk('div', 'hc-foot');
       const badges = mk('div', 'hc-badges');
@@ -2623,6 +2626,7 @@ try {
         if (f.arb && !norm(p.arbitro).includes(norm(f.arb))) return false;
         if (f.pista.ok && f.pista.val !== null && p.pista !== f.pista.val) return false;
         if (f.data && diaLocal(p.finalizou_em) !== f.data) return false;
+        if (f.hora !== null && new Date(p.iniciou_em).getHours() !== f.hora) return false;
         if (!lix) {
           if (f.status === 'pendentes' && p.sync !== 'pending') return false;
           if (f.status === 'enviadas' && p.sync !== 'synced') return false;
@@ -2642,6 +2646,7 @@ try {
       }
       a.forEach((p) => list.appendChild(cardProva(p, lix ? 'lix-local' : 'local')));
     }
+    let nuvemHora = true;    // o banco já tem a coluna hora_inicio? (só é preciso para "hora" sem data)
     let nuvemSaiu = true;    // o banco já tem a coluna saiu_da_tela_em?
     let nuvemNovas = true;   // a tabela de provas já tem as colunas descartada_em/restaurada_em? (se não, tenta sem elas)
     function urlNuvem(f, offset) {
@@ -2658,6 +2663,13 @@ try {
       if (f.arb) add('arbitro', like(f.arb));
       if (f.pista.ok && f.pista.val !== null) add('pista', 'eq.' + f.pista.val);
       if (f.este) add('dispositivo_id', 'eq.' + deviceId());
+      if (f.hora !== null) {
+        if (f.data) {                                                  // dia + hora: faixa exata em iniciou_em (não precisa da coluna nova)
+          const [y, m, d] = f.data.split('-').map(Number);
+          add('iniciou_em', 'gte.' + new Date(y, m - 1, d, f.hora).toISOString());
+          add('iniciou_em', 'lt.' + new Date(y, m - 1, d, f.hora + 1).toISOString());
+        } else if (nuvemHora) add('hora_inicio', 'eq.' + f.hora);     // qualquer dia: coluna gerada hora_inicio
+      }
       if (f.data) {
         const [y, m, d] = f.data.split('-').map(Number);
         add('finalizou_em', 'gte.' + new Date(y, m - 1, d).toISOString());
@@ -2675,6 +2687,7 @@ try {
       const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 15000);
       try {
         const r = await fetch(urlNuvem(f, histOffset), { headers: { 'apikey': NUVEM.key, 'Prefer': 'count=exact' }, signal: ctl.signal });
+        if (r.status === 400 && f.hora !== null && !f.data && nuvemHora) { nuvemHora = false; clearTimeout(to); return carregaNuvem(reset); }
         if (r.status === 400 && nuvemSaiu) { nuvemSaiu = false; clearTimeout(to); return carregaNuvem(reset); }
         if (r.status === 400 && !lix && nuvemNovas) { nuvemNovas = false; clearTimeout(to); return carregaNuvem(reset); }   // banco ainda sem as colunas novas
         if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -2685,7 +2698,7 @@ try {
         histOffset += rows.length;
         if (!histOffset) list.appendChild(mk('div', 'hist-empty', contaFiltros(f) ? 'Nada com esses filtros.' : (lix ? 'A lixeira da nuvem está vazia.' : 'Ainda não há provas na nuvem.')));
         const un = lix ? ['contagem', 'contagens'] : ['prova', 'provas'];
-        $('hist-count').textContent = (total !== null ? plural(total, un[0], un[1]) : plural(histOffset, un[0], un[1])) + (lix ? ' na lixeira da nuvem' : ' na nuvem') + (contaFiltros(f) ? ' (com filtro)' : '');
+        $('hist-count').textContent = (total !== null ? plural(total, un[0], un[1]) : plural(histOffset, un[0], un[1])) + (lix ? ' na lixeira da nuvem' : ' na nuvem') + (contaFiltros(f) ? ' (com filtro)' : '') + (f.hora !== null && !f.data && !nuvemHora ? ' · filtro de hora sem efeito: falta rodar o SQL (ou escolha uma data)' : '');
         more.hidden = !(rows.length === PAGINA && (total === null || histOffset < total));
       } catch (err) {
         if (meu !== histReq) return;
@@ -2746,7 +2759,7 @@ try {
       const meta = $('pv-meta'); meta.textContent = '';
       const linha = (t) => { meta.appendChild(mk('div', '', t)); };
       const dh = (iso) => new Date(iso).toLocaleString('pt-BR');
-      linha('Movimento: ' + (p.movimento || '—') + ' · Pista: ' + (p.pista != null ? p.pista : '—') + ' · Árbitro: ' + (p.arbitro || '—'));
+      linha('Movimento: ' + (p.movimento || '—') + ' · Plataforma: ' + (p.pista != null ? p.pista : '—') + ' · Árbitro: ' + (p.arbitro || '—'));
       linha('Início: ' + dh(p.iniciou_em) + ' · Fim: ' + dh(p.finalizou_em));
       linha('Aparelho: ' + String(p.dispositivo_id || '').slice(0, 8).toUpperCase() + (p.dispositivo_id === deviceId() ? ' (este)' : ''));
       if (p.saiu_da_tela_em) linha('Saiu da tela durante a contagem às ' + new Date(p.saiu_da_tela_em).toLocaleTimeString('pt-BR') + ' · a prova foi encerrada e salva automaticamente nesse momento');
