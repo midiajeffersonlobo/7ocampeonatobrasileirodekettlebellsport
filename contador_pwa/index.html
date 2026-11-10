@@ -629,6 +629,19 @@ try {
     .net-ind::after { width: 3.5px; height: 3.5px; background: var(--d, #2fbf6b); }
     [data-net="ok"] { --n: #2fbf6b; } [data-net="work"] { --n: #ffcc00; } [data-net="bad"] { --n: #ff4a4a; }
     [data-dat="ok"] { --d: #2fbf6b; } [data-dat="work"] { --d: #ffcc00; } [data-dat="bad"] { --d: #ff4a4a; }
+    /* luz azul atrás do indicador = há uma versão nova do contador */
+    .net-halo { position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; z-index: -1; pointer-events: none; display: none;
+      background: radial-gradient(circle, rgba(70, 160, 255, 0.95) 0%, rgba(70, 160, 255, 0.55) 32%, rgba(70, 160, 255, 0) 70%); }
+    .net-ind[data-upd="1"] .net-halo { display: block; animation: netHalo 1.7s ease-in-out infinite; }
+    @keyframes netHalo { 0%, 100% { opacity: 0.35; transform: scale(0.75); } 50% { opacity: 1; transform: scale(1.1); } }
+    .nl-upd { margin: 0 0 14px; padding: 12px; border-radius: 8px; background: rgba(40, 120, 255, 0.16); border: 2px solid #3d8bff; }
+    .nl-upd[hidden] { display: none; }
+    .nl-upd-t { padding-right: 46px; font-size: 0.92rem; line-height: 1.3; color: #cfe3ff; font-weight: 700; }
+    .nl-upd button { margin-top: 10px; width: 100%; min-height: 46px; border: 0; border-radius: 8px; background: #3d8bff; color: #fff; font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.06em; font-size: 1rem; font-weight: 800; cursor: pointer; }
+    .nl-upd button:disabled { background: #4a5670; color: #aab4c8; cursor: not-allowed; }
+    .nl-upd-n { margin-top: 8px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.8); }
+    .nl-upd-n:empty { display: none; }
+    .nl-bl { flex: none; width: 30px; height: 30px; border-radius: 50%; background: radial-gradient(circle, #46a0ff 0%, rgba(70, 160, 255, 0.5) 45%, rgba(70, 160, 255, 0) 72%); animation: netHalo 1.7s ease-in-out infinite; }
     .net-legend { position: fixed; inset: 0; z-index: 320; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0, 0, 0, 0.7); }
     .net-legend[hidden] { display: none; }
     .nl-card { position: relative; width: 100%; max-width: 360px; background: #001538; border: 2px solid var(--yellow-primary); border-radius: 10px; padding: 16px; color: #fff; }
@@ -1264,10 +1277,15 @@ try {
   </div>
 
   <!-- FAIXA DE SINCRONIZAÇÃO (sempre visível) -->
-  <div class="net-ind" id="net-ind" data-net="work" data-dat="work" role="img" aria-label="Estado da conexão e dos dados"></div>
+  <div class="net-ind" id="net-ind" data-net="work" data-dat="work" role="img" aria-label="Estado da conexão e dos dados"><span class="net-halo"></span></div>
   <div class="net-legend" id="net-legend" hidden onclick="fechaLegenda()">
     <div class="nl-card" onclick="event.stopPropagation()">
       <button class="nl-x" type="button" onclick="legendGuard = 0; fechaLegenda()" aria-label="Fechar legenda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+      <div class="nl-upd" id="nl-upd" hidden>
+        <div class="nl-upd-t">Atualização do site disponível. Clique no botão abaixo para melhor experiência.</div>
+        <button type="button" id="nl-upd-btn" onclick="carregaNovaVersao()">Atualizar</button>
+        <div class="nl-upd-n" id="nl-upd-n"></div>
+      </div>
       <h3>Indicador de conexão</h3>
       <div class="nl-sec"><span class="nl-ico" id="nl-ico-rede"></span><span>Borda · rede</span></div>
       <div class="nl-row"><i class="nl-g"></i><div>Verde: <b>conectado</b></div></div>
@@ -1277,6 +1295,8 @@ try {
       <div class="nl-row"><i class="nl-g"></i><div>Verde: <b>atualizados</b><span class="nl-sub">(tudo enviado à nuvem)</span></div></div>
       <div class="nl-row"><i class="nl-y"></i><div>Amarelo: <b>atualizando</b><span class="nl-sub">(enviando)</span></div></div>
       <div class="nl-row"><i class="nl-r"></i><div>Vermelho: <b>desatualizados</b><span class="nl-sub">(há itens não enviados)</span></div></div>
+      <div class="nl-sec"><span class="nl-bl"></span><span>Luz azul · versão</span></div>
+      <div class="nl-row"><i style="background:#46a0ff"></i><div><b>Piscando</b>: há uma <b>nova versão</b><span class="nl-sub">(use o botão azul no topo desta janela)</span></div></div>
       <div class="nl-now" id="nl-now"></div>
       <div class="nl-hint">Toque no X ou fora para fechar.</div>
     </div>
@@ -2034,8 +2054,16 @@ try {
     // Registra o service worker (guarda o contador no aparelho para uso offline)
     if ('serviceWorker' in navigator && location.protocol !== 'file:') {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(() => { /* segue funcionando sem cache */ });
+        navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then((reg) => {
+          const confere = () => { if (!document.hidden && navigator.onLine !== false) reg.update().catch(() => {}); };
+          setInterval(confere, 5 * 60 * 1000);
+          document.addEventListener('visibilitychange', confere);
+          window.addEventListener('online', confere);
+        }).catch(() => { /* segue funcionando sem cache */ });
       });
+      // uma versão nova assumiu o controle enquanto esta página já estava aberta (na 1ª instalação não havia controle anterior: ignora)
+      const tinhaControle = !!navigator.serviceWorker.controller;
+      navigator.serviceWorker.addEventListener('controllerchange', () => { if (tinhaControle) marcaNovaVersao(); });
     }
 
     // ---------- SEM ZOOM (desktop e mobile) ----------
@@ -2894,9 +2922,50 @@ try {
     }
     let legendT2 = null;
     const abreLegenda = () => {
-      renderStatus(); netLegend.hidden = false; legendGuard = Date.now() + 100000;
+      renderStatus(); renderNovaVersao(); netLegend.hidden = false; legendGuard = Date.now() + 100000;
       legendAnim = null; sorteiaCores(); clearInterval(legendT2); legendT2 = setInterval(sorteiaCores, 2200);
     };
+    // ---------- nova versão: luz azul atrás do indicador + botão na legenda ----------
+    let novaVersao = false, autoT = null;
+    const recarrega = () => (window.__kbReload || (() => location.reload()))();
+    // "ocioso" = nada em andamento nem aberto: pode recarregar sem atrapalhar ninguém
+    function ocioso() {
+      if (active) return false;
+      const aberto = (id) => { const e = document.getElementById(id); return !!e && (e.style.display === 'flex' || e.style.display === 'block'); };
+      return !['history-screen', 'dlg-modal', 'pin-modal', 'export-modal', 'install-modal'].some(aberto) && netLegend.hidden;
+    }
+    function autoLiberado() { try { return Date.now() - parseInt(sessionStorage.getItem('kb_auto_upd') || '0', 10) > 20000; } catch (e) { return true; } }   // trava anti-laço
+    function luzAzul(on) {
+      if (on) { netInd.dataset.upd = '1'; netInd.setAttribute('aria-label', 'Estado da conexão e dos dados · nova versão disponível'); }
+      renderNovaVersao();
+    }
+    // tenta carregar a versão nova sozinho: na tela inicial (ou com o app em segundo plano) recarrega na hora; senão acende a luz azul e tenta de novo a cada 2 s
+    function avaliaAuto() {
+      if (!novaVersao || autoT) return;
+      if (!autoLiberado() || !(ocioso() || (document.hidden && !active))) { luzAzul(true); return; }
+      if (!document.hidden) showToast('Atualizando para a nova versão…');
+      autoT = setTimeout(() => {
+        autoT = null;
+        if (!(ocioso() || (document.hidden && !active))) { luzAzul(true); return; }
+        try { sessionStorage.setItem('kb_auto_upd', String(Date.now())); } catch (e) {}
+        recarrega();
+      }, document.hidden ? 0 : 1100);
+    }
+    function marcaNovaVersao() { if (novaVersao) return; novaVersao = true; avaliaAuto(); }
+    setInterval(avaliaAuto, 2000);
+    function renderNovaVersao() {
+      const box = document.getElementById('nl-upd'), btn = document.getElementById('nl-upd-btn'), nota = document.getElementById('nl-upd-n');
+      box.hidden = !novaVersao;
+      if (!novaVersao) return;
+      const ocupado = active && !saved;
+      btn.disabled = ocupado;
+      nota.textContent = active ? 'Termine e salve a prova em andamento. Depois, a nova versão carrega sozinha ao voltar ao menu principal.' : 'Sua contagem fica guardada no aparelho.';
+    }
+    function carregaNovaVersao() {
+      if (!novaVersao) return;
+      if (active && !saved) { renderNovaVersao(); showToast('Termine e salve a prova para atualizar', 'err'); return; }
+      recarrega();
+    }
     function fechaLegenda() { if (Date.now() < legendGuard) return; netLegend.hidden = true; clearInterval(legendT2); }
     netInd.addEventListener('pointerdown', (e) => { e.stopPropagation(); clearTimeout(legendT); legendT = setTimeout(abreLegenda, 450); });
     ['pointerup', 'pointercancel', 'pointerleave'].forEach((t) => netInd.addEventListener(t, () => { clearTimeout(legendT); }));
