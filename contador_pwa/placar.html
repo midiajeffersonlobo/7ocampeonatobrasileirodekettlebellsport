@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#011d4d">
+<title>Placar · Contador KB</title>
+<style>
+  @font-face { font-family: 'Anton'; src: url(placar/anton.woff2) format('woff2'); font-display: block; }
+  @font-face { font-family: 'Oswald'; font-weight: 700; src: url(placar/oswald.woff2) format('woff2'); font-display: block; }
+  :root { --bg: #011d4d; --notch: #0b2d6b; --band: #0b2d6b; --circ: #1b4a96; --yellow: #ffcc00; --red: #ff3333; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); color: #fff; font-family: 'Oswald', 'Segoe UI', Arial, sans-serif; font-weight: 700; }
+  body { position: relative; user-select: none; -webkit-user-select: none; transition: background-color .15s ease; }
+  body.nc { background: #3d0b0b; }
+  body.nc::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 40; box-shadow: inset 0 0 0 1.4vh var(--red); }
+  body.idle { cursor: none; }
+
+  /* notch com os logos (igual ao do contador) */
+  .notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 20; display: flex; align-items: center; justify-content: center; gap: 2.6vw;
+    padding: 1.8vh 2.6vw 2.2vh; background: var(--notch); border-radius: 0 0 28px 28px; box-shadow: 0 10px 28px rgba(0,0,0,.28); transition: background-color .15s ease; }
+  body.nc .notch { background: #5c1616; }
+  .notch img { display: block; height: min(10vh, 130px); width: auto; }
+
+  /* botão de tela cheia: pendurado no notch, aparece ao mexer o mouse */
+  #fs { position: absolute; top: 100%; left: 50%; transform: translate(-50%, -6px); z-index: 21; margin-top: 10px; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
+    padding: 9px 16px; border: 2px solid rgba(255,255,255,.55); border-radius: 999px; background: rgba(0,0,0,.55); color: #fff; font: inherit; font-size: 1rem; letter-spacing: .06em; text-transform: uppercase; cursor: pointer;
+    opacity: 0; pointer-events: none; transition: opacity .25s ease, transform .25s ease; }
+  #fs svg { width: 20px; height: 20px; }
+  body:not(.idle) #fs { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
+  #fs:hover { background: rgba(255,255,255,.18); border-color: #fff; }
+
+  /* palco */
+  #stage { position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  #num { font-family: 'Anton', Impact, 'Arial Black', sans-serif; font-weight: 400; color: var(--yellow); line-height: .9; letter-spacing: .01em; text-align: center; white-space: nowrap;
+    font-variant-numeric: tabular-nums; text-shadow: 0 .03em .08em rgba(0,0,0,.55); transition: color .15s ease; }
+  body.nc #num { color: #ff5a5a; }
+  #tag { margin-top: 1.4vh; display: none; font-weight: 700; text-transform: uppercase; letter-spacing: .18em; padding: .1em .7em .14em; border-radius: 6px; color: #fff; }
+  body.nc #tag, body.fim #tag { display: block; }
+  body.nc #tag { background: var(--red); }
+  body.fim:not(.nc) #tag { background: rgba(255,255,255,.18); border: 2px solid rgba(255,255,255,.5); }
+
+  /* faixas laterais: o fundo se estende para fora da tela */
+  .band { position: absolute; top: 50%; z-index: 10; background: var(--band); display: none; transition: background-color .15s ease; }
+  body.nc .band { background: #5c1616; }
+  body.tem-atleta .band.on { display: flex; }
+  #bl { left: 0; margin-left: -120px; padding: 2.2vh 2vw 2.2vh calc(120px + 1.6vw); border-radius: 0 14px 14px 0; border-right: .9vh solid var(--yellow); align-items: center; }
+  #br { right: 0; margin-right: -120px; padding: 2.2vh calc(120px + 1.6vw) 2.2vh 2vw; border-radius: 14px 0 0 14px; border-left: .9vh solid var(--yellow); flex-direction: column; align-items: flex-start; gap: 1.6vh; }
+  .btxt { text-transform: uppercase; letter-spacing: .04em; line-height: 1.05; overflow-wrap: normal; word-break: normal; }
+  .plat { display: flex; align-items: center; gap: 1.2vw; }
+  .circ { flex: none; display: grid; place-items: center; width: 10vh; height: 10vh; border-radius: 50%; background: var(--circ); font-size: 5.6vh; line-height: 1; }
+  body.nc .circ { background: #7a2a2a; }
+  .plat small { font-size: 2.4vh; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.72); }
+
+  /* mensagens */
+  #msg { position: absolute; inset: 0; display: none; place-items: center; text-align: center; z-index: 5; font-size: 6vh; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.75); padding: 0 6vw; }
+  body.espera #msg { display: grid; }
+  body.espera #stage, body.espera .band { display: none !important; }
+  #sinal { position: absolute; left: 50%; bottom: 1.6vh; transform: translateX(-50%); z-index: 30; font-size: 2.2vh; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.5); display: none; }
+  body.semsinal #sinal { display: block; }
+</style>
+</head>
+<body class="espera">
+  <div class="notch" id="notch">
+    <img src="placar/logo-1.webp" alt="FPKS">
+    <img src="placar/logo-2.webp" alt="CONBRAKS">
+    <img src="placar/logo-3.webp" alt="WKSF">
+    <button id="fs" type="button" aria-label="Tela cheia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" id="fs-ico"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span id="fs-txt">Tela cheia</span></button>
+  </div>
+
+  <div id="stage"><div id="num">0</div><div id="tag"></div></div>
+
+  <div class="band" id="bl"><div class="btxt" id="bl-t"></div></div>
+  <div class="band" id="br"><div class="btxt" id="br-mov"></div><div class="plat" id="br-plat"><div class="circ" id="br-n"></div><small>Plataforma</small></div></div>
+
+  <div id="msg">Aguardando o contador…</div>
+  <div id="sinal">sem sinal do contador</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var body = document.body, num = $('num'), stage = $('stage'), tag = $('tag'), notch = $('notch');
+  var estado = null, ultimo = 0;
+
+  // ---------- encaixe: o número ocupa o máximo possível ----------
+  function cabe(el, caixaW, caixaH, maxPx, minPx) {            // reduz a fonte até o texto caber na caixa
+    var f = maxPx; el.style.fontSize = f + 'px';
+    while ((el.scrollHeight > caixaH + 1 || el.scrollWidth > caixaW + 1) && f > minPx) { f -= 1; el.style.fontSize = f + 'px'; }
+  }
+  function layout() {
+    var W = innerWidth, H = innerHeight, topo = notch.getBoundingClientRect().bottom + H * 0.05;
+    stage.style.top = topo + 'px';
+    var Hs = H - topo, bandas = body.classList.contains('tem-atleta');
+    var reserva = bandas ? W * 0.215 : W * 0.04;               // espaço fixo para as faixas (o número nunca passa por baixo delas)
+    var wN = W - 2 * reserva, rotulo = body.classList.contains('nc') || body.classList.contains('fim');
+    tag.style.fontSize = Math.max(16, Math.min(Hs * 0.07, W * 0.04)) + 'px';
+    var tagH = rotulo ? tag.getBoundingClientRect().height + Hs * 0.02 : 0;
+    var hN = Hs * 0.96 - tagH;
+    num.style.fontSize = '100px';
+    var w100 = num.getBoundingClientRect().width || 1;
+    var size = Math.min(hN / 0.9, wN * 100 / w100);
+    num.style.fontSize = Math.floor(size) + 'px';
+    // faixas: texto se ajusta à largura reservada
+    var bw = reserva - W * 0.022;
+    var bl = $('bl'), br = $('br');
+    bl.style.top = br.style.top = (topo + Hs / 2) + 'px';
+    bl.style.transform = br.style.transform = 'translateY(-50%)';
+    bl.style.width = br.style.width = (bw + 120 + W * 0.016) + 'px';
+    var tl = $('bl-t'), tm = $('br-mov');
+    tl.style.width = bw - W * 0.02 + 'px'; tm.style.width = bw - W * 0.02 + 'px';
+    cabe(tl, bw - W * 0.02, H * 0.2, H * 0.075, 14);
+    cabe(tm, bw - W * 0.02, H * 0.14, H * 0.06, 12);
+  }
+
+  function aplica(e) {
+    estado = e; ultimo = Date.now(); body.classList.remove('semsinal');
+    var ativo = !!e.ativo;
+    body.classList.toggle('espera', !ativo);
+    $('msg').textContent = 'Aguardando atleta';
+    body.classList.toggle('tem-atleta', ativo && !!(e.atleta || e.mov || e.pista));
+    body.classList.toggle('nc', ativo && !!e.nc);
+    body.classList.toggle('fim', ativo && !!e.fim);
+    tag.textContent = e.nc ? 'No Count' : 'Final';
+    num.textContent = String(e.score == null ? 0 : e.score);
+    var nome = (e.atleta || '').trim(), mov = (e.mov || '').trim(), p = e.pista;
+    $('bl').classList.toggle('on', !!nome); $('bl-t').textContent = nome;
+    $('br').classList.toggle('on', !!(mov || p != null));
+    $('br-mov').style.display = mov ? 'block' : 'none'; $('br-mov').textContent = mov;
+    $('br-plat').style.display = p != null ? 'flex' : 'none'; $('br-n').textContent = p != null ? String(p) : '';
+    layout();
+  }
+
+  // ---------- conversa com a janela do contador (mesmo navegador) ----------
+  var canal = null;
+  try { canal = new BroadcastChannel('kb_placar_v1'); } catch (err) { $('msg').textContent = 'Este navegador não permite o placar'; }
+  if (canal) {
+    canal.onmessage = function (ev) { var m = ev.data; if (m && m.t === 'estado') aplica(m); };
+    var oi = function () { canal.postMessage({ t: 'vivo' }); };
+    canal.postMessage({ t: 'oi' }); setInterval(oi, 1000);
+  }
+  setInterval(function () { if (estado && Date.now() - ultimo > 3000) body.classList.add('semsinal'); }, 1000);
+
+  // ---------- tela cheia (botão pendurado no notch; tecla F também) ----------
+  function telaCheia() {
+    if (document.fullscreenElement) { document.exitFullscreen(); return; }
+    var el = document.documentElement; (el.requestFullscreen || el.webkitRequestFullscreen).call(el).catch(function () {});
+  }
+  $('fs').addEventListener('click', telaCheia);
+  document.addEventListener('keydown', function (e) { if (e.key === 'f' || e.key === 'F') telaCheia(); });
+  document.addEventListener('fullscreenchange', function () {
+    var fs = !!document.fullscreenElement; $('fs-txt').textContent = fs ? 'Sair da tela cheia' : 'Tela cheia';
+    $('fs-ico').innerHTML = fs ? '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>' : '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>';
+    layout();
+  });
+  var idleT = null;
+  function acorda() { body.classList.remove('idle'); clearTimeout(idleT); idleT = setTimeout(function () { body.classList.add('idle'); }, 2500); }
+  document.addEventListener('mousemove', acorda); document.addEventListener('mousedown', acorda); acorda();
+
+  addEventListener('resize', layout);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);
+  window.__placarAplica = aplica;          // usado nos testes
+  layout();
+})();
+</script>
+</body>
+</html>

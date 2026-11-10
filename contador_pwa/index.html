@@ -177,8 +177,8 @@ try {
       height: 100%;
       display: grid;
       grid-template-columns: 1fr auto 1fr;
-      grid-template-rows: auto 1fr auto;
-      grid-template-areas: "name notch finish" "center center center" "hint actions keys";
+      grid-template-rows: auto 1fr auto auto;
+      grid-template-areas: "name notch finish" "center center center" "hint actions keys" "info info info";
       column-gap: var(--s6);
       row-gap: var(--s5);
       padding: 0 var(--g) calc(var(--s5) + env(safe-area-inset-bottom, 0px));
@@ -215,12 +215,20 @@ try {
     .c-notch img { display: block; height: var(--logo-h); width: auto; }
 
     /* ---- Nome do atleta e Finalizar ---- */
+    .c-athlete { display: none !important; }   /* o nome agora fica no rodapé (c-info) */
     .c-athlete {
       grid-area: name; align-self: center; justify-self: start; min-width: 0;
       font-family: var(--font-ui); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;
       font-size: clamp(1.1rem, min(3.2vh, 2.2vw), 2.4rem); line-height: 1.05; overflow-wrap: normal;
       display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
     }
+    /* nome, movimento e plataforma: rodapé, do canto esquerdo até perto do centro, em branco */
+    .c-info { grid-area: info; justify-self: start; align-self: end; width: 50%; max-width: 50%; min-width: 0; color: #fff; text-align: left; cursor: default; font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.04em; }
+    .c-info[hidden] { display: none; }
+    .ci-nome { font-weight: 700; font-size: clamp(1.05rem, min(2.8vh, 2.2vw), 2rem); line-height: 1.1; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }
+    .ci-sub { margin-top: 2px; font-weight: 700; font-size: clamp(0.9rem, min(2.2vh, 1.8vw), 1.5rem); line-height: 1.15; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+    .ci-sub:empty { display: none; }
+    @media (max-width: 900px) { .c-info { width: 58%; max-width: 58%; } .ci-nome { font-size: 1.05rem; } .ci-sub { font-size: 0.92rem; } }
     .c-tools { grid-area: finish; justify-self: end; align-self: center; display: flex; align-items: center; gap: var(--s3); }
 
     /* ---- Número ---- */
@@ -630,6 +638,15 @@ try {
     [data-net="ok"] { --n: #2fbf6b; } [data-net="work"] { --n: #ffcc00; } [data-net="bad"] { --n: #ff4a4a; }
     [data-dat="ok"] { --d: #2fbf6b; } [data-dat="work"] { --d: #ffcc00; } [data-dat="bad"] { --d: #ff4a4a; }
     /* luz azul atrás do indicador = há uma versão nova do contador */
+    /* janela do Placar (2ª tela) */
+    .pl-status { margin: 4px 0 12px; font-size: 0.9rem; color: #8a9bbd; }
+    .pl-status b { color: #2fbf6b; }
+    .pl-open { width: 100%; min-height: 52px; margin-bottom: 12px; }
+    .pl-how { margin: 0 0 12px; border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 8px; padding: 10px 12px; }
+    .pl-how summary { cursor: pointer; font-family: var(--font-ui); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+    .pl-how .install-steps { margin-top: 10px; }
+    .pl-how p { margin-top: 8px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.75); }
+    .pl-how .btn { min-height: 40px; margin-top: 6px; padding: 6px 14px; }
     .net-halo { position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; z-index: -1; pointer-events: none; display: none;
       background: radial-gradient(circle, rgba(70, 160, 255, 0.95) 0%, rgba(70, 160, 255, 0.55) 32%, rgba(70, 160, 255, 0) 70%); }
     .net-ind[data-upd="1"] .net-halo { display: block; animation: netHalo 1.7s ease-in-out infinite; }
@@ -780,8 +797,8 @@ try {
     @media (max-width: 900px) {
       .c-grid {
         grid-template-columns: 1fr auto;
-        grid-template-rows: auto auto 1fr auto;
-        grid-template-areas: "notch notch" "name finish" "center center" "actions actions";
+        grid-template-rows: auto auto 1fr auto auto;
+        grid-template-areas: "notch notch" "name finish" "center center" "actions actions" "info info";
         column-gap: var(--s4);
         row-gap: var(--s4);
       }
@@ -1007,6 +1024,8 @@ try {
         <div class="c-hint">Toque na tela para +1</div>
       </div>
 
+      <div class="c-info" id="counter-info" hidden><div class="ci-nome" id="ci-nome"></div><div class="ci-sub" id="ci-sub"></div></div>
+
       <div class="c-keys" role="button" tabindex="0" title="Clique para ampliar" aria-label="Atalhos do teclado — clique para ampliar" onclick="event.stopPropagation(); openKeys()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();event.stopPropagation();openKeys();}">
         <div class="c-keys-title">Atalhos do teclado <svg class="c-keys-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6"/><path d="M20 4l-7 7"/><path d="M10 20H4v-6"/><path d="M4 20l7-7"/></svg></div>
         <dl>
@@ -1112,6 +1131,9 @@ try {
             <button class="sc-item" id="sc-export" type="button" role="menuitem" onclick="exportTXT()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M6.5 9.5 12 15l5.5-5.5"/><path d="M4 20.5h16"/></svg><span>Exportar TXT</span>
             </button>
+            <button class="sc-item" id="sc-placar" type="button" role="menuitem" onclick="abrePlacarModal()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><span>Placar</span>
+            </button>
             <button class="sc-item" id="sc-home" type="button" role="menuitem" onclick="sairParaMenu()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-6h4v6"/></svg><span>Menu principal</span>
             </button>
@@ -1133,6 +1155,7 @@ try {
   <div class="menu-backdrop" id="menu-backdrop" onclick="closeMenu()"></div>
   <nav class="menu-panel" id="menu-panel" aria-label="Menu" aria-hidden="true">
     <button class="menu-item" id="menu-home" type="button" onclick="closeHistory()"><span>Menu principal</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-6h4v6"/></svg></button>
+    <button class="menu-item" id="menu-placar" type="button" onclick="abrePlacarModal()"><span>Placar</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></button>
     <button class="menu-item" id="menu-hist" type="button" aria-expanded="false" onclick="toggleHistSub()"><span>Histórico</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg></button>
     <div class="menu-sub" id="menu-sub"><div>
       <button class="menu-subitem" type="button" onclick="openHistory('local')">Histórico local</button>
@@ -1241,6 +1264,29 @@ try {
   </div>
 
   <!-- CONFIRMAÇÃO GENÉRICA -->
+  <!-- PLACAR (2ª tela) -->
+  <div class="modal-backdrop" id="placar-modal" onclick="if (event.target === this) fechaPlacarModal()">
+    <div class="modal-card confirm-card" role="dialog" aria-modal="true" aria-labelledby="pl-title">
+      <div class="modal-header"><h2 class="modal-title" id="pl-title">Placar · 2ª tela</h2></div>
+      <p class="confirm-text">Mostra o número da contagem, com os logos e os dados do atleta, em um monitor ou TV ligado ao computador.</p>
+      <div class="pl-status" id="pl-status"></div>
+      <button class="btn btn-export pl-open" type="button" onclick="abrePlacar()">Abrir 2ª tela</button>
+      <details class="pl-how" id="pl-how"><summary>Como usar</summary>
+        <ol class="install-steps">
+          <li id="pl-inst"><strong>Antes de tudo, instale o site no computador.</strong> Assim a 2ª tela abre limpa, sem barra de endereço.<br><button class="btn btn-back" type="button" onclick="fechaPlacarModal(); installApp()">Instalar</button></li>
+          <li>Ligue o monitor ou a TV ao notebook. No Windows, aperte <strong>Win + P</strong> e escolha <strong>Estender</strong>.</li>
+          <li>Toque em <strong>Abrir 2ª tela</strong>. Abre uma janela nova só com o placar.</li>
+          <li>Arraste essa janela para o monitor grande.</li>
+          <li>Passe o mouse perto dos logos, no alto da janela, e clique em <strong>Tela cheia</strong>. Para sair, clique de novo (ou aperte Esc).</li>
+        </ol>
+        <p>O contador e a 2ª tela precisam estar no mesmo navegador (ou os dois no app instalado).</p>
+      </details>
+      <div class="modal-actions">
+        <button class="btn btn-back" type="button" onclick="fechaPlacarModal()">Fechar <span class="kb">(Esc)</span></button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-backdrop" id="dlg-modal">
     <div class="modal-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="dlg-title">
       <div class="modal-header"><h2 class="modal-title" id="dlg-title"></h2></div>
@@ -1468,6 +1514,14 @@ try {
       void scoreDisplay.offsetWidth;
       scoreDisplay.classList.add('bump');
       counterAthlete.textContent = athlete;
+      atualizaInfo(); publicaPlacar();
+    }
+
+    function atualizaInfo() {
+      const n = (athlete || '').trim(), sub = [movimento || '', pista != null ? 'Plataforma\u00a0' + pista : ''].filter(Boolean).join(' · ');
+      const a = document.getElementById('ci-nome'), b = document.getElementById('ci-sub'), c = document.getElementById('counter-info');
+      if (!a) return;
+      a.textContent = n; b.textContent = sub; c.hidden = !(n || sub);
     }
 
     function ensureFooter() {
@@ -1727,7 +1781,7 @@ try {
     athleteSummary.addEventListener('input', () => {
       marcaAlterado();
       athlete = athleteSummary.value.trim();
-      counterAthlete.textContent = athlete;
+      counterAthlete.textContent = athlete; atualizaInfo(); publicaPlacar();
       saveState();
     });
 
@@ -2023,11 +2077,31 @@ try {
                 mas <strong>os navegadores só instalam o app quando ele é aberto pelo endereço publicado</strong> (https).</p>
                 <p class="confirm-text">Abra o link do contador no Chrome, Edge ou Safari e toque de novo em <strong>Instalar</strong>.</p>`;
       } else if (isIOS) {
-        html = `<ol class="install-steps">
-                  <li>No <strong>Safari</strong>, toque em <strong>Compartilhar</strong> (quadrado com seta para cima).</li>
-                  <li>Escolha <strong>Adicionar à Tela de Início</strong>.</li>
+        const nav = /CriOS/.test(ua) ? 'Chrome' : /EdgiOS/.test(ua) ? 'Edge' : /FxiOS/.test(ua) ? 'Firefox' : /OPiOS|OPT\//.test(ua) ? 'Opera' : null;
+        const dentroDeApp = /FBAN|FBAV|Instagram|Line\/|MicroMessenger|TikTok|Snapchat/.test(ua);
+        const passoSafari = `<ol class="install-steps">
+                  <li>No <strong>Safari</strong>, toque em <strong>Compartilhar</strong> (quadrado com seta para cima, na barra de baixo).</li>
+                  <li>Role a lista e escolha <strong>Adicionar à Tela de Início</strong>.</li>
                   <li>Toque em <strong>Adicionar</strong>. O ícone do contador aparece na tela do aparelho.</li>
                 </ol>`;
+        if (dentroDeApp) {
+          html = `<p class="confirm-text">Você abriu o contador dentro de outro aplicativo. Toque nos três pontinhos (<strong>⋯</strong>) e escolha <strong>Abrir no Safari</strong> (ou copie o link e cole no Safari). Depois toque de novo em <strong>Instalar</strong>.</p>`;
+        } else if (nav === 'Chrome') {
+          html = `<ol class="install-steps">
+                  <li>No <strong>Chrome</strong>, toque em <strong>Compartilhar</strong> (quadrado com seta para cima, ao lado do endereço, no alto da tela).</li>
+                  <li>Role a lista e escolha <strong>Adicionar à Tela de Início</strong>.</li>
+                  <li>Toque em <strong>Adicionar</strong>. O ícone do contador aparece na tela do aparelho.</li>
+                </ol>
+                <p class="confirm-text">Se essa opção não aparecer, abra o link no <strong>Safari</strong> e siga os mesmos passos.</p>`;
+        } else if (nav) {
+          html = `<ol class="install-steps">
+                  <li>No <strong>${nav}</strong>, abra o menu de <strong>Compartilhar</strong> (ou o menu <strong>⋯</strong>).</li>
+                  <li>Procure <strong>Adicionar à Tela de Início</strong> e toque em <strong>Adicionar</strong>.</li>
+                </ol>
+                <p class="confirm-text">Se essa opção não aparecer, abra o link no <strong>Safari</strong> e siga os mesmos passos.</p>`;
+        } else {
+          html = passoSafari;
+        }
       } else if (isSafariMac) {
         html = `<ol class="install-steps">
                   <li>No menu <strong>Arquivo</strong> do Safari, escolha <strong>Adicionar ao Dock</strong>.</li>
@@ -2098,6 +2172,7 @@ try {
         else if (e.code === 'Space') e.preventDefault();
         return;
       }
+      if (placarModal.style.display === 'flex') { if (e.key === 'Escape' || e.key === 'Enter') { e.preventDefault(); fechaPlacarModal(); } else if (e.code === 'Space') e.preventDefault(); return; }
       // Janelas novas: só Esc age; nenhuma outra tecla conta repetição
       if (pinModal.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); closePin(); } return; }
       if (!netLegend.hidden) { if (e.key === 'Escape') { e.preventDefault(); legendGuard = 0; fechaLegenda(); } return; }
@@ -2904,6 +2979,47 @@ try {
     window.addEventListener('resize', () => { if (extraOpen) medeLift(); });
     window.addEventListener('online', () => { netState = 'work'; renderStatus(); pingNet(); syncNow(false); });
     window.addEventListener('offline', () => { netState = 'down'; renderStatus(); });
+    // ---------- PLACAR (2ª tela): outra janela do mesmo navegador mostra o número ----------
+    let placarCh = null, placarVivo = 0, placarUlt = '';
+    try { placarCh = new BroadcastChannel('kb_placar_v1'); } catch (e) {}
+    const placarModal = document.getElementById('placar-modal');
+    function publicaPlacar(forca) {
+      try {
+        if (!placarCh) return;
+        const e = { t: 'estado', ativo: !!active, atleta: athlete || '', mov: movimento || '', pista: pista, score: score, nc: !!isNoCountState, fim: !!(active && endTime) };
+        const k = JSON.stringify(e);
+        if (!forca && k === placarUlt) return;
+        placarUlt = k; placarCh.postMessage(e);
+      } catch (e) {}
+    }
+    const placarLigado = () => Date.now() - placarVivo < 3500;
+    function renderPlacarStatus() {
+      const st = document.getElementById('pl-status');
+      st.innerHTML = placarLigado() ? '2ª tela: <b>conectada</b>' : '2ª tela: ainda não aberta';
+    }
+    if (placarCh) placarCh.onmessage = (ev) => {
+      const m = ev.data; if (!m) return;
+      if (m.t === 'oi') { placarVivo = Date.now(); publicaPlacar(true); renderPlacarStatus(); }
+      else if (m.t === 'vivo') { placarVivo = Date.now(); renderPlacarStatus(); }
+    };
+    let placarTick = 0;
+    setInterval(() => { placarTick++; publicaPlacar(placarTick % 4 === 0 && placarLigado()); if (placarTick % 4 === 0 && placarModal.style.display === 'flex') renderPlacarStatus(); }, 250);
+    function abrePlacarModal() {
+      try { closeMenu(); fechaMenuResumo(); } catch (e) {}
+      let visto = false; try { visto = localStorage.getItem('kb_placar_visto') === '1'; localStorage.setItem('kb_placar_visto', '1'); } catch (e) {}
+      document.getElementById('pl-how').open = !visto;
+      document.getElementById('pl-inst').hidden = isStandalone();
+      renderPlacarStatus();
+      placarModal.style.display = 'flex';
+    }
+    function fechaPlacarModal() { placarModal.style.display = 'none'; }
+    function abrePlacar() {
+      const w = (window.__kbOpen || ((u, n, f) => window.open(u, n, f)))('placar.html', 'kb_placar', 'popup=yes,width=1280,height=720');
+      if (!w) { showToast('O navegador bloqueou a janela. Permita pop-ups para este site e tente de novo.', 'err'); return; }
+      try { w.focus(); } catch (e) {}
+      setTimeout(() => publicaPlacar(true), 700);
+    }
+
     // segurar o indicador mostra a legenda; um toque simples não faz nada
     let legendGuard = 0, legendT = null;
     const netInd = document.getElementById('net-ind'), netLegend = document.getElementById('net-legend');
@@ -2932,7 +3048,7 @@ try {
     function ocioso() {
       if (active) return false;
       const aberto = (id) => { const e = document.getElementById(id); return !!e && (e.style.display === 'flex' || e.style.display === 'block'); };
-      return !['history-screen', 'dlg-modal', 'pin-modal', 'export-modal', 'install-modal'].some(aberto) && netLegend.hidden;
+      return !['history-screen', 'dlg-modal', 'pin-modal', 'export-modal', 'install-modal', 'placar-modal'].some(aberto) && netLegend.hidden;
     }
     function autoLiberado() { try { return Date.now() - parseInt(sessionStorage.getItem('kb_auto_upd') || '0', 10) > 20000; } catch (e) { return true; } }   // trava anti-laço
     function luzAzul(on) {
@@ -2976,7 +3092,7 @@ try {
 
     // ---------- SAIR DA TELA: ao voltar, sempre menu principal; a prova é salva sozinha ----------
     function fechaTudoParaMenu() {
-      try { closeDlg(); closePin(); closeExportar(); closeTabela(); fechaMenuResumo(); fechaMenuPv(); closeMenu(); cancelFinish(); closeKeys(); } catch (e) {}
+      try { closeDlg(); fechaPlacarModal(); closePin(); closeExportar(); closeTabela(); fechaMenuResumo(); fechaMenuPv(); closeMenu(); cancelFinish(); closeKeys(); } catch (e) {}
       if (histScreen.style.display === 'flex') closeHistory(); else fechaProva();
     }
     function retornouDaTela() {

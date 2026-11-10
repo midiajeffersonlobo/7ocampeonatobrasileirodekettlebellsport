@@ -1,10 +1,16 @@
 // Service worker do Contador KB: guarda tudo no aparelho para funcionar 100% offline.
 // Ao publicar uma versão nova do index.html, aumente o número abaixo.
-const CACHE = 'contador-kb-v19';
+const CACHE = 'contador-kb-v20';
 const FILES = [
   './',
   './index.html',
   './manifest.webmanifest',
+  './placar.html',
+  './placar/anton.woff2',
+  './placar/oswald.woff2',
+  './placar/logo-1.webp',
+  './placar/logo-2.webp',
+  './placar/logo-3.webp',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
@@ -31,7 +37,7 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     caches.open(CACHE).then(async (cache) => {
-      const key = req.mode === 'navigate' ? './index.html' : req;
+      const key = req.mode === 'navigate' && !/placar\.html$/.test(new URL(req.url).pathname) ? './index.html' : req;
       const cached = await cache.match(key, { ignoreSearch: true });
       const network = fetch(req, { cache: 'no-cache' })
         .then((res) => { if (res && res.ok) cache.put(key, res.clone()); return res; })
