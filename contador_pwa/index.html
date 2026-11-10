@@ -177,8 +177,8 @@ try {
       height: 100%;
       display: grid;
       grid-template-columns: 1fr auto 1fr;
-      grid-template-rows: auto 1fr auto auto;
-      grid-template-areas: "name notch finish" "center center center" "hint actions keys" "info info info";
+      grid-template-rows: auto 1fr auto;
+      grid-template-areas: "name notch finish" "center center center" "info actions keys";
       column-gap: var(--s6);
       row-gap: var(--s5);
       padding: 0 var(--g) calc(var(--s5) + env(safe-area-inset-bottom, 0px));
@@ -223,12 +223,14 @@ try {
       display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
     }
     /* nome, movimento e plataforma: rodapé, do canto esquerdo até perto do centro, em branco */
-    .c-info { grid-area: info; justify-self: start; align-self: end; width: 50%; max-width: 50%; min-width: 0; color: #fff; text-align: left; cursor: default; font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.04em; }
+    .c-info { grid-area: info; justify-self: start; align-self: center; width: 100%; max-width: 100%; min-width: 0; color: #fff; text-align: left; cursor: default; font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.04em; }
     .c-info[hidden] { display: none; }
-    .ci-nome { font-weight: 700; font-size: clamp(1.05rem, min(2.8vh, 2.2vw), 2rem); line-height: 1.1; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }
-    .ci-sub { margin-top: 2px; font-weight: 700; font-size: clamp(0.9rem, min(2.2vh, 1.8vw), 1.5rem); line-height: 1.15; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+    .ci-nome { font-weight: 700; font-size: clamp(1.55rem, min(4.2vh, 3.3vw), 3rem); line-height: 1.1; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; overflow-wrap: anywhere; }
+    .ci-sub { margin-top: 2px; font-weight: 700; font-size: clamp(1.3rem, min(3.3vh, 2.7vw), 2.25rem); line-height: 1.15; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
     .ci-sub:empty { display: none; }
-    @media (max-width: 900px) { .c-info { width: 58%; max-width: 58%; } .ci-nome { font-size: 1.05rem; } .ci-sub { font-size: 0.92rem; } }
+    @media (max-width: 900px) { .c-info { grid-area: info; align-self: end; width: 100%; max-width: 100%; } .ci-nome { font-size: 1.5rem; } .ci-sub { font-size: 1.3rem; } }
+    /* atalhos do teclado saem do fluxo da grade (só no computador): o número ganha altura */
+    @media (min-width: 901px) { .c-keys { position: absolute; right: var(--g); bottom: calc(var(--s5) + env(safe-area-inset-bottom, 0px)); } }
     .c-tools { grid-area: finish; justify-self: end; align-self: center; display: flex; align-items: center; gap: var(--s3); }
 
     /* ---- Número ---- */
@@ -237,7 +239,7 @@ try {
       font-family: var(--font-display);
       font-weight: 400;
       font-size: min(50vh, 60vw);
-      font-size: min(92cqh, 58cqw);
+      font-size: min(97cqh, 58cqw);
       line-height: 0.86;
       letter-spacing: 0.01em;
       color: var(--yellow-primary);
@@ -489,6 +491,20 @@ try {
     .btn-install-main[hidden] { display: none; }
 
     /* ================= BOTÃO VIBRAÇÃO (liga/desliga) ================= */
+    .js-fs svg { width: 24px; height: 24px; flex: none; }
+    .js-fs[aria-pressed="false"] .fs-out, .js-fs[aria-pressed="true"] .fs-in { display: none; }
+    .c-grid .c-fs { background: transparent; color: #fff; border: 2px solid rgba(255, 255, 255, 0.3); min-height: 44px; min-width: 48px; padding: 0 10px; }
+    .c-grid .c-fs:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(255, 255, 255, 0.5); }
+    .c-grid .c-fs[hidden] { display: none; }
+    /* porta de entrada: só passa apertando o botão (o navegador exige um toque para liberar a tela cheia) */
+    #fs-gate { position: fixed; inset: 0; z-index: 400; display: none; align-items: center; justify-content: center; padding: 24px; text-align: center;
+      background: linear-gradient(135deg, #00102e 0%, #011d4d 60%, #004d25 100%); color: #fff; }
+    #fs-gate.show { display: flex; }
+    .fsg-card { max-width: 460px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+    .fsg-card svg { width: 72px; height: 72px; color: var(--yellow-primary); }
+    .fsg-card h2 { font-family: var(--font-ui); text-transform: uppercase; letter-spacing: 0.08em; font-size: 1.8rem; color: var(--yellow-primary); }
+    .fsg-card p { font-size: 1.05rem; line-height: 1.4; color: rgba(255, 255, 255, 0.85); }
+    .fsg-btn { width: 100%; min-height: 64px; font-family: var(--font-ui); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; font-size: 1.3rem; border: 0; border-radius: 8px; background: var(--yellow-primary); color: #000; cursor: pointer; }
     .js-haptic svg { width: 24px; height: 24px; flex: none; }
     .js-haptic[aria-pressed="true"] .hx-slash { display: none; }
     .js-haptic[aria-pressed="false"] .hx-waves { display: none; }
@@ -1008,6 +1024,7 @@ try {
         <path class="hx-slash" d="M3 3l18 18"/>
       </svg>
         </button>
+        <button class="btn js-fs c-fs" id="btn-fs" type="button" aria-pressed="false" aria-label="Tela cheia" title="Tela cheia" onclick="toggleTelaCheia(event)" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="fs-in"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></g><g class="fs-out"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></g></svg></button>
         <button class="btn c-finish" onclick="event.stopPropagation(); requestFinish()">Finalizar</button>
       </div>
 
@@ -1287,6 +1304,16 @@ try {
     </div>
   </div>
 
+  <!-- TELA CHEIA OBRIGATÓRIA (só some ao apertar o botão) -->
+  <div id="fs-gate" role="dialog" aria-modal="true" aria-labelledby="fsg-t">
+    <div class="fsg-card">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="fs-in"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></g></svg>
+      <h2 id="fsg-t">Tela cheia</h2>
+      <p>Para não sair da contagem sem querer, o contador funciona em tela cheia.</p>
+      <button class="fsg-btn" id="fsg-btn" type="button" onclick="entraTelaCheia()">Entrar em tela cheia</button>
+    </div>
+  </div>
+
   <div class="modal-backdrop" id="dlg-modal">
     <div class="modal-card confirm-card" role="alertdialog" aria-modal="true" aria-labelledby="dlg-title">
       <div class="modal-header"><h2 class="modal-title" id="dlg-title"></h2></div>
@@ -1421,7 +1448,8 @@ try {
     }
 
     function updateHapticUI() {
-      const supported = CAN_VIBRATE || IS_IOS_HAPTIC;
+      const toque = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+      const supported = (CAN_VIBRATE && toque) || IS_IOS_HAPTIC;   // computador não vibra: sem botão
       document.querySelectorAll('.js-haptic').forEach((el) => {
         el.hidden = !supported;
         el.setAttribute('aria-pressed', hapticOn ? 'true' : 'false');
@@ -2172,6 +2200,7 @@ try {
         else if (e.code === 'Space') e.preventDefault();
         return;
       }
+      if (fsGate.classList.contains('show')) { if (e.key === 'Enter') { e.preventDefault(); entraTelaCheia(); } else e.preventDefault(); return; }
       if (placarModal.style.display === 'flex') { if (e.key === 'Escape' || e.key === 'Enter') { e.preventDefault(); fechaPlacarModal(); } else if (e.code === 'Space') e.preventDefault(); return; }
       // Janelas novas: só Esc age; nenhuma outra tecla conta repetição
       if (pinModal.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); closePin(); } return; }
@@ -2979,6 +3008,55 @@ try {
     window.addEventListener('resize', () => { if (extraOpen) medeLift(); });
     window.addEventListener('online', () => { netState = 'work'; renderStatus(); pingNet(); syncNow(false); });
     window.addEventListener('offline', () => { netState = 'down'; renderStatus(); });
+    // ---------- TELA CHEIA: obrigatória ao entrar; só o botão do lado direito da tela 1 desliga ----------
+    const FS_ROOT = document.documentElement;
+    const FS_OK = !!(FS_ROOT.requestFullscreen || FS_ROOT.webkitRequestFullscreen) && document.fullscreenEnabled !== false;   // iPhone não tem
+    const fsAtivo = () => !!(document.fullscreenElement || document.webkitFullscreenElement) || window.matchMedia('(display-mode: fullscreen)').matches;
+    let fsOptOut = false, fsRearma = false;
+    const fsGate = document.getElementById('fs-gate'), fsBtn = document.getElementById('btn-fs');
+    function fsTravaTeclas() { try { if (navigator.keyboard && navigator.keyboard.lock) navigator.keyboard.lock(['Escape', 'F11']).catch(() => {}); } catch (e) {} }
+    function fsLiberaTeclas() { try { if (navigator.keyboard && navigator.keyboard.unlock) navigator.keyboard.unlock(); } catch (e) {} }
+    function fsEntra() {
+      try {
+        const r = (FS_ROOT.requestFullscreen || FS_ROOT.webkitRequestFullscreen).call(FS_ROOT, { navigationUI: 'hide' });
+        return Promise.resolve(r).then(() => { fsTravaTeclas(); return true; }).catch(() => false);
+      } catch (e) { return Promise.resolve(false); }
+    }
+    function fsRender() {
+      const on = fsAtivo();
+      if (fsBtn) { fsBtn.hidden = !FS_OK; fsBtn.setAttribute('aria-pressed', on ? 'true' : 'false'); fsBtn.setAttribute('aria-label', on ? 'Sair da tela cheia' : 'Tela cheia'); fsBtn.title = on ? 'Sair da tela cheia' : 'Tela cheia'; }
+    }
+    function mostraGate() { if (FS_OK && !fsOptOut && !fsAtivo()) { fsGate.classList.add('show'); } }
+    async function entraTelaCheia() {
+      fsOptOut = false;
+      const okFs = await fsEntra();
+      fsGate.classList.remove('show');
+      if (!okFs && !fsAtivo()) showToast('Este navegador não liberou a tela cheia. Use o botão do canto direito para tentar de novo.', 'err');
+      fsRender();
+    }
+    function toggleTelaCheia(ev) {
+      if (ev) ev.stopPropagation();
+      if (fsAtivo()) {
+        fsOptOut = true; fsRearma = false; fsLiberaTeclas();
+        try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {}
+      } else { fsOptOut = false; fsEntra(); }
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    }
+    function fsMudou() {
+      fsRender();
+      if (fsAtivo()) { fsGate.classList.remove('show'); fsRearma = false; fsTravaTeclas(); return; }
+      if (fsOptOut || !FS_OK) return;
+      // saiu sem usar o botão (Esc, F11, gesto do navegador): não interrompe a contagem; volta no próximo toque ou tecla
+      if (active) fsRearma = true; else mostraGate();
+    }
+    document.addEventListener('fullscreenchange', fsMudou); document.addEventListener('webkitfullscreenchange', fsMudou);
+    ['pointerdown', 'keydown'].forEach((t) => document.addEventListener(t, (e) => {
+      if (e.type === 'keydown' && e.key === 'F11' && fsAtivo()) e.preventDefault();
+      if (!fsRearma || fsOptOut || fsAtivo() || (e.type === 'keydown' && e.key === 'Escape')) return;
+      fsRearma = false; fsEntra().then((okFs) => { if (!okFs && !fsAtivo()) fsRearma = true; });
+    }, true));
+    fsRender(); mostraGate();
+
     // ---------- PLACAR (2ª tela): outra janela do mesmo navegador mostra o número ----------
     let placarCh = null, placarVivo = 0, placarUlt = '';
     try { placarCh = new BroadcastChannel('kb_placar_v1'); } catch (e) {}
