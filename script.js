@@ -1153,19 +1153,85 @@ document.addEventListener('keydown', (event) => {
   const logo = document.querySelector('.opening__layer--title');
   if (!logo) return;
   const PIN = '4250', TOQUES = 10, JANELA_MS = 3500, ERROS_MAX = 3, BLOQUEIO_MS = 10 * 60 * 1000;
+  const RAPIDO_MS = 2000, PROTEGE_MS = 5000, BALANCOS = 5;
   const K_ERR = 'kb_site_pin_erros', K_BLQ = 'kb_site_pin_bloqueio';
   const DESTINO = 'contador_pwa/';
+  const TITULO_C = 'assets/contador/titulo-contador.webp';
+  const ASPECTO_C = 825 / 379;
   const WA = 'https://wa.me/5581996484250?text=' + encodeURIComponent('Olá Jefferson! Preciso do link direto do contador de repetições do 7º Campeonato Brasileiro de Kettlebell Sport.');
+  const reduz = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const get = (k) => { try { return parseInt(localStorage.getItem(k) || '0', 10) || 0; } catch (e) { return 0; } };
   const set = (k, v) => { try { localStorage.setItem(k, String(v)); } catch (e) {} };
   const del = (k) => { try { localStorage.removeItem(k); } catch (e) {} };
   const bloqueadoAte = () => { const t = get(K_BLQ); if (t && t > Date.now()) return t; if (t) del(K_BLQ); return 0; };
+  const vib = (p) => { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} };
+  const espera = (ms) => new Promise((r) => setTimeout(r, ms));
+  const anima = (el, kf, op) => { try { return el.animate(kf, op); } catch (e) { return { finished: Promise.resolve(), cancel() {} }; } };
+  const fim = (a) => (a && a.finished ? a.finished.catch(() => {}) : Promise.resolve());
+  const rectDe = (el) => { const r = el.getBoundingClientRect(); return { x: r.x, y: r.y, w: r.width, h: r.height }; };
+  const setRect = (el, r) => { el.style.left = r.x + 'px'; el.style.top = r.y + 'px'; el.style.width = r.w + 'px'; el.style.height = r.h + 'px'; };
+  // onde a logo do contador fica na tela do contador (as duas páginas usam esta mesma conta)
+  function stdRect() {
+    const W = window.innerWidth, H = window.innerHeight;
+    let w = W <= H ? W * 0.86 : Math.min(W * 0.56, 825), h = w / ASPECTO_C;
+    if (h > H * 0.4) { h = H * 0.4; w = h * ASPECTO_C; }
+    return { x: (W - w) / 2, y: (H - 34) / 2 - h / 2, w, h };
+  }
 
-  // elementos (criados aqui para não mexer no HTML)
+  // ---------- elementos que voam ----------
+  const SEL = ['.site-header .menu-toggle', '.site-header .brand', '.site-header .participation-label', '.site-header .header-actions .button', '.site-header .site-nav a',
+    '.opening__sponsor-tab', '.opening__workshop-tab', '.opening__cta .button', '.opening__enter', '.opening__info-trigger',
+    '.opening__layer--city', '.opening__layer--date', '.opening__layer--place', '.opening__layer--url'].join(',');
+  function alvos() {
+    const W = window.innerWidth, H = window.innerHeight, out = [];
+    document.querySelectorAll(SEL).forEach((el) => {
+      const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+      if (r.width < 2 || r.height < 2 || r.bottom < 0 || r.top > H || r.right < 0 || r.left > W || cs.display === 'none') return;
+      out.push(el);
+    });
+    return out;
+  }
+  function vetor(el, i) {
+    const r = el.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight;
+    const cx = r.x + r.width / 2 - W / 2, cy = r.y + r.height / 2 - H / 2;
+    const rnd = (n) => { const x = Math.sin((i + 1) * 12.9898 + n * 78.233) * 43758.5453; return x - Math.floor(x); };
+    let dx, dy;
+    if (Math.abs(cx) / W > Math.abs(cy) / H) { dx = Math.sign(cx || 1) * (W * 0.9 + r.width + rnd(1) * W * 0.3); dy = cy * 0.6 + (rnd(2) - 0.5) * H * 0.4; }
+    else { dy = Math.sign(cy || 1) * (H * 0.9 + r.height + rnd(1) * H * 0.3); dx = cx * 0.6 + (rnd(2) - 0.5) * W * 0.4; }
+    return { dx, dy, rot: (rnd(3) > 0.5 ? 1 : -1) * (360 + rnd(4) * 360), ax: -Math.sign(dx) * 10, ay: -Math.sign(dy) * 10 };
+  }
+  const voaSai = (el, v, i) => anima(el, [
+    { transform: 'none', offset: 0 },
+    { transform: `translate(${v.ax}px,${v.ay}px) scale(1.12,.88)`, offset: 0.22 },
+    { transform: `translate(${v.dx}px,${v.dy}px) rotate(${v.rot}deg) scale(.5)`, offset: 1 }
+  ], { duration: 750, delay: Math.min(i * 45, 450), easing: 'cubic-bezier(.55,-.25,.75,.4)', fill: 'both' });
+  const voaEntra = (el, v, i) => anima(el, [
+    { transform: `translate(${v.dx}px,${v.dy}px) rotate(${v.rot}deg) scale(.5)`, offset: 0 },
+    { transform: 'translate(-6px,4px) scale(1.1,.9)', offset: 0.72 },
+    { transform: 'none', offset: 1 }
+  ], { duration: 420, delay: Math.min(i * 18, 250), easing: 'cubic-bezier(.2,.9,.3,1.05)', fill: 'both' });
+
+  // ---------- logo clone e fundo do contador ----------
+  const srcSite = () => (logo.querySelector('img') || {}).src || '';
+  function criaLogo(rect, src) {
+    const im = document.createElement('img');
+    im.className = 'kbe-logo'; im.alt = ''; im.src = src; setRect(im, rect);
+    document.body.appendChild(im); return im;
+  }
+  function criaFundo(cx, cy, raio) {
+    const d = document.createElement('div'); d.className = 'kbe-bg';
+    d.style.clipPath = `circle(${raio}px at ${cx}px ${cy}px)`;
+    document.body.appendChild(d); return d;
+  }
+  const circulo = (cx, cy, r) => `circle(${r}px at ${cx}px ${cy}px)`;
+  const P = 'perspective(800px) ';
+
+  // ---------- PIN ----------
   const pinBox = document.createElement('div');
   pinBox.className = 'kbp'; pinBox.hidden = true;
-  pinBox.innerHTML = '<input class="kbp__input" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="PIN de 4 dígitos" placeholder="••••">';
-  const input = pinBox.firstChild;
+  pinBox.innerHTML = '<input class="kbp__input" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="PIN de 4 dígitos" placeholder="••••">' +
+    '<div class="kbp__shake" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="3" width="8" height="18" rx="2"/><path d="M12 18h.01"/><path d="M4 8v8M2 10v4M20 8v8M22 10v4"/></svg><b>Balance o celular!</b><i><u></u></i><button type="button">ou toque aqui</button></div>';
+  const input = pinBox.firstChild, shakeBox = pinBox.lastChild, shakeBar = shakeBox.querySelector('u'), shakeSkip = shakeBox.querySelector('button');
   const lockBox = document.createElement('div');
   lockBox.className = 'kbp kbp--lock'; lockBox.hidden = true;
   lockBox.innerHTML = '<div class="kbp__card" role="alertdialog" aria-modal="true" aria-labelledby="kbp-lt"><h2 id="kbp-lt">Acesso bloqueado</h2><p>Tente de novo em <b class="kbp__time">10:00</b>.</p><p>Para receber o link direto do contador, fale com o Jefferson.</p><a class="kbp__wa" target="_blank" rel="noopener">Falar com o Jefferson no WhatsApp</a><button class="kbp__close" type="button">Fechar</button></div>';
@@ -1173,14 +1239,44 @@ document.addEventListener('keydown', (event) => {
   document.body.append(pinBox, lockBox);
   const timeEl = lockBox.querySelector('.kbp__time');
 
-  let n = 0, ultimo = 0, tick = null;
+  let n = 0, ultimo = 0, tick = null, ocupado = false, qLast = 0, lastClick = 0, temSensor = false, offMotion = null, offShake = null;
+  const precisaPermissao = () => typeof window.DeviceMotionEvent !== 'undefined' && typeof window.DeviceMotionEvent.requestPermission === 'function';
+  const logoCentro = () => { const r = logo.getBoundingClientRect(); return { dx: r.x + r.width / 2 - window.innerWidth / 2, dy: r.y + r.height / 2 - window.innerHeight / 2 }; };
 
-  function fechaPin() { pinBox.hidden = true; input.value = ''; input.blur(); n = 0; }
+  function escutaSensor() {
+    temSensor = false; if (offMotion) offMotion();
+    if (precisaPermissao()) return;               // iPhone: pede permissão → não balança
+    const h = (e) => { const a = e.accelerationIncludingGravity; if (a && a.x != null) { temSensor = true; window.removeEventListener('devicemotion', h); } };
+    window.addEventListener('devicemotion', h);
+    offMotion = () => { window.removeEventListener('devicemotion', h); offMotion = null; };
+  }
+  function limpaPin() {
+    pinBox.style.display = ''; pinBox.hidden = true; input.value = ''; input.hidden = false; input.style.background = ''; input.blur();
+    shakeBox.hidden = true; ocupado = false; n = 0;
+    if (offMotion) offMotion(); if (offShake) { offShake(); offShake = null; }
+    pinBox.getAnimations && pinBox.getAnimations().forEach((a) => a.cancel());
+    input.getAnimations && input.getAnimations().forEach((a) => a.cancel());
+  }
+  // saída "curiosa": o campo é sugado de volta para a logo
+  async function fechaPin(animado) {
+    if (pinBox.hidden) return;
+    if (!animado || reduz) { limpaPin(); return; }
+    ocupado = true;
+    const { dx, dy } = logoCentro();
+    const a = anima(input, [
+      { transform: 'none', opacity: 1, offset: 0 },
+      { transform: 'translate(0,-22px) scale(1.15) rotate(-10deg)', opacity: 1, offset: 0.25 },
+      { transform: `translate(${dx}px,${dy}px) scale(.05) rotate(320deg)`, opacity: 0, offset: 1 }
+    ], { duration: 480, easing: 'cubic-bezier(.5,0,.8,.4)', fill: 'forwards' });
+    anima(pinBox, [{ opacity: 1 }, { opacity: 0 }], { duration: 480, fill: 'forwards' });
+    await fim(a);
+    limpaPin();
+    anima(logo, [{ filter: 'brightness(1)' }, { filter: 'brightness(1.9) drop-shadow(0 0 14px rgba(255,213,0,.95))' }, { filter: 'brightness(1)' }], { duration: 380 });
+  }
   function fechaLock() { lockBox.hidden = true; clearInterval(tick); n = 0; }
   function mostraLock() {
-    fechaPin();
-    const ate = bloqueadoAte();
-    if (!ate) return false;
+    limpaPin();
+    if (!bloqueadoAte()) return false;
     const atualiza = () => {
       const falta = Math.max(0, bloqueadoAte() - Date.now());
       if (!falta) { fechaLock(); return; }
@@ -1192,32 +1288,140 @@ document.addEventListener('keydown', (event) => {
     return true;
   }
   function abrePin() {
-    pinBox.hidden = false; input.value = '';
-    pinBox.classList.remove('is-ok');
-    setTimeout(() => input.focus(), 60);
+    limpaPin();
+    pinBox.hidden = false; ocupado = false;
+    qLast = lastClick = Date.now();
+    new Image().src = TITULO_C;                  // já deixa a logo do contador pronta
+    escutaSensor();
+    const { dx, dy } = logoCentro();
+    if (!reduz) anima(input, [
+      { transform: `translate(${dx}px,${dy}px) scale(.05) rotate(-300deg)`, opacity: 0, offset: 0 },
+      { transform: `translate(${dx * 0.1}px,${dy * 0.1 - 30}px) scale(1.2) rotate(12deg)`, opacity: 1, offset: 0.6 },
+      { transform: 'translate(0,8px) scale(.94) rotate(-4deg)', offset: 0.78 },
+      { transform: 'translate(0,-3px) scale(1.03) rotate(1deg)', offset: 0.9 },
+      { transform: 'none', offset: 1 }
+    ], { duration: 720, easing: 'cubic-bezier(.3,.7,.4,1)' });
+    setTimeout(() => input.focus(), reduz ? 60 : 500);
   }
-  function erro() {
-    fechaPin();
+  async function erro() {
+    ocupado = true;
+    input.style.background = 'rgba(255,190,190,.85)';
+    if (!reduz) await fim(anima(input, [{ transform: 'translateX(0)' }, { transform: 'translateX(-18px) rotate(-3deg)' }, { transform: 'translateX(16px) rotate(3deg)' }, { transform: 'translateX(-12px)' }, { transform: 'translateX(8px)' }, { transform: 'none' }], { duration: 420 }));
+    await fechaPin(true);
     window.scrollTo({ top: 0, behavior: 'auto' });
     const e = get(K_ERR) + 1;
     if (e >= ERROS_MAX) { del(K_ERR); set(K_BLQ, Date.now() + BLOQUEIO_MS); mostraLock(); }
     else set(K_ERR, e);
   }
-  function confere() {
-    if (input.value.length < 4) return;
-    if (input.value === PIN) {
-      del(K_ERR); del(K_BLQ);
-      pinBox.classList.add('is-ok');
-      setTimeout(() => { (window.__kbIr || ((u) => { window.location.href = u; }))(DESTINO); }, 260);
-    } else erro();
-  }
-  input.addEventListener('input', () => { input.value = input.value.replace(/\D/g, '').slice(0, 4); if (input.value.length === 4) setTimeout(confere, 140); });
-  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); confere(); } });
-  pinBox.addEventListener('click', (e) => { if (e.target === pinBox) fechaPin(); });
-  lockBox.addEventListener('click', (e) => { if (e.target === lockBox || e.target.classList.contains('kbp__close')) fechaLock(); });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (!pinBox.hidden) fechaPin(); if (!lockBox.hidden) fechaLock(); } });
 
-  // toque na logo: pulso simples (brilho cresce até o 10º)
+  // ---------- PIN certo: balançar (se der) e revelar o contador ----------
+  async function acerto() {
+    ocupado = true; del(K_ERR); del(K_BLQ);
+    input.style.background = 'rgba(170,240,195,.9)';
+    if (!reduz) await fim(anima(input, [{ transform: 'none', opacity: 1 }, { transform: 'scale(1.18)', offset: 0.4 }, { transform: 'scale(.1) rotate(200deg)', opacity: 0 }], { duration: 380, fill: 'forwards' }));
+    input.hidden = true;
+    if (!reduz && temSensor && !precisaPermissao()) { esperaBalanco(); return; }
+    pinBox.style.display = 'none';
+    revelar();
+  }
+  function esperaBalanco() {
+    shakeBox.hidden = false; shakeSkip.hidden = true; shakeBar.style.width = '0%';
+    anima(shakeBox, [{ transform: 'scale(.3) rotate(-15deg)', opacity: 0 }, { transform: 'scale(1.1) rotate(4deg)', opacity: 1, offset: 0.65 }, { transform: 'none', opacity: 1 }], { duration: 520, easing: 'cubic-bezier(.3,.8,.3,1)', fill: 'backwards' });
+    let picos = 0, t0 = 0, last = null, tPico = 0, feito = false;
+    const vai = () => { if (feito) return; feito = true; if (offShake) { offShake(); offShake = null; } clearTimeout(tSkip); pinBox.style.display = 'none'; revelar(); };
+    const h = (e) => {
+      const a = e.accelerationIncludingGravity; if (!a || a.x == null) return;
+      const m = Math.abs(a.x) + Math.abs(a.y) + Math.abs(a.z);
+      const now = Date.now();
+      if (last != null && Math.abs(m - last) > 14 && now - tPico > 120) {
+        if (now - t0 > 1500) picos = 0;
+        t0 = tPico = now; picos++; vib(15);
+        shakeBar.style.width = Math.min(100, picos / BALANCOS * 100) + '%';
+        if (picos >= BALANCOS) vai();
+      }
+      last = m;
+    };
+    window.addEventListener('devicemotion', h);
+    offShake = () => window.removeEventListener('devicemotion', h);
+    const tSkip = setTimeout(() => { shakeSkip.hidden = false; }, 4000);
+    shakeSkip.onclick = vai;
+  }
+  async function revelar() {
+    try { document.documentElement.style.overflow = 'hidden'; document.body.style.overflow = 'hidden'; window.scrollTo(0, 0); } catch (e) {}
+    const W = window.innerWidth, H = window.innerHeight, rect = rectDe(logo), std = stdRect();
+    const ir = () => { try { sessionStorage.setItem('kb_egg_in', '1'); sessionStorage.setItem('kb_egg_rect', JSON.stringify(std)); } catch (e) {} (window.__kbIr || ((u) => { window.location.href = u; }))(DESTINO); };
+    if (reduz) { ir(); return; }
+    const lista = alvos(), vs = lista.map(vetor);
+    const clone = criaLogo(rect, srcSite());
+    logo.style.visibility = 'hidden';
+    vib([40, 30, 40]);
+    lista.forEach((el, i) => voaSai(el, vs[i], i));
+    setTimeout(() => vib([25]), 320); setTimeout(() => vib([25, 30, 25]), 660);
+    await espera(1250);
+    await fim(anima(clone, [{ transform: 'rotate(0)' }, { transform: 'rotate(-5deg) scale(1.08)' }, { transform: 'rotate(4deg) scale(.96)' }, { transform: 'rotate(-3deg) scale(1.05,.93)' }, { transform: 'none' }], { duration: 600 }));
+    const cx = rect.x + rect.w / 2, cy = rect.y + rect.h / 2, R = Math.hypot(W, H);
+    const bg = criaFundo(cx, cy, 0);
+    const bgA = anima(bg, [{ clipPath: circulo(cx, cy, 0) }, { clipPath: circulo(cx, cy, R) }], { duration: 1000, easing: 'ease-in-out', fill: 'forwards' });
+    vib([60, 40, 90]);
+    await fim(anima(clone, [{ transform: P + 'rotateY(0)' }, { transform: P + 'rotateY(90deg) scale(1.1)' }], { duration: 220, easing: 'ease-in', fill: 'forwards' }));
+    clone.src = new URL(TITULO_C, document.baseURI).href; setRect(clone, std);
+    await fim(anima(clone, [{ transform: P + 'rotateY(-90deg) scale(.8)' }, { transform: P + 'rotateY(12deg) scale(1.12)', offset: 0.7 }, { transform: P + 'rotateY(0) scale(1)' }], { duration: 380, easing: 'cubic-bezier(.2,.8,.3,1)', fill: 'forwards' }));
+    await fim(bgA);
+    vib([50]);
+    await espera(250);
+    ir();
+  }
+
+  // ---------- volta do contador: a animação ao contrário, rápida ----------
+  (function retorno() {
+    let vindo = false, std = null;
+    try { vindo = sessionStorage.getItem('kb_egg_out') === '1'; sessionStorage.removeItem('kb_egg_out'); std = JSON.parse(sessionStorage.getItem('kb_egg_rect') || 'null'); } catch (e) {}
+    if (!vindo) return;
+    const html = document.documentElement;
+    const W = window.innerWidth, H = window.innerHeight; std = std || stdRect();
+    const R = Math.hypot(W, H);
+    const bg = criaFundo(W / 2, H / 2, R);
+    const clone = criaLogo(std, new URL(TITULO_C, document.baseURI).href);
+    logo.style.visibility = 'hidden';
+    html.classList.add('kbe-ready');
+    const limpa = () => { try { bg.remove(); clone.remove(); logo.style.visibility = ''; } catch (e) {} };
+    const roda = async () => {
+      try {
+        const sr = rectDe(logo), lista = alvos(), vs = lista.map(vetor);
+        const cx = sr.x + sr.w / 2, cy = sr.y + sr.h / 2;
+        const todas = lista.map((el, i) => { const a = voaEntra(el, vs[i], i); a.id = 'kbe'; return a; });
+        vib([30]);
+        const bgA = anima(bg, [{ clipPath: circulo(cx, cy, R) }, { clipPath: circulo(cx, cy, 0) }], { duration: 500, easing: 'ease-in-out', fill: 'forwards' });
+        await fim(anima(clone, [{ transform: P + 'rotateY(0)' }, { transform: P + 'rotateY(90deg)' }], { duration: 140, easing: 'ease-in', fill: 'forwards' }));
+        clone.src = srcSite(); setRect(clone, sr);
+        await fim(anima(clone, [{ transform: P + 'rotateY(-90deg) scale(.9)' }, { transform: P + 'rotateY(8deg) scale(1.06)', offset: 0.7 }, { transform: P + 'rotateY(0) scale(1)' }], { duration: 220, easing: 'cubic-bezier(.2,.8,.3,1)', fill: 'forwards' }));
+        await fim(bgA);
+        await Promise.all(todas.map(fim));
+        todas.forEach((a) => { try { a.cancel(); } catch (e) {} });
+      } finally { limpa(); }
+    };
+    const inicia = () => setTimeout(roda, 150);
+    if (document.readyState === 'complete') inicia(); else { window.addEventListener('load', inicia, { once: true }); setTimeout(inicia, 4000); }
+  })();
+
+  input.addEventListener('input', () => { if (ocupado) return; input.value = input.value.replace(/\D/g, '').slice(0, 4); if (input.value.length === 4) setTimeout(confere, 140); });
+  function confere() {
+    if (ocupado || input.value.length < 4) return;
+    if (input.value === PIN) acerto(); else erro();
+  }
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); confere(); } });
+  // toque no fundo: só fecha 5 s depois do último toque rápido (rápido = até 2 s de intervalo)
+  pinBox.addEventListener('click', (e) => {
+    if (e.target !== pinBox || ocupado) return;
+    const t = Date.now(), rapido = t - lastClick <= RAPIDO_MS;
+    lastClick = t;
+    if (rapido) { qLast = t; return; }
+    if (t - qLast >= PROTEGE_MS) fechaPin(true);
+  });
+  lockBox.addEventListener('click', (e) => { if (e.target === lockBox || e.target.classList.contains('kbp__close')) fechaLock(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (!pinBox.hidden && !ocupado) fechaPin(true); if (!lockBox.hidden) fechaLock(); } });
+
+  // 10 toques na logo: pulso simples (o brilho cresce até o 10º)
   logo.addEventListener('click', () => {
     const agora = Date.now();
     if (agora - ultimo > JANELA_MS) n = 0;

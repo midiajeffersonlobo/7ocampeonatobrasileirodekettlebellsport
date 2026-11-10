@@ -796,11 +796,20 @@ dialog.athlete-modal.is-closing::backdrop,dialog.lightbox.is-closing::backdrop,d
 
 /* ---- Acesso oculto ao contador (PIN) ---- */
 .opening__layer--title{pointer-events:auto;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;touch-action:manipulation;cursor:default}
-.kbp{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(2,10,30,.55);animation:kbp-fade .25s ease both}
+.kbp{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(2,10,30,.5);animation:kbp-fade .25s ease both}
 .kbp[hidden]{display:none}
-.kbp__input{width:min(260px,80vw);height:64px;padding:0 16px;border:0;border-radius:12px;background:#fff;color:#021b63;text-align:center;font:700 2rem/1 "Inter",Arial,sans-serif;letter-spacing:.5em;text-indent:.5em;box-shadow:0 10px 40px rgba(0,0,0,.5);outline:0;animation:kbp-pop .28s cubic-bezier(.22,1,.36,1) both;transition:background-color .2s ease}
-.kbp__input::placeholder{color:#b9c2d6;letter-spacing:.4em}
-.kbp.is-ok .kbp__input{background:#bff0cf}
+.kbp__input{width:min(260px,80vw);height:64px;padding:0 16px;border:0;border-radius:12px;background:rgba(255,255,255,.8);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);color:#021b63;text-align:center;font:700 2rem/1 "Inter",Arial,sans-serif;letter-spacing:.5em;text-indent:.5em;box-shadow:0 10px 40px rgba(0,0,0,.45);outline:0;transition:background-color .2s ease}
+.kbp__input[hidden]{display:none}
+.kbp__input::placeholder{color:#8f9bb8;letter-spacing:.4em}
+.kbp__shake{display:flex;flex-direction:column;align-items:center;gap:12px;width:min(300px,84vw);padding:22px 18px;border-radius:16px;background:rgba(255,255,255,.88);color:#021b63;text-align:center;box-shadow:0 12px 44px rgba(0,0,0,.5)}
+.kbp__shake[hidden]{display:none}
+.kbp__shake svg{width:64px;height:64px;animation:kbp-wiggle .5s ease-in-out infinite alternate}
+.kbp__shake b{font:800 1.25rem/1.1 "Inter",Arial,sans-serif;text-transform:uppercase;letter-spacing:.04em}
+.kbp__shake i{display:block;width:100%;height:10px;border-radius:99px;background:rgba(2,27,99,.15);overflow:hidden}
+.kbp__shake u{display:block;width:0;height:100%;background:#ffd500;border-radius:99px;transition:width .15s ease}
+.kbp__shake button{padding:10px 14px;border:2px solid #cfd6e6;border-radius:10px;background:transparent;color:#021b63;font:700 .9rem "Inter",Arial,sans-serif;cursor:pointer}
+.kbp__shake button[hidden]{display:none}
+@keyframes kbp-wiggle{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
 .kbp__card{width:100%;max-width:380px;padding:22px 20px;border-radius:14px;background:#fff;color:#021b63;text-align:center;box-shadow:0 14px 50px rgba(0,0,0,.55);animation:kbp-pop .28s cubic-bezier(.22,1,.36,1) both}
 .kbp__card h2{margin:0 0 10px;font:800 1.35rem/1.1 "Inter",Arial,sans-serif;text-transform:uppercase;letter-spacing:.04em}
 .kbp__card p{margin:0 0 10px;font:500 1rem/1.4 "Inter",Arial,sans-serif}
@@ -809,3 +818,11 @@ dialog.athlete-modal.is-closing::backdrop,dialog.lightbox.is-closing::backdrop,d
 .kbp__close{width:100%;padding:12px;border:2px solid #cfd6e6;border-radius:10px;background:transparent;color:#021b63;font:700 .95rem "Inter",Arial,sans-serif;cursor:pointer}
 @keyframes kbp-fade{from{opacity:0}to{opacity:1}}
 @keyframes kbp-pop{from{opacity:0;transform:scale(.9) translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---- revelação do contador (easter egg) ---- */
+.kbe-bg{position:fixed;inset:0;z-index:99990;background:linear-gradient(135deg,#00102e 0%,#011d4d 60%,#004d25 100%);pointer-events:none;visibility:visible}
+.kbe-logo{position:fixed;z-index:99995;object-fit:contain;pointer-events:none;transform-origin:center;visibility:visible}
+html.kbe-return:not(.kbe-ready){background:#00102e}
+html.kbe-return:not(.kbe-ready) body{visibility:hidden}
+html.kbe-return .opening__layer,html.kbe-return .opening__shimmer{animation:none!important;opacity:1!important}
+html.kbe-return .opening__shimmer{opacity:0!important}

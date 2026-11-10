@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<script>
+// Entrada animada: vindo do site principal (sempre) ou na 1ª abertura direta neste aparelho (1 vez)
+try {
+  var h = document.documentElement, q = sessionStorage;
+  if (q.getItem('kb_egg_in') === '1') { q.removeItem('kb_egg_in'); h.classList.add('egg-in'); window.__eggRect = q.getItem('kb_egg_rect'); localStorage.setItem('kb_contador_intro_v1', '1'); }
+  else if (!localStorage.getItem('kb_contador_intro_v1')) { localStorage.setItem('kb_contador_intro_v1', '1'); h.classList.add('egg-first'); }
+} catch (e) {}
+</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>7º Campeonato Brasileiro de Kettlebell Sport - Contador</title>
@@ -729,6 +737,17 @@
     .pv-card .log-table-container { overflow-x: auto; }
     .sc-actions #pv-restore { flex: 1 1 auto; }
 
+
+    /* ===== entrada animada (easter egg) e botão "Site principal" ===== */
+    @keyframes egg-pop { 0% { opacity: 0; transform: translateY(40px) scale(0.4) rotate(-8deg); } 55% { opacity: 1; transform: translateY(-10px) scale(1.12) rotate(3deg); } 78% { transform: translateY(3px) scale(0.96) rotate(-1deg); } 100% { opacity: 1; transform: none; } }
+    html.egg-in .sponsors-row, html.egg-first .sponsors-row { animation: egg-pop 0.75s 0.2s cubic-bezier(0.2, 0.8, 0.3, 1) backwards; }
+    html.egg-in .intro-footer, html.egg-first .intro-footer { animation: egg-pop 0.75s 0.4s cubic-bezier(0.2, 0.8, 0.3, 1) backwards; }
+    html.egg-in .btn-haptic-start, html.egg-first .btn-haptic-start { animation: egg-pop 0.6s 0.6s cubic-bezier(0.2, 0.8, 0.3, 1) backwards; }
+    html.egg-in .btn-burger, html.egg-first .btn-burger { animation: egg-pop 0.6s 0.7s cubic-bezier(0.2, 0.8, 0.3, 1) backwards; }
+    html.egg-first .event-title-logo { animation: egg-pop 0.8s 0.05s cubic-bezier(0.2, 0.8, 0.3, 1) backwards; }
+    .menu-site { margin: 8px 10px 6px; width: calc(100% - 20px); border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 12px; }
+    .menu-site:disabled { opacity: 0.4; filter: grayscale(1); cursor: not-allowed; border-color: rgba(255, 255, 255, 0.2); background: transparent; }
+
     /* ================= RESPONSIVO ================= */
     @media (max-aspect-ratio: 1/1) {
       .sponsors-row { gap: 5vw; margin-bottom: 4vh; }
@@ -1110,6 +1129,7 @@
       <button class="menu-subitem" type="button" onclick="openLixeira('local')">Lixeira local</button>
       <button class="menu-subitem" type="button" onclick="openLixeira('nuvem')">Lixeira na nuvem</button>
     </div></div>
+    <button class="menu-item menu-site" id="menu-site" type="button" onclick="irParaSite()" disabled title="Sem conexão"><span>Site principal</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.6 4 5.7 4 9s-1.4 6.4-4 9c-2.6-2.6-4-5.7-4-9s1.4-6.4 4-9z"/></svg></button>
     <div class="menu-foot">Aparelho <code id="device-short"></code></div>
   </nav>
 
@@ -2386,6 +2406,7 @@
       const dados = syncing ? 'work' : (n === 0 ? 'ok' : ((rede === 'bad' || lastNetFail || nErr > 0) ? 'bad' : 'work'));
       const ni = document.getElementById('net-ind');
       ni.dataset.net = rede; ni.dataset.dat = dados;
+      const ms = document.getElementById('menu-site'); ms.disabled = rede !== 'ok'; ms.title = rede === 'ok' ? '' : 'Sem conexão';
       const tr = { ok: ['Conectado', 'Atualizados'], work: ['Conectando', 'Atualizando'], bad: ['Sem conexão', 'Desatualizados'] };
       ni.setAttribute('aria-label', 'Rede: ' + tr[rede][0] + ' · Dados: ' + tr[dados][1]);
       document.getElementById('nl-now').textContent = 'Agora: rede ' + tr[rede][0].toLowerCase() + ' · dados ' + tr[dados][1].toLowerCase() + (n ? ' (' + plural(n, 'item', 'itens') + ' a enviar)' : '') + '.';
@@ -2923,6 +2944,43 @@
     refreshSugestoes();
     renderStatus();
     setTimeout(() => syncNow(false), 1500);
+
+
+    // ---------- SITE PRINCIPAL (animação de saída) e ENTRADA ANIMADA ----------
+    function stdRect() {
+      const W = innerWidth, H = innerHeight, A = 825 / 379;
+      let w = W <= H ? W * 0.86 : Math.min(W * 0.56, 825), h = w / A;
+      if (h > H * 0.4) { h = H * 0.4; w = h * A; }
+      return { x: (W - w) / 2, y: (H - 34) / 2 - h / 2, w, h };
+    }
+    function irParaSite() {
+      const b = $('menu-site');
+      if (b.disabled) return;
+      closeMenu(); if (histScreen.style.display === 'flex') closeHistory();
+      const W = innerWidth, H = innerHeight;
+      const fora = [['.sponsors-row', 0, -H], ['.intro-footer', 0, H], ['#btn-haptic-start', -W, 0], ['#btn-burger', W, 0]];
+      try { if (navigator.vibrate) navigator.vibrate([30]); } catch (e) {}
+      fora.forEach(([sel, dx, dy], i) => { const el = document.querySelector(sel); if (el) el.animate([{ transform: 'none' }, { transform: 'translate(' + (-Math.sign(dx) * 8) + 'px,' + (-Math.sign(dy) * 8) + 'px) scale(1.08,.92)', offset: 0.25 }, { transform: 'translate(' + dx + 'px,' + dy + 'px) rotate(' + (i % 2 ? 300 : -300) + 'deg) scale(.5)' }], { duration: 420, delay: i * 30, easing: 'cubic-bezier(.55,-.25,.75,.4)', fill: 'forwards' }); });
+      const logo = document.querySelector('.event-title-logo'), n = logo.getBoundingClientRect(), s = stdRect();
+      logo.animate([{ transform: 'none' }, { transform: 'translate(' + (s.x + s.w / 2 - n.x - n.width / 2) + 'px,' + (s.y + s.h / 2 - n.y - n.height / 2) + 'px) scale(' + (s.w / n.width) + ',' + (s.h / n.height) + ')' }], { duration: 400, easing: 'ease-in-out', fill: 'forwards' });
+      setTimeout(() => {
+        try { sessionStorage.setItem('kb_egg_out', '1'); sessionStorage.setItem('kb_egg_rect', JSON.stringify(s)); } catch (e) {}
+        (window.__kbIr || ((u) => { window.location.href = u; }))('../');
+      }, 520);
+    }
+    (function entradaAnimada() {
+      const h = document.documentElement;
+      if (!h.classList.contains('egg-in') && !h.classList.contains('egg-first')) return;
+      if (h.classList.contains('egg-in')) {
+        let from = null; try { from = JSON.parse(window.__eggRect || 'null'); } catch (e) {}
+        const logo = document.querySelector('.event-title-logo');
+        if (from && logo) {
+          const n = logo.getBoundingClientRect();
+          logo.animate([{ transform: 'translate(' + (from.x + from.w / 2 - n.x - n.width / 2) + 'px,' + (from.y + from.h / 2 - n.y - n.height / 2) + 'px) scale(' + (from.w / n.width) + ',' + (from.h / n.height) + ')' }, { transform: 'none' }], { duration: 480, easing: 'cubic-bezier(.2,.9,.3,1.1)' });
+        }
+      }
+      setTimeout(() => h.classList.remove('egg-in', 'egg-first'), 2600);
+    })();
 
     // ---------- RESTAURAR CONTAGEM SALVA ----------
     if (loadState()) {
