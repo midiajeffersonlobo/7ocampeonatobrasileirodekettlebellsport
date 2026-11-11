@@ -36,6 +36,19 @@
 const opening = document.querySelector('.opening');
 const shimmer = document.querySelector('.opening__shimmer img');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+// Botão "desativar animações": quando ligado, animações criadas via JS terminam na hora.
+let animationsOff = false;
+const nativeElementAnimate = Element.prototype.animate;
+if (nativeElementAnimate) {
+  Element.prototype.animate = function (...args) {
+    const animation = nativeElementAnimate.apply(this, args);
+    if (animationsOff) {
+      try { animation.finish(); } catch (_) { try { animation.cancel(); } catch (__) {} }
+    }
+    return animation;
+  };
+}
 const mobileLayout = window.matchMedia('(max-width: 767px)');
 const videoIntro = document.querySelector('#videoIntro');
 const videoIntroMedia = document.querySelector('#videoIntroMedia');
@@ -52,7 +65,7 @@ let shimmerTimer;
 
 function scheduleShimmer(delay = 3500 + Math.random() * 5000) {
   clearTimeout(shimmerTimer);
-  if (document.hidden || reducedMotion.matches) return;
+  if (document.hidden || reducedMotion.matches || animationsOff) return;
   shimmerTimer = setTimeout(() => shimmer.classList.add('is-reflecting'), delay);
 }
 
@@ -86,12 +99,12 @@ mobileLayout.addEventListener?.('change', syncMobileTriggers);
 
 let openingStarted = false;
 
-// Vídeo de fundo do hero: ciclos curtos para não ficar rodando o tempo todo.
-// Cada ciclo (fade in + vídeo + fade out) dura 15 s e termina com o vídeo pausado.
-// Um novo ciclo só começa depois que o usuário sai do hero, volta e fica 20 s seguidos nele.
+// Vídeo de fundo do hero: toca 30 s (fade in + vídeo + fade out), pausa e, 20 s depois,
+// toca de novo — em loop. Se o usuário sai do hero (ou da aba), o vídeo faz fade out e pausa;
+// ao voltar, espera 20 s antes de tocar. O botão "desativar animações" interrompe tudo.
 const HERO_VIDEO_OPACITY = .45;
 const HERO_VIDEO_FADE_MS = 1500;
-const HERO_VIDEO_CYCLE_MS = 15000;
+const HERO_VIDEO_CYCLE_MS = 30000;
 const HERO_VIDEO_REPLAY_DELAY_MS = 20000;
 const HERO_VISIBLE_RATIO = .3;
 
@@ -99,21 +112,25 @@ let heroRatioVisible = true;
 let heroVideoReady = false;
 let heroVideoState = 'paused'; // 'playing' | 'fading-out' | 'paused'
 let heroVideoPlayedOnce = false;
-let heroVideoNeedsReentry = false;
 let heroVideoCycleTimer;
 let heroVideoPauseTimer;
 let heroVideoReplayTimer;
 
-const heroActive = () => heroRatioVisible && !document.hidden;
+const heroActive = () => heroRatioVisible && !document.hidden && !animationsOff;
 
 function setHeroVideoOpacity(value) {
   opening.style.setProperty('--video-opacity-duration', `${HERO_VIDEO_FADE_MS / 1000}s`);
   opening.style.setProperty('--video-opacity', String(value));
 }
 
+// Rede de segurança: se algo der play enquanto o vídeo deveria estar pausado, pausa de novo.
+openingVideo.addEventListener('play', () => {
+  if (heroVideoState === 'paused') openingVideo.pause();
+});
+
 function scheduleHeroVideoReplay() {
   window.clearTimeout(heroVideoReplayTimer);
-  if (!heroVideoReady || heroVideoState !== 'paused' || heroVideoNeedsReentry || !heroActive() || reducedMotion.matches) return;
+  if (!heroVideoReady || heroVideoState !== 'paused' || !heroActive()) return;
   heroVideoReplayTimer = window.setTimeout(startHeroVideoCycle, heroVideoPlayedOnce ? HERO_VIDEO_REPLAY_DELAY_MS : 0);
 }
 
@@ -121,10 +138,9 @@ function startHeroVideoCycle() {
   window.clearTimeout(heroVideoReplayTimer);
   window.clearTimeout(heroVideoPauseTimer);
   window.clearTimeout(heroVideoCycleTimer);
-  if (reducedMotion.matches) return;
+  if (animationsOff || !heroActive()) return;
   heroVideoState = 'playing';
   heroVideoPlayedOnce = true;
-  heroVideoNeedsReentry = false;
   heroVideoCycleTimer = window.setTimeout(endHeroVideoCycle, HERO_VIDEO_CYCLE_MS - HERO_VIDEO_FADE_MS);
   Promise.resolve(openingVideo.play()).then(() => {
     if (heroVideoState !== 'playing') return;
@@ -135,21 +151,34 @@ function startHeroVideoCycle() {
   }).catch(() => {
     window.clearTimeout(heroVideoCycleTimer);
     heroVideoState = 'paused';
+    scheduleHeroVideoReplay();
   });
+}
+
+function finishHeroVideoPause() {
+  window.clearTimeout(heroVideoPauseTimer);
+  heroVideoState = 'paused';
+  openingVideo.pause();
+  scheduleHeroVideoReplay();
 }
 
 function endHeroVideoCycle() {
   if (heroVideoState !== 'playing') return;
   window.clearTimeout(heroVideoCycleTimer);
+  window.clearTimeout(heroVideoPauseTimer);
   heroVideoState = 'fading-out';
-  // Fim natural com o usuário ainda no hero: exige sair e voltar. Saída no meio do ciclo: já saiu.
-  heroVideoNeedsReentry = heroActive();
   setHeroVideoOpacity(0);
-  heroVideoPauseTimer = window.setTimeout(() => {
-    openingVideo.pause();
-    heroVideoState = 'paused';
-    scheduleHeroVideoReplay();
-  }, HERO_VIDEO_FADE_MS + 60);
+  heroVideoPauseTimer = window.setTimeout(finishHeroVideoPause, HERO_VIDEO_FADE_MS + 60);
+}
+
+// Para tudo na hora (sem fade): usado pelo botão "desativar animações".
+function stopHeroVideoNow() {
+  window.clearTimeout(heroVideoCycleTimer);
+  window.clearTimeout(heroVideoPauseTimer);
+  window.clearTimeout(heroVideoReplayTimer);
+  setHeroVideoOpacity(0);
+  heroVideoState = 'paused';
+  openingVideo.pause();
 }
 
 function syncHeroVideoPresence() {
@@ -160,20 +189,82 @@ function syncHeroVideoPresence() {
   }
   window.clearTimeout(heroVideoReplayTimer);
   if (heroVideoState === 'playing') endHeroVideoCycle();
-  else heroVideoNeedsReentry = false;
 }
 
 function beginHeroVideoContinuation() {
   heroVideoReady = true;
   setHeroVideoOpacity(0);
-  if (heroActive()) startHeroVideoCycle();
-  else scheduleHeroVideoReplay();
+  syncHeroVideoPresence();
 }
 
 new IntersectionObserver(([entry]) => {
   heroRatioVisible = entry.intersectionRatio >= HERO_VISIBLE_RATIO;
   syncHeroVideoPresence();
 }, { threshold: [0, HERO_VISIBLE_RATIO] }).observe(opening);
+
+// ---- Botão "desativar animações" (canto inferior direito do hero, ao lado do link CONBRAKS) ----
+const animToggle = document.querySelector('#animToggle');
+const animToggleTip = animToggle?.querySelector('.anim-toggle__tip');
+let animToggleTipTimer;
+
+function placeAnimToggle() {
+  if (!animToggle) return;
+  const link = document.querySelector('.opening__url-link');
+  if (!link) return;
+  const size = animToggle.offsetWidth || 36;
+  const gap = 6;
+  const box = opening.getBoundingClientRect();
+  const rect = link.getBoundingClientRect();
+  let left = rect.right - box.left + gap;
+  let top = (rect.top + rect.bottom) / 2 - box.top - size / 2;
+  const maxLeft = box.width - size - 4;
+  if (left > maxLeft) {
+    // Sem espaço à direita do link: encosta na borda, acima do link.
+    left = maxLeft;
+    top = rect.top - box.top - size - 2;
+  }
+  animToggle.style.left = `${Math.round(left)}px`;
+  animToggle.style.top = `${Math.round(top)}px`;
+}
+
+function showAnimToggle() {
+  if (!animToggle) return;
+  placeAnimToggle();
+  animToggle.classList.add('is-visible');
+}
+
+function setAnimationsOff(off) {
+  animationsOff = off;
+  document.documentElement.classList.toggle('no-anim', off);
+  if (animToggle) {
+    const label = off ? 'Ativar animações do site' : 'Desativar animações do site';
+    animToggle.setAttribute('aria-pressed', String(off));
+    animToggle.setAttribute('aria-label', label);
+    if (animToggleTip) animToggleTip.textContent = label;
+  }
+  if (off) {
+    stopHeroVideoNow();
+    clearTimeout(shimmerTimer);
+    shimmer.classList.remove('is-reflecting');
+  } else {
+    heroVideoPlayedOnce = false; // ao reativar, o vídeo volta logo (sem esperar os 20 s)
+    syncHeroVideoPresence();
+    scheduleShimmer();
+  }
+}
+
+if (animToggle) {
+  animToggle.addEventListener('click', () => {
+    setAnimationsOff(!animationsOff);
+    // No toque não existe hover: mostra a dica por um instante para confirmar o novo estado.
+    animToggle.classList.add('is-tip');
+    window.clearTimeout(animToggleTipTimer);
+    animToggleTipTimer = window.setTimeout(() => animToggle.classList.remove('is-tip'), 2200);
+  });
+  window.addEventListener('resize', placeAnimToggle);
+  window.addEventListener('orientationchange', placeAnimToggle);
+  if (typeof ResizeObserver === 'function') new ResizeObserver(placeAnimToggle).observe(opening);
+}
 
 function startOpening() {
   if (openingStarted) return;
@@ -186,6 +277,7 @@ function startOpening() {
     scheduleShimmer(3000);
     setTimeout(() => {
       opening.classList.add('is-settled');
+      showAnimToggle();
     }, 4500);
   }));
 }

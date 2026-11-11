@@ -826,3 +826,24 @@ html.kbe-return:not(.kbe-ready){background:#00102e}
 html.kbe-return:not(.kbe-ready) body{visibility:hidden}
 html.kbe-return .opening__layer,html.kbe-return .opening__shimmer{animation:none!important;opacity:1!important}
 html.kbe-return .opening__shimmer{opacity:0!important}
+
+/* ===== Botão discreto "desativar animações" ===== */
+.anim-toggle{position:absolute;z-index:22;left:0;top:0;width:36px;height:36px;padding:0;border:0;border-radius:50%;background:transparent;color:#fff;cursor:pointer;opacity:0;pointer-events:none;transition:opacity .6s ease;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.anim-toggle.is-visible{opacity:1;pointer-events:auto}
+.anim-toggle svg{display:block;width:100%;height:100%;opacity:.4;filter:drop-shadow(0 1px 3px rgba(0,0,0,.55));transition:opacity .25s ease}
+.anim-toggle[aria-pressed="true"] svg{opacity:.65}
+.anim-toggle:hover svg,.anim-toggle:focus-visible svg{opacity:.95}
+.anim-toggle__slash{opacity:0;transition:opacity .25s ease}
+.anim-toggle[aria-pressed="true"] .anim-toggle__slash{opacity:1}
+.anim-toggle:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.anim-toggle__tip{position:absolute;right:0;bottom:calc(100% + 6px);padding:7px 10px;border-left:3px solid var(--yellow);background:rgba(7,20,31,.94);color:#fff;font:600 .72rem/1.2 var(--body);letter-spacing:.04em;white-space:nowrap;opacity:0;transform:translateY(4px);pointer-events:none;transition:opacity .2s ease,transform .2s ease}
+.anim-toggle:hover .anim-toggle__tip,.anim-toggle:focus-visible .anim-toggle__tip,.anim-toggle.is-tip .anim-toggle__tip{opacity:1;transform:none}
+
+/* ===== Animações desativadas pelo botão (espelha o prefers-reduced-motion) ===== */
+html.no-anim{scroll-behavior:auto}
+html.no-anim *,html.no-anim *:before,html.no-anim *:after{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.01ms!important;transition-delay:0s!important}
+html.no-anim .reveal{opacity:1!important;transform:none!important}
+html.no-anim .opening__layer{opacity:1!important}
+html.no-anim .opening__water,html.no-anim .opening__shimmer{display:none!important}
+html.no-anim .opening__video{opacity:0!important}
+html.no-anim .site-header{opacity:1;transform:none}
