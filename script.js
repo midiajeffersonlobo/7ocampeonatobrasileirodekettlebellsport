@@ -214,7 +214,16 @@ function placeAnimToggle() {
   const size = animToggle.offsetWidth || 36;
   const gap = 6;
   const box = opening.getBoundingClientRect();
-  const rect = link.getBoundingClientRect();
+  // Posição de layout do link (ignora o transform das animações de entrada), para poder
+  // posicionar o botão mesmo antes de a abertura terminar de animar.
+  const stage = link.offsetParent || opening;
+  const stageBox = stage.getBoundingClientRect();
+  const rect = {
+    left: stageBox.left + link.offsetLeft,
+    top: stageBox.top + link.offsetTop,
+    right: stageBox.left + link.offsetLeft + link.offsetWidth,
+    bottom: stageBox.top + link.offsetTop + link.offsetHeight
+  };
   let left = rect.right - box.left + gap;
   let top = (rect.top + rect.bottom) / 2 - box.top - size / 2;
   const maxLeft = box.width - size - 4;
@@ -274,6 +283,7 @@ function startOpening() {
     document.querySelector('.opening__layer--title img').decode?.()
   ]).then(() => requestAnimationFrame(() => {
     opening.classList.add('is-ready');
+    if (document.documentElement.classList.contains('intro-seen')) setTimeout(showAnimToggle, 400);
     scheduleShimmer(3000);
     setTimeout(() => {
       opening.classList.add('is-settled');
