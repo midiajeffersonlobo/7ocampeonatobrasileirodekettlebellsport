@@ -528,6 +528,24 @@ try {
       background: none; border: none; color: #fff;
       opacity: 0.75; transition: opacity 0.2s;
     }
+    .btn-fs-start {
+      position: absolute;
+      top: calc(2.5vh + env(safe-area-inset-top, 0px));
+      left: calc(3vw + env(safe-area-inset-left, 0px));
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 11px; min-height: 0; background: none; border: none; color: #fff;
+      opacity: 0.75; transition: opacity 0.2s;
+    }
+    .btn-fs-start:hover { opacity: 1; }
+    .btn-fs-start[hidden] { display: none; }
+    .btn-haptic-start:not([hidden]) + .btn-fs-start { left: calc(3vw + 50px + env(safe-area-inset-left, 0px)); }
+    /* pisca quando a pessoa tenta sair da tela cheia por Esc/F11 e não consegue: aponta o botão certo */
+    @keyframes fs-pisca {
+      0%, 100% { transform: scale(1); opacity: 0.75; box-shadow: 0 0 0 0 rgba(255, 205, 0, 0); background: none; }
+      25%, 75% { transform: scale(1.25); opacity: 1; color: var(--yellow-primary); background: rgba(255, 205, 0, 0.18); box-shadow: 0 0 0 8px rgba(255, 205, 0, 0.35); border-radius: 10px; }
+      50% { transform: scale(1); opacity: 0.9; box-shadow: 0 0 0 0 rgba(255, 205, 0, 0); }
+    }
+    .btn-fs-start.fs-pisca { animation: fs-pisca 0.7s ease-in-out 3; }
     .btn-haptic-start:hover { opacity: 1; }
     .btn-haptic-start[aria-pressed="false"] { opacity: 0.5; }
     .btn-haptic-start[hidden] { display: none; }
@@ -790,7 +808,7 @@ try {
     @keyframes egg-pop { 0% { opacity: 0; transform: translateY(40px) scale(0.4) rotate(-8deg); } 55% { opacity: 1; transform: translateY(-10px) scale(1.12) rotate(3deg); } 78% { transform: translateY(3px) scale(0.96) rotate(-1deg); } 100% { opacity: 1; transform: none; } }
     html.egg-in .sponsors-row, html.egg-first .sponsors-row { animation: egg-pop 0.75s 0.2s cubic-bezier(0.2, 0.8, 0.3, 1) backwards; }
     html.egg-in .intro-footer, html.egg-first .intro-footer { animation: egg-pop 0.75s 0.4s cubic-bezier(0.2, 0.8, 0.3, 1) backwards; }
-    html.egg-in .btn-haptic-start, html.egg-first .btn-haptic-start { animation: egg-pop 0.6s 0.6s cubic-bezier(0.2, 0.8, 0.3, 1) backwards; }
+    html.egg-in .btn-haptic-start, html.egg-in .btn-fs-start, html.egg-first .btn-haptic-start, html.egg-first .btn-fs-start { animation: egg-pop 0.6s 0.6s cubic-bezier(0.2, 0.8, 0.3, 1) backwards; }
     html.egg-in .btn-burger, html.egg-first .btn-burger { animation: egg-pop 0.6s 0.7s cubic-bezier(0.2, 0.8, 0.3, 1) backwards; }
     html.egg-first .event-title-logo { animation: egg-pop 0.8s 0.05s cubic-bezier(0.2, 0.8, 0.3, 1) backwards; }
     .menu-site { margin: 8px 10px 6px; width: calc(100% - 20px); border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 12px; }
@@ -967,6 +985,7 @@ try {
         <path class="hx-slash" d="M3 3l18 18"/>
       </svg>
     </button>
+    <button class="btn js-fs btn-fs-start" id="btn-fs-start" type="button" aria-pressed="false" aria-label="Tela cheia" title="Tela cheia" onclick="event.stopPropagation(); toggleTelaCheia(event)" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="fs-in"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></g><g class="fs-out"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></g></svg></button>
 
     <button class="btn-burger" id="btn-burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu-panel" onclick="event.stopPropagation(); toggleMenu()"><span></span><span></span><span></span></button>
 
@@ -3025,7 +3044,7 @@ try {
     }
     function fsRender() {
       const on = fsAtivo();
-      if (fsBtn) { fsBtn.hidden = !FS_OK; fsBtn.setAttribute('aria-pressed', on ? 'true' : 'false'); fsBtn.setAttribute('aria-label', on ? 'Sair da tela cheia' : 'Tela cheia'); fsBtn.title = on ? 'Sair da tela cheia' : 'Tela cheia'; }
+      document.querySelectorAll('.js-fs').forEach((b) => { b.hidden = !FS_OK; b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.setAttribute('aria-label', on ? 'Sair da tela cheia' : 'Tela cheia'); b.title = on ? 'Sair da tela cheia' : 'Tela cheia'; });
     }
     function mostraGate() { if (FS_OK && !fsOptOut && !fsAtivo()) { fsGate.classList.add('show'); } }
     async function entraTelaCheia() {
@@ -3056,6 +3075,18 @@ try {
       if (!fsRearma || fsOptOut || fsAtivo() || (e.type === 'keydown' && e.key === 'Escape')) return;
       fsRearma = false; fsEntra().then((okFs) => { if (!okFs && !fsAtivo()) fsRearma = true; });
     }, true));
+    // tentou sair (Esc/F11) e continuou em tela cheia: pisca o botão da tela inicial para mostrar onde se desliga
+    let fsPiscaT = 0;
+    function fsPisca() {
+      const b = document.getElementById('btn-fs-start');
+      if (!b || b.hidden || b.offsetParent === null) return;
+      b.classList.remove('fs-pisca'); void b.offsetWidth; b.classList.add('fs-pisca');
+      clearTimeout(fsPiscaT); fsPiscaT = setTimeout(() => b.classList.remove('fs-pisca'), 2300);
+    }
+    document.addEventListener('keydown', (e) => {
+      if ((e.key === 'Escape' || e.key === 'F11') && fsAtivo()) setTimeout(() => { if (fsAtivo()) fsPisca(); }, 350);
+    }, true);
+    window.fsPisca = fsPisca;
     fsRender(); mostraGate();
 
     // durante a contagem: sem menu do botão direito, sem botão do meio, sem arrastar/selecionar por engano
@@ -3243,7 +3274,7 @@ try {
       if (b.disabled) return;
       closeMenu(); if (histScreen.style.display === 'flex') closeHistory();
       const W = innerWidth, H = innerHeight;
-      const fora = [['.sponsors-row', 0, -H], ['.intro-footer', 0, H], ['#btn-haptic-start', -W, 0], ['#btn-burger', W, 0]];
+      const fora = [['.sponsors-row', 0, -H], ['.intro-footer', 0, H], ['#btn-haptic-start', -W, 0], ['#btn-fs-start', -W, 0], ['#btn-burger', W, 0]];
       try { if (navigator.vibrate) navigator.vibrate([30]); } catch (e) {}
       fora.forEach(([sel, dx, dy], i) => { const el = document.querySelector(sel); if (el) el.animate([{ transform: 'none' }, { transform: 'translate(' + (-Math.sign(dx) * 8) + 'px,' + (-Math.sign(dy) * 8) + 'px) scale(1.08,.92)', offset: 0.25 }, { transform: 'translate(' + dx + 'px,' + dy + 'px) rotate(' + (i % 2 ? 300 : -300) + 'deg) scale(.5)' }], { duration: 420, delay: i * 30, easing: 'cubic-bezier(.55,-.25,.75,.4)', fill: 'forwards' }); });
       const logo = document.querySelector('.event-title-logo'), n = logo.getBoundingClientRect(), s = stdRect();
