@@ -972,6 +972,43 @@ try {
     .sc-next-row[hidden] { display: none; }
     .sc-next-row .btn-next { width: 100%; }
     .btn-export.is-saved { background: transparent; border: 2px solid #2fbf6b; color: #2fbf6b; opacity: 1; cursor: default; }
+
+    /* resumo: dados da prova só para leitura */
+    .sc-ro { display: flex; flex-direction: column; gap: 6px; }
+    .sc-ro-name { font-family: var(--font-ui); font-size: 1.35rem; line-height: 1.1; color: var(--yellow-primary); overflow-wrap: anywhere; }
+    .sc-ro-grid { display: grid; grid-template-columns: 1.4fr 0.6fr 1.2fr; gap: 8px; margin: 0; }
+    .sc-ro-grid div { min-width: 0; }
+    .sc-ro-grid dt { color: #8a9bbd; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    .sc-ro-grid dd { margin: 2px 0 0; color: #fff; font-size: 1rem; overflow-wrap: anywhere; }
+    @media (max-width: 560px) { .sc-ro-grid { grid-template-columns: 1fr 1fr; } .sc-ro-grid > div:first-child { grid-column: 1 / -1; } }
+    /* exportar planilha */
+    #xl-modal { z-index: 132; }
+    .xl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 0 12px; text-align: left; }
+    .xl-grid label { display: flex; flex-direction: column; gap: 4px; color: #8a9bbd; font-size: 0.75rem; text-transform: uppercase; min-width: 0; }
+    .xl-grid input, .xl-grid select { padding: 8px 12px; font-size: 1rem; border-radius: 4px; border: 1px solid rgba(255, 204, 0, 0.5); background: rgba(0, 0, 0, 0.3); color: #fff; font-family: inherit; min-width: 0; width: 100%; }
+    .xl-grid select option { color: #000; }
+    .xl-nota { margin: 0 0 6px; font-size: 0.9rem; }
+    .xl-status { min-height: 1.3em; margin-bottom: 8px; color: #cfd8ee; font-size: 0.9rem; }
+    /* antes de contar: 2ª tela + tela cheia */
+    .fsg-aviso { background: rgba(255, 204, 0, 0.12); border-left: 4px solid var(--yellow-primary); padding: 10px 14px; text-align: left; font-size: 1rem; }
+    .fsg-sec { background: transparent; color: #fff; border: 2px solid rgba(255, 255, 255, 0.5); }
+    .fsg-voltar { background: none; border: 0; color: rgba(255, 255, 255, 0.7); text-decoration: underline; font-size: 1rem; cursor: pointer; padding: 8px; font-family: inherit; }
+    #pre-flow { position: fixed; inset: 0; z-index: 401; display: none; align-items: center; justify-content: center; padding: 24px; text-align: center; overflow-y: auto;
+      background: linear-gradient(135deg, #00102e 0%, #011d4d 60%, #004d25 100%); color: #fff; }
+    #pre-flow.show { display: flex; }
+    #pre-flow section { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; }
+    #pre-flow section[hidden] { display: none; }
+    .pf-card { max-width: 560px; width: 100%; }
+    .pf-steps { list-style: none; counter-reset: pf; margin: 4px 0; padding: 0; text-align: left; width: 100%; display: flex; flex-direction: column; gap: 12px; }
+    .pf-steps li { counter-increment: pf; position: relative; padding-left: 44px; min-height: 32px; line-height: 1.4; font-size: 1.05rem; color: rgba(255, 255, 255, 0.92); }
+    .pf-steps li::before { content: counter(pf); position: absolute; left: 0; top: -1px; width: 30px; height: 30px; border-radius: 50%; background: var(--yellow-primary); color: #000; font-family: var(--font-ui); font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .pf-key { color: var(--yellow-primary); font-weight: 700; }
+    .pf-os { color: #8fa6cf; font-weight: 300; font-size: 0.82em; letter-spacing: 0.02em; margin-left: 4px; }
+    .pf-open { display: inline-block; padding: 4px 12px; border-radius: 6px; border: 2px solid var(--yellow-primary); background: transparent; color: var(--yellow-primary); font-family: var(--font-ui); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; font-size: 0.95rem; }
+    .pf-open:hover { background: rgba(255, 204, 0, 0.15); }
+    .pf-status { display: inline-block; margin-left: 8px; font-size: 0.85rem; color: #ffb4b4; }
+    .pf-status.ok { color: #2fbf6b; }
+    .pf-warn { margin: 0; color: #ffd966; font-size: 0.95rem; text-align: left; }
   </style>
 </head>
 <body>
@@ -985,7 +1022,6 @@ try {
         <path class="hx-slash" d="M3 3l18 18"/>
       </svg>
     </button>
-    <button class="btn js-fs btn-fs-start" id="btn-fs-start" type="button" aria-pressed="false" aria-label="Tela cheia" title="Tela cheia" onclick="event.stopPropagation(); toggleTelaCheia(event)" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="fs-in"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></g><g class="fs-out"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></g></svg></button>
 
     <button class="btn-burger" id="btn-burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="menu-panel" onclick="event.stopPropagation(); toggleMenu()"><span></span><span></span><span></span></button>
 
@@ -1044,7 +1080,6 @@ try {
         <path class="hx-slash" d="M3 3l18 18"/>
       </svg>
         </button>
-        <button class="btn js-fs c-fs" id="btn-fs" type="button" aria-pressed="false" aria-label="Tela cheia" title="Tela cheia" onclick="toggleTelaCheia(event)" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="fs-in"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></g><g class="fs-out"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></g></svg></button>
         <button class="btn c-finish" onclick="event.stopPropagation(); requestFinish()">Finalizar</button>
       </div>
 
@@ -1128,13 +1163,21 @@ try {
       </div>
 
       <div class="sc-meta">
-        <label class="mm-athlete">Atleta (obrigatório) <input type="text" id="athlete-summary" maxlength="60" autocomplete="off" placeholder="Nome do atleta" required></label>
+        <div class="sc-ro" id="sc-ro" aria-label="Dados da prova">
+          <div class="sc-ro-name" id="sum-athlete"></div>
+          <dl class="sc-ro-grid">
+            <div><dt>Movimento</dt><dd id="sum-mov">—</dd></div>
+            <div><dt>Plataforma</dt><dd id="sum-pista">—</dd></div>
+            <div><dt>Árbitro</dt><dd id="sum-arb">—</dd></div>
+          </dl>
+        </div>
+        <div class="sc-hidden-state" hidden aria-hidden="true"><label class="mm-athlete">Atleta (obrigatório) <input type="text" id="athlete-summary" maxlength="60" autocomplete="off" placeholder="Nome do atleta" required></label>
         <button class="sc-more" id="sc-more" type="button" aria-expanded="false" aria-controls="sc-extra" onclick="toggleSummaryExtra()"><span id="sc-more-txt">Movimento, plataforma e árbitro</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
         <div class="sc-extra" id="sc-extra" aria-hidden="true"><div><div class="sc-extra-in">
           <label class="mm-mov">Movimento <input type="text" id="mov-summary" maxlength="60" list="dl-mov" autocomplete="off"></label>
           <label>Plataforma <select id="pista-summary"><option value="">—</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select></label>
           <label>Árbitro <input type="text" id="arb-summary" maxlength="60" list="dl-arb" autocomplete="off"></label>
-        </div></div></div>
+        </div></div></div></div>
       </div>
 
       <div class="summary-stats">
@@ -1167,9 +1210,6 @@ try {
           <div class="sc-menu" id="sc-menu" role="menu" hidden onclick="event.stopPropagation()">
             <button class="sc-item" id="sc-export" type="button" role="menuitem" onclick="exportTXT()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M6.5 9.5 12 15l5.5-5.5"/><path d="M4 20.5h16"/></svg><span>Exportar TXT</span>
-            </button>
-            <button class="sc-item" id="sc-placar" type="button" role="menuitem" onclick="abrePlacarModal()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg><span>Placar</span>
             </button>
             <button class="sc-item" id="sc-home" type="button" role="menuitem" onclick="sairParaMenu()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v10h13V10"/><path d="M10 20v-6h4v6"/></svg><span>Menu principal</span>
@@ -1212,6 +1252,7 @@ try {
     <div class="hist-head">
       <h2 id="hist-title">Histórico</h2>
       <button class="hist-filter-btn" id="hf-toggle" type="button" aria-expanded="false" aria-controls="hist-filters" onclick="toggleFiltros()"><span>Filtros</span><span id="hf-badge"></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 9l7 7 7-7"/></svg></button>
+      <button class="hist-filter-btn" id="hf-export" type="button" onclick="abrePlanilha()" aria-label="Exportar planilha"><span>Exportar</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M6.5 9.5 12 15l5.5-5.5"/><path d="M4 20.5h16"/></svg></button>
       <button class="keys-close" id="hist-burger" type="button" onclick="event.stopPropagation(); toggleMenu()" aria-label="Menu" aria-expanded="false" aria-controls="menu-panel">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
       </button>
@@ -1324,13 +1365,42 @@ try {
     </div>
   </div>
 
-  <!-- TELA CHEIA OBRIGATÓRIA (só some ao apertar o botão) -->
+  <!-- TELA CHEIA OBRIGATÓRIA (só na contagem; só some ao apertar o botão) -->
   <div id="fs-gate" role="dialog" aria-modal="true" aria-labelledby="fsg-t">
     <div class="fsg-card">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="fs-in"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></g></svg>
-      <h2 id="fsg-t">Tela cheia</h2>
-      <p>Para não sair da contagem sem querer, o contador funciona em tela cheia.</p>
+      <h2 id="fsg-t">Tela cheia obrigatória</h2>
+      <p>A contagem funciona em tela cheia, para não sair dela sem querer.</p>
+      <p class="fsg-aviso"><strong>Para sair da tela cheia, é preciso sair da contagem</strong> (Finalizar e voltar ao menu principal).</p>
       <button class="fsg-btn" id="fsg-btn" type="button" onclick="entraTelaCheia()">Entrar em tela cheia</button>
+      <button class="fsg-voltar" type="button" onclick="pfCancela()">Voltar ao menu</button>
+    </div>
+  </div>
+
+  <!-- ANTES DE CONTAR: pergunta da 2ª tela e passo a passo -->
+  <div id="pre-flow" role="dialog" aria-modal="true" aria-labelledby="pf-t">
+    <div class="fsg-card pf-card">
+      <section id="pf-pergunta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg>
+        <h2 id="pf-t">Abrir a 2ª tela do placar?</h2>
+        <p>Mostra o número da contagem, com os dados do atleta, em um monitor ou TV ligado ao computador.</p>
+        <button class="fsg-btn" type="button" onclick="pfSim()">Sim, abrir a 2ª tela</button>
+        <button class="fsg-btn fsg-sec" type="button" onclick="pfNao()">Não, só contar</button>
+        <button class="fsg-voltar" type="button" onclick="pfCancela()">Voltar ao menu</button>
+      </section>
+      <section id="pf-macro" hidden>
+        <h2>Configure a 2ª tela</h2>
+        <ol class="pf-steps">
+          <li>Conecte a segunda tela (monitor ou TV) ao computador.</li>
+          <li>Escolha a opção <strong class="pf-key">Estender (Win+P)</strong> <span class="pf-os">no Windows</span></li>
+          <li>Clique em <button class="pf-open" type="button" onclick="abrePlacar()">Abrir 2ª tela</button> <span class="pf-status" id="pf-status"></span></li>
+          <li>Arraste a janela do placar para a segunda tela.</li>
+          <li>Na janela do placar, deixe em <strong>tela cheia</strong>: passe o mouse perto dos logos, no alto da janela, e clique em <strong>Tela cheia</strong>.</li>
+        </ol>
+        <p class="pf-warn" id="pf-warn" hidden>A 2ª tela ainda não aparece conectada. Se já fez tudo, toque de novo em “Já fiz tudo” para continuar mesmo assim.</p>
+        <button class="fsg-btn" type="button" onclick="pfConfirma()">Já fiz tudo</button>
+        <button class="fsg-voltar" type="button" onclick="pfVolta()">Voltar</button>
+      </section>
     </div>
   </div>
 
@@ -1354,6 +1424,26 @@ try {
         <button class="btn btn-export" type="submit">Confirmar</button>
       </div>
     </form>
+  </div>
+
+  <!-- EXPORTAR PLANILHA (histórico) -->
+  <div class="modal-backdrop" id="xl-modal" onclick="if (event.target === this) fechaPlanilha()">
+    <div class="modal-card confirm-card" role="dialog" aria-modal="true" aria-labelledby="xl-title">
+      <div class="modal-header"><h2 class="modal-title" id="xl-title">Exportar planilha</h2></div>
+      <p class="confirm-text" id="xl-fonte"></p>
+      <div class="xl-grid">
+        <label>Dia · de <input type="date" id="xl-de"></label>
+        <label>até <input type="date" id="xl-ate"></label>
+        <label>Hora de início <select id="xl-hora"></select></label>
+        <label>Movimento <input type="text" id="xl-mov" list="dl-mov" autocomplete="off"></label>
+      </div>
+      <p class="confirm-text xl-nota">Planilha Excel (.xlsx) com duas abas: <strong>Provas</strong> e <strong>Repetições</strong>.</p>
+      <div class="xl-status" id="xl-status" aria-live="polite"></div>
+      <div class="modal-actions">
+        <button class="btn btn-export" id="xl-go" type="button" onclick="geraPlanilha()">Exportar</button>
+        <button class="btn btn-close" type="button" onclick="fechaPlanilha()">Cancelar <span class="kb">(Esc)</span></button>
+      </div>
+    </div>
   </div>
 
   <!-- EXPORTAR TXT -->
@@ -1585,8 +1675,16 @@ try {
 
     function startCounter(ev) {
       if (ev && extraOpen) { setExtra(false); return; }   // primeiro toque só recolhe os campos
+      if (preFluxoAberto()) return;
       const nome = limpaTexto(athleteStart.value);
       if (!nome) { mostraErroAtleta(); return; }          // só o nome do atleta é obrigatório
+      const pr = lePista(pistaStart.value);
+      if (!pr.ok) { mostraErroPista(); return; }
+      pfInicio();                                          // 2ª tela (opcional) → tela cheia obrigatória → beginCounter()
+    }
+    function beginCounter() {
+      const nome = limpaTexto(athleteStart.value);
+      if (!nome) { mostraErroAtleta(); return; }
       const pr = lePista(pistaStart.value);
       if (!pr.ok) { mostraErroPista(); return; }
       athlete = nome;
@@ -1748,6 +1846,13 @@ try {
     }
     function marcaAlterado() { if (saved) { saved = false; applySavedMode(); } }
 
+    // Resumo: dados da prova só para leitura (preenchidos na tela inicial)
+    function atualizaResumoRO() {
+      document.getElementById('sum-athlete').textContent = athlete || 'SEM NOME';
+      document.getElementById('sum-mov').textContent = movimento || '—';
+      document.getElementById('sum-pista').textContent = (pista === null || pista === undefined) ? '—' : String(pista);
+      document.getElementById('sum-arb').textContent = arbitro || '—';
+    }
     function atualizaExtraLabel() {
       const parts = [];
       const m = limpaTexto(movSummary.value), p = pistaSummary.value.trim(), a = limpaTexto(arbSummary.value);
@@ -1818,6 +1923,7 @@ try {
       [athleteSummary, pistaSummary].forEach((i) => i.classList.remove('invalid'));
       setSummaryExtra(false);
       atualizaExtraLabel();
+      atualizaResumoRO();
       renderLogTables();
       applySavedMode();
       updateExportButton();
@@ -1838,6 +1944,7 @@ try {
     // Volta à tela inicial e zera tudo (a prova já foi salva ou descartada antes de chegar aqui)
     function concluirReset() {
       disarmReset();
+      fsSai();
       fechaMenuResumo(); closeDlg(); closeTabela();
       active = false;
       finished = false;
@@ -2220,13 +2327,15 @@ try {
         else if (e.code === 'Space') e.preventDefault();
         return;
       }
-      if (fsGate.classList.contains('show')) { if (e.key === 'Enter') { e.preventDefault(); entraTelaCheia(); } else e.preventDefault(); return; }
+      if (pfEl.classList.contains('show')) { if (e.key === 'Escape') { e.preventDefault(); pfCancela(); } return; }
+      if (fsGate.classList.contains('show')) { if (e.key === 'Escape') { e.preventDefault(); pfCancela(); } else if (e.key === 'Enter') { e.preventDefault(); entraTelaCheia(); } else e.preventDefault(); return; }
       if (placarModal.style.display === 'flex') { if (e.key === 'Escape' || e.key === 'Enter') { e.preventDefault(); fechaPlacarModal(); } else if (e.code === 'Space') e.preventDefault(); return; }
       // Janelas novas: só Esc age; nenhuma outra tecla conta repetição
       if (pinModal.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); closePin(); } return; }
       if (!netLegend.hidden) { if (e.key === 'Escape') { e.preventDefault(); legendGuard = 0; fechaLegenda(); } return; }
       if (dlgOpen) { if (e.key === 'Escape') { e.preventDefault(); closeDlg(); } return; }
       if (exportModal.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); closeExportar(); } return; }
+      if (xlModal.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); fechaPlanilha(); } return; }
       if (tblScreen.style.display === 'flex') { if (e.key === 'Escape') { e.preventDefault(); closeTabela(); } return; }
       if (scMenuOpen) { if (e.key === 'Escape') { e.preventDefault(); fechaMenuResumo(); } return; }
       // Detalhe de prova / histórico / menu: Esc fecha, nenhuma outra tecla conta repetição
@@ -2694,6 +2803,7 @@ try {
       $('hist-title').textContent = titulos[modo];
       $('hf-status-wrap').hidden = modo !== 'local';
       $('hf-este-wrap').hidden = !ehNuvem();
+      $('hf-export').hidden = ehLix();
       histScreen.style.display = 'flex'; document.body.classList.add('hist-open');
       renderHistorico(true);
     }
@@ -2801,14 +2911,14 @@ try {
     let nuvemHora = true;    // o banco já tem a coluna hora_inicio? (só é preciso para "hora" sem data)
     let nuvemSaiu = true;    // o banco já tem a coluna saiu_da_tela_em?
     let nuvemNovas = true;   // a tabela de provas já tem as colunas descartada_em/restaurada_em? (se não, tenta sem elas)
-    function urlNuvem(f, offset) {
+    function urlNuvem(f, offset, opt) {
       const lix = ehLix();
       const ps = [];
       const add = (k, v) => ps.push(k + '=' + encodeURIComponent(v));
       add('select', 'id,atleta,pista,movimento,arbitro,dispositivo_id,iniciou_em,finalizou_em,reps_validas,no_counts,duracao_s,enviado_em' +
-        (lix ? ',descartada_em' : (nuvemNovas ? ',descartada_em,restaurada_em' : '')) + (nuvemSaiu ? ',saiu_da_tela_em' : ''));
+        (lix ? ',descartada_em' : (nuvemNovas ? ',descartada_em,restaurada_em' : '')) + (nuvemSaiu ? ',saiu_da_tela_em' : '') + (opt && opt.eventos ? ',eventos' : ''));
       add('order', lix ? 'descartada_em.desc' : 'finalizou_em.desc');
-      add('limit', String(PAGINA)); add('offset', String(offset));
+      add('limit', String((opt && opt.limit) || PAGINA)); add('offset', String(offset));
       const like = (s) => 'ilike.*' + s.replace(/[*%,()]/g, ' ') + '*';
       if (f.atleta) add('atleta', like(f.atleta));
       if (f.mov) add('movimento', like(f.mov));
@@ -3002,6 +3112,187 @@ try {
       showToast('Restaurada: agora está no histórico, marcada como restaurada', 'ok');
       atualizaAposLixeira();
     }
+    // ---------- exportar planilha (.xlsx com duas abas; sem biblioteca: zip "store" + XML) ----------
+    const xlModal = document.getElementById('xl-modal');
+    const XLSX_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    const XL = (() => {
+      const enc = new TextEncoder();
+      const crcT = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[n] = c >>> 0; } return t; })();
+      const crc32 = (u) => { let c = 0xFFFFFFFF; for (let i = 0; i < u.length; i++) c = crcT[(c ^ u[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+      function zip(files) {
+        const parts = [], central = []; let offset = 0;
+        const d = new Date();
+        const dosT = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1);
+        const dosD = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+        files.forEach((f) => {
+          const name = enc.encode(f.name), data = enc.encode(f.data), crc = crc32(data);
+          const lh = new DataView(new ArrayBuffer(30));
+          lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+          lh.setUint16(10, dosT, true); lh.setUint16(12, dosD, true); lh.setUint32(14, crc, true);
+          lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true); lh.setUint16(26, name.length, true); lh.setUint16(28, 0, true);
+          parts.push(new Uint8Array(lh.buffer), name, data);
+          const ch = new DataView(new ArrayBuffer(46));
+          ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true); ch.setUint16(10, 0, true);
+          ch.setUint16(12, dosT, true); ch.setUint16(14, dosD, true); ch.setUint32(16, crc, true);
+          ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true); ch.setUint16(28, name.length, true); ch.setUint32(42, offset, true);
+          central.push(new Uint8Array(ch.buffer), name);
+          offset += 30 + name.length + data.length;
+        });
+        let cdSize = 0; central.forEach((c) => { cdSize += c.length; });
+        const end = new DataView(new ArrayBuffer(22));
+        end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true);
+        end.setUint32(12, cdSize, true); end.setUint32(16, offset, true);
+        return new Blob([...parts, ...central, new Uint8Array(end.buffer)], { type: XLSX_MIME });
+      }
+      const esc = (v) => String(v).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const colName = (i) => { let n = i + 1, s = ''; while (n > 0) { s = String.fromCharCode(65 + (n - 1) % 26) + s; n = Math.floor((n - 1) / 26); } return s; };
+      // estilos: 0 padrão · 1 cabeçalho · 2 data · 3 hh:mm:ss · 4 [mm]:ss · 5 0.0 · 6 hh:mm:ss.000
+      const STYLES = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+        '<numFmts count="4"><numFmt numFmtId="164" formatCode="hh:mm:ss"/><numFmt numFmtId="165" formatCode="[mm]:ss"/><numFmt numFmtId="166" formatCode="0.0"/><numFmt numFmtId="167" formatCode="hh:mm:ss.000"/></numFmts>' +
+        '<fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts>' +
+        '<fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFFCC00"/><bgColor indexed="64"/></patternFill></fill></fills>' +
+        '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>' +
+        '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>' +
+        '<cellXfs count="7"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>' +
+        '<xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/>' +
+        '<xf numFmtId="14" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>' +
+        '<xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>' +
+        '<xf numFmtId="165" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>' +
+        '<xf numFmtId="166" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>' +
+        '<xf numFmtId="167" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/></cellXfs>' +
+        '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>';
+      function sheetXml(head, widths, rows) {
+        const all = [head.map((h) => ({ k: 's', v: h, s: 1 })), ...rows];
+        let x = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><sheetFormatPr defaultRowHeight="15"/><cols>';
+        widths.forEach((w, i) => { x += '<col min="' + (i + 1) + '" max="' + (i + 1) + '" width="' + w + '" customWidth="1"/>'; });
+        x += '</cols><sheetData>';
+        all.forEach((row, r) => {
+          x += '<row r="' + (r + 1) + '">';
+          row.forEach((c, i) => {
+            if (!c) return;
+            const ref = colName(i) + (r + 1), st = c.s ? ' s="' + c.s + '"' : '';
+            if (c.k === 'n') { if (isFinite(c.v)) x += '<c r="' + ref + '"' + st + '><v>' + c.v + '</v></c>'; }
+            else x += '<c r="' + ref + '"' + st + ' t="inlineStr"><is><t xml:space="preserve">' + esc(c.v) + '</t></is></c>';
+          });
+          x += '</row>';
+        });
+        x += '</sheetData>';
+        if (rows.length) x += '<autoFilter ref="A1:' + colName(head.length - 1) + (rows.length + 1) + '"/>';
+        return x + '</worksheet>';
+      }
+      const S = (v) => (v === null || v === undefined || v === '') ? null : { k: 's', v: String(v) };
+      const N = (v, s) => (v === null || v === undefined || v === '' || !isFinite(v)) ? null : { k: 'n', v: Number(v), s: s || 0 };
+      const xlDia = (d) => Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86400000) + 25569;
+      const xlHora = (d) => (d.getHours() * 3600 + d.getMinutes() * 60 + d.getSeconds() + d.getMilliseconds() / 1000) / 86400;
+      function planilha(provas) {
+        const rows1 = [], rows2 = [];
+        provas.forEach((p, i) => {
+          const n = i + 1, ini = new Date(p.iniciou_em), fim = new Date(p.finalizou_em), dur = p.duracao_s || 0;
+          rows1.push([N(n), S(p.atleta), S(p.movimento), N(p.pista), S(p.arbitro), N(xlDia(fim), 2), N(xlHora(ini), 3), N(xlHora(fim), 3),
+            N(p.reps_validas), N(p.no_counts), N(dur / 86400, 4), N(dur > 0 ? p.reps_validas / (dur / 60) : 0, 5),
+            S(String(p.dispositivo_id || '').slice(0, 8).toUpperCase()), S(p.saiu_da_tela_em ? 'Sim' : '')]);
+          (p.eventos || []).forEach((e) => {
+            const t = e[1];
+            rows2.push([N(n), S(p.atleta), S(p.movimento), N(xlDia(fim), 2), N(e[0]), S(t === 'N' ? 'NO COUNT' : (t === 'C' ? 'CORREÇÃO (-1)' : 'VÁLIDA')),
+              N(e[2]), N(e[5] === null || e[5] === undefined ? null : e[5] / 1000, 5), N(e[3] === null || e[3] === undefined ? null : xlHora(new Date(e[3])), 6), N((e[4] || 0) / 86400000, 4)]);
+          });
+        });
+        const head1 = ['Prova nº', 'Atleta', 'Movimento', 'Plataforma', 'Árbitro', 'Data', 'Início', 'Término', 'Reps válidas', 'No Counts', 'Duração', 'Ritmo (RPM)', 'Aparelho', 'Saiu da tela'];
+        const w1 = [9, 28, 18, 11, 22, 12, 10, 10, 12, 11, 10, 12, 11, 12];
+        const head2 = ['Prova nº', 'Atleta', 'Movimento', 'Data', '#', 'Status', 'Reps após', 'Intervalo (s)', 'Hora exata', 'Decorrido'];
+        const w2 = [9, 28, 18, 12, 6, 16, 11, 14, 14, 11];
+        const NS = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main', RS = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+        return zip([
+          { name: '[Content_Types].xml', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>' },
+          { name: '_rels/.rels', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>' },
+          { name: 'xl/workbook.xml', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="' + NS + '" xmlns:r="' + RS + '"><sheets><sheet name="Provas" sheetId="1" r:id="rId1"/><sheet name="Repetições" sheetId="2" r:id="rId2"/></sheets></workbook>' },
+          { name: 'xl/_rels/workbook.xml.rels', data: '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>' },
+          { name: 'xl/styles.xml', data: STYLES },
+          { name: 'xl/worksheets/sheet1.xml', data: sheetXml(head1, w1, rows1) },
+          { name: 'xl/worksheets/sheet2.xml', data: sheetXml(head2, w2, rows2) }
+        ]);
+      }
+      return { planilha };
+    })();
+
+    async function saveBlobFile(blob, fileName) {
+      if (window.showSaveFilePicker) {
+        try {
+          const handle = await window.showSaveFilePicker({ suggestedName: fileName, types: [{ description: 'Planilha Excel', accept: { [XLSX_MIME]: ['.xlsx'] } }] });
+          const w = await handle.createWritable(); await w.write(blob); await w.close();
+          return true;
+        } catch (err) {
+          if (err && err.name === 'AbortError') return false;   // cancelou
+          // outro erro (ex.: o navegador pede um toque novo depois da espera): cai no download comum
+        }
+      }
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob); link.download = fileName;
+      document.body.appendChild(link); link.click(); document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(link.href), 10000);
+      return true;
+    }
+    // Nuvem: baixa todas as páginas (com os eventos) respeitando dia e movimento; a hora é filtrada aqui
+    async function baixaProvasNuvem(f, de, ate, onProg) {
+      const rows = []; let off = 0;
+      for (let guard = 0; guard < 400; guard++) {
+        let url = urlNuvem(f, off, { eventos: true, limit: 100 });
+        if (de) { const [y, m, d] = de.split('-').map(Number); url += '&finalizou_em=gte.' + encodeURIComponent(new Date(y, m - 1, d).toISOString()); }
+        if (ate) { const [y, m, d] = ate.split('-').map(Number); url += '&finalizou_em=lt.' + encodeURIComponent(new Date(y, m - 1, d + 1).toISOString()); }
+        const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 20000);
+        let r;
+        try { r = await fetch(url, { headers: { 'apikey': NUVEM.key }, signal: ctl.signal }); } finally { clearTimeout(to); }
+        if (r.status === 400 && nuvemSaiu) { nuvemSaiu = false; continue; }
+        if (r.status === 400 && nuvemNovas) { nuvemNovas = false; continue; }
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        const page = await r.json();
+        rows.push(...page); off += page.length; onProg(rows.length);
+        if (page.length < 100) break;
+      }
+      return rows;
+    }
+    function abrePlanilha() {
+      if (ehLix()) return;
+      const hh = $('xl-hora');
+      if (!hh.options.length) hh.innerHTML = $('hf-hora').innerHTML;
+      $('xl-de').value = $('hf-data').value; $('xl-ate').value = $('hf-data').value;
+      hh.value = $('hf-hora').value; $('xl-mov').value = $('hf-mov').value;
+      $('xl-fonte').textContent = 'Fonte: ' + (ehNuvem() ? 'histórico na nuvem' : 'histórico local (este aparelho)') + '. Deixe um filtro em branco para não limitar.';
+      $('xl-status').textContent = ''; $('xl-go').disabled = false;
+      xlModal.style.display = 'flex';
+    }
+    function fechaPlanilha() { xlModal.style.display = 'none'; }
+    let xlBusy = false;
+    async function geraPlanilha() {
+      if (xlBusy) return;
+      const de = $('xl-de').value, ate = $('xl-ate').value, mov = limpaTexto($('xl-mov').value);
+      const hora = $('xl-hora').value === '' ? null : parseInt($('xl-hora').value, 10);
+      if (de && ate && de > ate) { $('xl-status').textContent = 'O dia inicial é depois do final.'; return; }
+      xlBusy = true; $('xl-go').disabled = true; $('xl-status').textContent = 'Preparando…';
+      try {
+        let provas;
+        if (ehNuvem()) {
+          const f = { atleta: '', mov: mov, arb: '', pista: { ok: true, val: null }, hora: null, data: '', status: 'todos', este: false };
+          provas = await baixaProvasNuvem(f, de, ate, (n) => { $('xl-status').textContent = 'Baixando da nuvem… ' + n; });
+        } else provas = histLoad();
+        provas = provas.filter((p) => {
+          if (mov && !norm(p.movimento).includes(norm(mov))) return false;
+          const dia = diaLocal(p.finalizou_em);
+          if (de && dia < de) return false;
+          if (ate && dia > ate) return false;
+          if (hora !== null && new Date(p.iniciou_em).getHours() !== hora) return false;
+          return true;
+        }).sort((a, b) => (a.iniciou_em > b.iniciou_em ? 1 : -1));
+        if (!provas.length) { $('xl-status').textContent = 'Nenhuma prova com esses filtros.'; return; }
+        const nome = 'kettlebell_planilha_' + (ehNuvem() ? 'nuvem' : 'local') + '_' + fileStamp(new Date()) + '.xlsx';
+        const blob = XL.planilha(provas);
+        fechaPlanilha();
+        if (await saveBlobFile(blob, nome)) showToast('Planilha gerada: ' + plural(provas.length, 'prova', 'provas'), 'ok');
+      } catch (err) {
+        $('xl-status').textContent = ehNuvem() ? 'Não foi possível baixar da nuvem. Verifique a internet e tente de novo.' : 'Não foi possível gerar a planilha.';
+      } finally { xlBusy = false; $('xl-go').disabled = false; }
+    }
+
     function exportaProvaTXT() {
       if (!provaAberta) return;
       const p = provaAberta;
@@ -3028,12 +3319,12 @@ try {
     window.addEventListener('resize', () => { if (extraOpen) medeLift(); });
     window.addEventListener('online', () => { netState = 'work'; renderStatus(); pingNet(); syncNow(false); });
     window.addEventListener('offline', () => { netState = 'down'; renderStatus(); });
-    // ---------- TELA CHEIA: obrigatória ao entrar; só o botão do lado direito da tela 1 desliga ----------
+    // ---------- TELA CHEIA: obrigatória só na tela de contagem; só sai ao sair da contagem ----------
     const FS_ROOT = document.documentElement;
     const FS_OK = !!(FS_ROOT.requestFullscreen || FS_ROOT.webkitRequestFullscreen) && document.fullscreenEnabled !== false;   // iPhone não tem
     const fsAtivo = () => !!(document.fullscreenElement || document.webkitFullscreenElement) || window.matchMedia('(display-mode: fullscreen)').matches;
-    let fsOptOut = false, fsRearma = false;
-    const fsGate = document.getElementById('fs-gate'), fsBtn = document.getElementById('btn-fs');
+    let fsRearma = false;
+    const fsGate = document.getElementById('fs-gate');
     function fsTravaTeclas() { try { if (navigator.keyboard && navigator.keyboard.lock) navigator.keyboard.lock(['Escape', 'F11']).catch(() => {}); } catch (e) {} }
     function fsLiberaTeclas() { try { if (navigator.keyboard && navigator.keyboard.unlock) navigator.keyboard.unlock(); } catch (e) {} }
     function fsEntra() {
@@ -3042,52 +3333,66 @@ try {
         return Promise.resolve(r).then(() => { fsTravaTeclas(); return true; }).catch(() => false);
       } catch (e) { return Promise.resolve(false); }
     }
-    function fsRender() {
-      const on = fsAtivo();
-      document.querySelectorAll('.js-fs').forEach((b) => { b.hidden = !FS_OK; b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.setAttribute('aria-label', on ? 'Sair da tela cheia' : 'Tela cheia'); b.title = on ? 'Sair da tela cheia' : 'Tela cheia'; });
+    // ao sair da contagem (menu principal): libera a tela cheia
+    function fsSai() {
+      fsRearma = false; fsLiberaTeclas();
+      try {
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+          const r = (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+          if (r && r.catch) r.catch(() => {});
+        }
+      } catch (e) {}
     }
-    function mostraGate() { if (FS_OK && !fsOptOut && !fsAtivo()) { fsGate.classList.add('show'); } }
     async function entraTelaCheia() {
-      fsOptOut = false;
       const okFs = await fsEntra();
-      fsGate.classList.remove('show');
-      if (!okFs && !fsAtivo()) showToast('Este navegador não liberou a tela cheia. Use o botão do canto direito para tentar de novo.', 'err');
-      fsRender();
-    }
-    function toggleTelaCheia(ev) {
-      if (ev) ev.stopPropagation();
-      if (fsAtivo()) {
-        fsOptOut = true; fsRearma = false; fsLiberaTeclas();
-        try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {}
-      } else { fsOptOut = false; fsEntra(); }
-      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+      if (okFs || fsAtivo()) { fsGate.classList.remove('show'); beginCounter(); return; }
+      showToast('Este navegador não liberou a tela cheia. Toque de novo em "Entrar em tela cheia".', 'err');
     }
     function fsMudou() {
-      fsRender();
-      if (fsAtivo()) { fsGate.classList.remove('show'); fsRearma = false; fsTravaTeclas(); return; }
-      if (fsOptOut || !FS_OK) return;
-      // saiu sem usar o botão (Esc, F11, gesto do navegador): não interrompe a contagem; volta no próximo toque ou tecla
-      if (active) fsRearma = true; else mostraGate();
+      if (fsAtivo()) { fsRearma = false; fsTravaTeclas(); return; }
+      // saiu sem querer (Esc, F11, gesto do navegador) no meio da contagem: não interrompe; volta no próximo toque ou tecla
+      if (active) fsRearma = true;
     }
     document.addEventListener('fullscreenchange', fsMudou); document.addEventListener('webkitfullscreenchange', fsMudou);
     ['pointerdown', 'keydown'].forEach((t) => document.addEventListener(t, (e) => {
       if (e.type === 'keydown' && e.key === 'F11' && fsAtivo()) e.preventDefault();
-      if (!fsRearma || fsOptOut || fsAtivo() || (e.type === 'keydown' && e.key === 'Escape')) return;
+      if (!fsRearma || fsAtivo() || (e.type === 'keydown' && e.key === 'Escape')) return;
       fsRearma = false; fsEntra().then((okFs) => { if (!okFs && !fsAtivo()) fsRearma = true; });
     }, true));
-    // tentou sair (Esc/F11) e continuou em tela cheia: pisca o botão da tela inicial para mostrar onde se desliga
-    let fsPiscaT = 0;
-    function fsPisca() {
-      const b = document.getElementById('btn-fs-start');
-      if (!b || b.hidden || b.offsetParent === null) return;
-      b.classList.remove('fs-pisca'); void b.offsetWidth; b.classList.add('fs-pisca');
-      clearTimeout(fsPiscaT); fsPiscaT = setTimeout(() => b.classList.remove('fs-pisca'), 2300);
+
+    // ---------- ANTES DE CONTAR: pergunta da 2ª tela (e passo a passo) → tela cheia obrigatória → contagem ----------
+    const pfEl = document.getElementById('pre-flow');
+    let pfAvisou = false;
+    const preFluxoAberto = () => pfEl.classList.contains('show') || fsGate.classList.contains('show');
+    function pfPasso(p) {
+      document.getElementById('pf-pergunta').hidden = p !== 'pergunta';
+      document.getElementById('pf-macro').hidden = p !== 'macro';
+      if (p === 'macro') pfStatus();
     }
-    document.addEventListener('keydown', (e) => {
-      if ((e.key === 'Escape' || e.key === 'F11') && fsAtivo()) setTimeout(() => { if (fsAtivo()) fsPisca(); }, 350);
-    }, true);
-    window.fsPisca = fsPisca;
-    fsRender(); mostraGate();
+    function pfStatus() {
+      const el = document.getElementById('pf-status'), ok = placarLigado();
+      el.textContent = ok ? '2ª tela conectada ✓' : '2ª tela ainda não aberta';
+      el.classList.toggle('ok', ok);
+    }
+    function pfInicio() {
+      try { closeMenu(); } catch (e) {}
+      if (placarLigado()) { pfTelaCheia(); return; }       // 2ª tela já conectada: não pergunta de novo
+      pfAvisou = false; document.getElementById('pf-warn').hidden = true;
+      pfPasso('pergunta'); pfEl.classList.add('show');
+    }
+    function pfSim() { pfPasso('macro'); }
+    function pfNao() { pfTelaCheia(); }
+    function pfVolta() { pfPasso('pergunta'); }
+    function pfConfirma() {
+      if (!placarLigado() && !pfAvisou) { pfAvisou = true; document.getElementById('pf-warn').hidden = false; return; }
+      pfTelaCheia();
+    }
+    function pfTelaCheia() {
+      pfEl.classList.remove('show');
+      if (!FS_OK || fsAtivo()) { beginCounter(); return; }
+      fsGate.classList.add('show');
+    }
+    function pfCancela() { pfEl.classList.remove('show'); fsGate.classList.remove('show'); }
 
     // durante a contagem: sem menu do botão direito, sem botão do meio, sem arrastar/selecionar por engano
     const emContagem = () => { const c = document.getElementById('counter-screen'); return !!c && c.offsetParent !== null; };
@@ -3114,6 +3419,7 @@ try {
     function renderPlacarStatus() {
       const st = document.getElementById('pl-status');
       st.innerHTML = placarLigado() ? '2ª tela: <b>conectada</b>' : '2ª tela: ainda não aberta';
+      if (pfEl.classList.contains('show')) pfStatus();
     }
     if (placarCh) placarCh.onmessage = (ev) => {
       const m = ev.data; if (!m) return;
@@ -3121,7 +3427,7 @@ try {
       else if (m.t === 'vivo') { placarVivo = Date.now(); renderPlacarStatus(); }
     };
     let placarTick = 0;
-    setInterval(() => { placarTick++; publicaPlacar(placarTick % 4 === 0 && placarLigado()); if (placarTick % 4 === 0 && placarModal.style.display === 'flex') renderPlacarStatus(); }, 250);
+    setInterval(() => { placarTick++; publicaPlacar(placarTick % 4 === 0 && placarLigado()); if (placarTick % 4 === 0 && (placarModal.style.display === 'flex' || pfEl.classList.contains('show'))) renderPlacarStatus(); }, 250);
     function abrePlacarModal() {
       try { closeMenu(); fechaMenuResumo(); } catch (e) {}
       let visto = false; try { visto = localStorage.getItem('kb_placar_visto') === '1'; localStorage.setItem('kb_placar_visto', '1'); } catch (e) {}
