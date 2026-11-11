@@ -85,40 +85,95 @@ syncMobileTriggers();
 mobileLayout.addEventListener?.('change', syncMobileTriggers);
 
 let openingStarted = false;
-const videoOpacityStates = [
-  { opacity: .45, holdDuration: 0 }
-];
-const videoOpacityTransitionDuration = 1500;
-let videoOpacityIndex = 0;
-let videoOpacityTimer;
-let openingIsVisible = true;
-let continuationActive = false;
 
-function stopVideoOpacityCycle() {
-  window.clearTimeout(videoOpacityTimer);
+// Vídeo de fundo do hero: ciclos curtos para não ficar rodando o tempo todo.
+// Cada ciclo (fade in + vídeo + fade out) dura 15 s e termina com o vídeo pausado.
+// Um novo ciclo só começa depois que o usuário sai do hero, volta e fica 20 s seguidos nele.
+const HERO_VIDEO_OPACITY = .45;
+const HERO_VIDEO_FADE_MS = 1500;
+const HERO_VIDEO_CYCLE_MS = 15000;
+const HERO_VIDEO_REPLAY_DELAY_MS = 20000;
+const HERO_VISIBLE_RATIO = .3;
+
+let heroRatioVisible = true;
+let heroVideoReady = false;
+let heroVideoState = 'paused'; // 'playing' | 'fading-out' | 'paused'
+let heroVideoPlayedOnce = false;
+let heroVideoNeedsReentry = false;
+let heroVideoCycleTimer;
+let heroVideoPauseTimer;
+let heroVideoReplayTimer;
+
+const heroActive = () => heroRatioVisible && !document.hidden;
+
+function setHeroVideoOpacity(value) {
+  opening.style.setProperty('--video-opacity-duration', `${HERO_VIDEO_FADE_MS / 1000}s`);
+  opening.style.setProperty('--video-opacity', String(value));
 }
 
-function scheduleVideoOpacityCycle() {
-  stopVideoOpacityCycle();
-  if (videoOpacityStates.length < 2 || !continuationActive || !openingIsVisible || document.hidden || reducedMotion.matches) return;
-
-  const currentState = videoOpacityStates[videoOpacityIndex];
-  videoOpacityTimer = window.setTimeout(() => {
-    videoOpacityIndex = (videoOpacityIndex + 1) % videoOpacityStates.length;
-    const nextState = videoOpacityStates[videoOpacityIndex];
-    opening.style.setProperty('--video-opacity-duration', `${videoOpacityTransitionDuration / 1000}s`);
-    opening.style.setProperty('--video-opacity', String(nextState.opacity));
-    videoOpacityTimer = window.setTimeout(scheduleVideoOpacityCycle, videoOpacityTransitionDuration);
-  }, currentState.holdDuration);
+function scheduleHeroVideoReplay() {
+  window.clearTimeout(heroVideoReplayTimer);
+  if (!heroVideoReady || heroVideoState !== 'paused' || heroVideoNeedsReentry || !heroActive() || reducedMotion.matches) return;
+  heroVideoReplayTimer = window.setTimeout(startHeroVideoCycle, heroVideoPlayedOnce ? HERO_VIDEO_REPLAY_DELAY_MS : 0);
 }
 
-const openingVisibilityObserver = new IntersectionObserver(([entry]) => {
-  openingIsVisible = entry.isIntersecting;
-  if (openingIsVisible) scheduleVideoOpacityCycle();
-  else stopVideoOpacityCycle();
-}, { threshold: .05 });
+function startHeroVideoCycle() {
+  window.clearTimeout(heroVideoReplayTimer);
+  window.clearTimeout(heroVideoPauseTimer);
+  window.clearTimeout(heroVideoCycleTimer);
+  if (reducedMotion.matches) return;
+  heroVideoState = 'playing';
+  heroVideoPlayedOnce = true;
+  heroVideoNeedsReentry = false;
+  heroVideoCycleTimer = window.setTimeout(endHeroVideoCycle, HERO_VIDEO_CYCLE_MS - HERO_VIDEO_FADE_MS);
+  Promise.resolve(openingVideo.play()).then(() => {
+    if (heroVideoState !== 'playing') return;
+    opening.classList.add('has-video-continuation');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (heroVideoState === 'playing') setHeroVideoOpacity(HERO_VIDEO_OPACITY);
+    }));
+  }).catch(() => {
+    window.clearTimeout(heroVideoCycleTimer);
+    heroVideoState = 'paused';
+  });
+}
 
-openingVisibilityObserver.observe(opening);
+function endHeroVideoCycle() {
+  if (heroVideoState !== 'playing') return;
+  window.clearTimeout(heroVideoCycleTimer);
+  heroVideoState = 'fading-out';
+  // Fim natural com o usuário ainda no hero: exige sair e voltar. Saída no meio do ciclo: já saiu.
+  heroVideoNeedsReentry = heroActive();
+  setHeroVideoOpacity(0);
+  heroVideoPauseTimer = window.setTimeout(() => {
+    openingVideo.pause();
+    heroVideoState = 'paused';
+    scheduleHeroVideoReplay();
+  }, HERO_VIDEO_FADE_MS + 60);
+}
+
+function syncHeroVideoPresence() {
+  if (!heroVideoReady) return;
+  if (heroActive()) {
+    scheduleHeroVideoReplay();
+    return;
+  }
+  window.clearTimeout(heroVideoReplayTimer);
+  if (heroVideoState === 'playing') endHeroVideoCycle();
+  else heroVideoNeedsReentry = false;
+}
+
+function beginHeroVideoContinuation() {
+  heroVideoReady = true;
+  setHeroVideoOpacity(0);
+  if (heroActive()) startHeroVideoCycle();
+  else scheduleHeroVideoReplay();
+}
+
+new IntersectionObserver(([entry]) => {
+  heroRatioVisible = entry.intersectionRatio >= HERO_VISIBLE_RATIO;
+  syncHeroVideoPresence();
+}, { threshold: [0, HERO_VISIBLE_RATIO] }).observe(opening);
 
 function startOpening() {
   if (openingStarted) return;
@@ -146,15 +201,7 @@ function continueVideoInOpening() {
     } catch (_) {
       // O navegador ajustará o tempo assim que os metadados estiverem disponíveis.
     }
-    openingVideo.play().catch(() => {});
-    continuationActive = true;
-    videoOpacityIndex = 0;
-    opening.style.setProperty('--video-opacity-duration', `${videoOpacityTransitionDuration / 1000}s`);
-    opening.style.setProperty('--video-opacity', String(videoOpacityStates[0].opacity));
-    requestAnimationFrame(() => {
-      opening.classList.add('has-video-continuation');
-      videoOpacityTimer = window.setTimeout(scheduleVideoOpacityCycle, videoOpacityTransitionDuration);
-    });
+    beginHeroVideoContinuation();
   };
 
   if (openingVideo.readyState >= 1) startContinuation();
@@ -201,10 +248,10 @@ if (document.documentElement.classList.contains('intro-seen')) {
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     clearTimeout(shimmerTimer);
-    stopVideoOpacityCycle();
+    syncHeroVideoPresence();
   } else {
     scheduleShimmer();
-    scheduleVideoOpacityCycle();
+    syncHeroVideoPresence();
   }
 });
 
